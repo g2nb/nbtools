@@ -25,13 +25,13 @@ def _post_install():
                  "jupyter serverextension enable --py nbtools\n")
 
 
-class GPInstall(_install):
+class NBInstall(_install):
     def run(self):
         _install.run(self)
         self.execute(_post_install, [], msg="Running post install task")
 
 
-class GPDevelop(_develop):
+class NBDevelop(_develop):
     def run(self):
         _develop.run(self)
         self.execute(_post_install, [], msg="Running post develop task")
@@ -61,6 +61,6 @@ setup(name='nbtool-manager',
           'notebook>=4.2.0',
           'ipywidgets>=5.0.0',
       ],
-      cmdclass={'install': GPInstall, 'develop': GPDevelop},
+      cmdclass={'install': NBInstall, 'develop': NBDevelop},
       package_data={'nbtools': ['static/nbtools.js']},
       )
