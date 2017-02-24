@@ -6,7 +6,7 @@ A lightweight manager for registering and browsing Jupyter tools
 The Notebook Tool Manager API consists of two components: a singleton manager which registers and lists tools, 
 as well as a simple interface a tool can implement to provide its metadata and rendering instructions.
 
-### Tool Manager
+### Tool Manager Singleton
 * **register(tool): id**
     * Registers a tool with the manager, passing in an object that implements the Notebook Tool interface (see below). 
     Returns an ID unique to this tool’s registration.
@@ -16,7 +16,7 @@ as well as a simple interface a tool can implement to provide its metadata and r
 * **list(): list**
     * Lists all currently registered tools
 
-### Notebook Tool
+### Notebook Tool Interface
 * **load(): boolean**
     * Function to call when a notebook first loads (for example, import dependencies, add new cell type to the menu, 
     add buttons to the toolbar, etc.).
