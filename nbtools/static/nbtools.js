@@ -154,9 +154,16 @@ define("nbtools", ["base/js/namespace",
              * @returns {boolean}
              * @private
              */
-            _valid_tool(tool) {
-                // TODO: Implement
-                return true;
+            static _valid_tool(tool) {
+                return  tool !== undefined &&
+                        tool !== null &&
+                        typeof tool === "object" &&
+                        typeof tool.load === "function" &&
+                        typeof tool.prepare === "function" &&
+                        typeof tool.render === "function" &&
+                        typeof tool.origin === "string" &&
+                        typeof tool.id === "string" &&
+                        typeof tool.name === "string";
             }
         }
 
