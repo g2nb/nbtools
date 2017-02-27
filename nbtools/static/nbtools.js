@@ -1,6 +1,26 @@
+/**
+ * @author Thorin Tabor
+ *
+ * Loads the Notebook Tool Manager extension for Jupyter Notebook
+ */
+
+
+/**
+ * Notebook Tools Manager package
+ *
+ * To use, load using require.js like so:
+ *      require(["nbtools"], function (NBToolManager) {
+ *          // Your code using the notebook tools manager here
+ *          ...
+ *          NBToolManager.instance().register(...)
+ *      }
+ */
 define("nbtools", ["base/js/namespace",
                    "nbextensions/jupyter-js-widgets/extension",
                    "jquery"], function (Jupyter, widgets, $) {
+
+    // Store a reference to the NBToolManager singleton
+    var _instance = null;
 
     /**
      * Base Notebook Tool class
@@ -88,116 +108,135 @@ define("nbtools", ["base/js/namespace",
      *
      * @type {{instance}}
      */
-    var NBToolManager = (function () {
-        var _instance = null;
+    class Singleton {
+        constructor() {
+            // List of registered tools
+            this._tools = {};
+            // The next ID value to return
+            this._next_id = 1;
+            // Whether the Jupyter kernel has been loaded yet
+            this._kernel_loaded = false;
+        }
 
         /**
-         * Define the Tool Manager singleton object
+         * Register a notebook tool with the manager
+         * Return null if the provided tool is not valid
+         *
+         * @param tool - Object implementing the Notebook Tool interface
+         * @returns {number|null} - Returns the tool ID or null if invalid
          */
-        class Singleton {
-            constructor() {
-                this._tools = {};
-                this._next_id = 1;
-            }
+        register(tool) {
+            if (Singleton._valid_tool(tool)) {
+                var id = this._generate_id();
+                this._tools[id] = tool;
 
-            /**
-             * Register a notebook tool with the manager
-             * Return null if the provided tool is not valid
-             *
-             * @param tool - Object implementing the Notebook Tool interface
-             * @returns {number|null} - Returns the tool ID or null if invalid
-             */
-            register(tool) {
-                if (Singleton._valid_tool(tool)) {
-                    var id = this._generate_id();
-                    this._tools[id] = tool;
-                    return id;
+                // If the kernel has already been loaded, immediately call load() for the tool
+                if (this._kernel_loaded) {
+                    var success = tool.load();
+
+                    // Log error to console if tool had trouble loading
+                    if (!success) console.log("Problem loading tool: " + tool.name);
                 }
-                else {
-                    return null;
-                }
-            }
 
-            /**
-             * Unregister a notebook tool from the manager
-             *
-             * @param id - Unique tool ID returned when registering the tool
-             * @returns {boolean} - Returns whether the tool was successfully registered
-             */
-            unregister(id) {
-                if (id in this._tools) {
-                    delete this._tools[id];
-                    return true;
-                }
-                else {
-                    return false;
-                }
+                return id;
             }
-
-            /**
-             * Returns a list of all currently registered tools
-             *
-             * @returns {Array} - A list of registered tools
-             */
-            list() {
-                var tools = this._tools;
-                return Object.keys(this._tools).map(function(key){
-                    return tools[key];
-                });
-            }
-
-            /**
-             * Increment and return the next tool id number
-             *
-             * @returns {number} - The generated ID
-             * @private
-             */
-            _generate_id() {
-                return this._next_id++;
-            }
-
-            /**
-             * Tests whether the provided tool specification is valid
-             *
-             * @param tool
-             * @returns {boolean}
-             * @private
-             */
-            static _valid_tool(tool) {
-                return  tool !== undefined &&
-                        tool !== null &&
-                        typeof tool === "object" &&
-                        typeof tool.load === "function" &&
-                        typeof tool.prepare === "function" &&
-                        typeof tool.render === "function" &&
-                        typeof tool.origin === "string" &&
-                        typeof tool.id === "string" &&
-                        typeof tool.name === "string";
+            else {
+                return null;
             }
         }
 
-        function init() {
-            return new Singleton();
+        /**
+         * Unregister a notebook tool from the manager
+         *
+         * @param id - Unique tool ID returned when registering the tool
+         * @returns {boolean} - Returns whether the tool was successfully registered
+         */
+        unregister(id) {
+            if (id in this._tools) {
+                delete this._tools[id];
+                return true;
+            }
+            else {
+                return false;
+            }
         }
 
-        return {
-            instance: function () {
-                if (!_instance) {
-                    _instance = init();
-                }
-                return _instance;
-            }
-        };
-    })();
+        /**
+         * Returns a list of all currently registered tools
+         *
+         * @returns {Array} - A list of registered tools
+         */
+        list() {
+            var tools = this._tools;
+            return Object.keys(this._tools).map(function(key){
+                return tools[key];
+            });
+        }
 
-    function load_ipython_extension() {
-        console.log("nbtools load_ipython_extension() called");
+        /**
+         * Tells the Tool Manager that the Jupyter kernel has been loaded.
+         * At this point it should call load() on all registered tools.
+         * Any tools registered after this point should have load() called
+         * immediately upon registration.
+         *
+         * @private
+         */
+        _load_kernel() {
+            // Get the list to load
+            var to_load = this.list();
+
+            // Update manager state
+            this._kernel_loaded = true;
+
+            // Load each tool in the list
+            for (var i in to_load) {
+                var success = to_load[i].load();
+
+                // Log error to console if tool had trouble loading
+                if (!success) console.log("Problem loading tool: " + to_load[i].name);
+            }
+        }
+
+        /**
+         * Increment and return the next tool id number
+         *
+         * @returns {number} - The generated ID
+         * @private
+         */
+        _generate_id() {
+            return this._next_id++;
+        }
+
+        /**
+         * Tests whether the provided tool specification is valid
+         *
+         * @param tool
+         * @returns {boolean}
+         * @private
+         */
+        static _valid_tool(tool) {
+            return  tool !== undefined &&
+                    tool !== null &&
+                    typeof tool === "object" &&
+                    typeof tool.load === "function" &&
+                    typeof tool.prepare === "function" &&
+                    typeof tool.render === "function" &&
+                    typeof tool.origin === "string" &&
+                    typeof tool.id === "string" &&
+                    typeof tool.name === "string";
+        }
     }
 
+    /**
+     * Notebook Tool Manager view widget
+     *
+     * Used to synchronize notebook client with notebook kernel.
+     */
     var NBToolView = widgets.DOMWidgetView.extend({
         render: function () {
             var cell = this.options.cell;
             var next_id = this.model.get('next_id');
+            this.$el.append("Widget UI Loaded");
 
             console.log("NBToolView render() called");
 
@@ -230,8 +269,60 @@ define("nbtools", ["base/js/namespace",
         }
     });
 
+    /**
+     * Return reference to the Notebook Tool Manager widget
+     * and to the Notebook Tool Manager singleton instance
+     */
     return {
-        load_ipython_extension: load_ipython_extension,
-        NBToolView: NBToolView
+        NBToolView: NBToolView,
+        instance: function () {
+            if (!_instance) {
+                _instance = new Singleton();
+            }
+            return _instance;
+        }
+    };
+});
+
+define(["base/js/namespace",
+        "nbextensions/jupyter-js-widgets/extension",
+        "nbtools",
+        "jquery"], function (Jupyter, widgets, NBToolManager, $) {
+    // Has the Tool Manager been initialized yet?
+    var done_init = false;
+
+    /**
+     * Poll, waiting for the kernel to be loaded, then inform the Tool Manager
+     * so that it can call load() on already registered tools
+     *
+     * @param id - ID of JavaScript interval
+     */
+    function wait_for_kernel(id) {
+        if (!done_init  && Jupyter.notebook.kernel) {
+            NBToolManager.instance()._load_kernel();
+            done_init = true;
+        }
+        else if (done_init) {
+            clearInterval(id);
+        }
+    }
+
+    /**
+     * Function to call when the nbextension is loaded
+     */
+    function load_ipython_extension() {
+        console.log("Notebook Tool Manager loaded");
+
+        // Wait for the kernel to be ready and then call load() on registered tools
+        var interval = setInterval(function() {
+            wait_for_kernel(interval);
+        }, 500);
+    }
+
+    /**
+     * Return the nbextension load function
+     */
+    return {
+        load_ipython_extension: load_ipython_extension
     }
 });
