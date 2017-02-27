@@ -14,7 +14,7 @@ define("nbtools", ["base/js/namespace",
      *      prepare(): Called when the tool has been clicked in the navigation
      *      render(): Called to render the tool in the notebook
      *
-     * In addition, some metadata for the tool should be provided:
+     * In addition, some metadata for the tool should be provided in an object passed to the constructor:
      *      origin: Identifier for the origin of the tool (local execution, specific remote domain, etc.)
      *      id: Identifier unique within an origin (example: LSID)
      *      name: What we display to the user
@@ -24,27 +24,35 @@ define("nbtools", ["base/js/namespace",
      *      attributes: Tool-specific metadata which may be useful to the tool. (optional)
      */
     class NBTool {
-        constructor() {
+        constructor(pObj) {
+            // Parameter validation
+            if (!pObj) throw "NBTool.constructor() properties either null or undefined";
+            if (typeof pObj === 'object' && (!pObj.origin || !pObj.id ||!pObj.name)) throw "NBTool.constructor() parameter does not contain origin, id or name";
+            if (typeof pObj.origin !== 'string') throw "NBTool.origin must be a string";
+            if (typeof pObj.id !== 'string') throw "NBTool.id must be a string";
+            if (typeof pObj.name !== 'string') throw "NBTool.name must be a string";
+
+
             // Identifier for the origin of the tool (local execution, specific GenePattern server, GenomeSpace, etc.)
-            this.origin = null;
+            this.origin = pObj.origin;
 
             // Identifier unique within an origin (example: LSID)
-            this.id = null;
+            this.id = pObj.id;
 
             // What we display to the user
-            this.name = null;
+            this.name = pObj.name;
 
             // Brief description of the tool (optional)
-            this.description = null;
+            this.description = typeof pObj.description === 'string' ? pObj.description : null;
 
             // To identify particular versions of a tool (optional)
-            this.version = null;
+            this.version = typeof pObj.version === 'string' || typeof pObj.version === 'number' ? pObj.version : null;
 
             // Categories or other navigation aids (optional)
-            this.tags = null;
+            this.tags = typeof pObj.tags === 'object' ? pObj.tags : null;
 
             // Tool-specific metadata which may be useful to the tool. (optional)
-            this.attributes = null;
+            this.attributes = typeof pObj.attributes === 'object' ? pObj.attributes : null;
         }
 
         /**
@@ -89,7 +97,7 @@ define("nbtools", ["base/js/namespace",
         class Singleton {
             constructor() {
                 this._tools = {};
-                this._next_id = 0;
+                this._next_id = 1;
             }
 
             /**
@@ -100,7 +108,7 @@ define("nbtools", ["base/js/namespace",
              * @returns {number|null} - Returns the tool ID or null if invalid
              */
             register(tool) {
-                if (this._valid_tool(tool)) {
+                if (Singleton._valid_tool(tool)) {
                     var id = this._generate_id();
                     this._tools[id] = tool;
                     return id;
@@ -132,8 +140,9 @@ define("nbtools", ["base/js/namespace",
              * @returns {Array} - A list of registered tools
              */
             list() {
+                var tools = this._tools;
                 return Object.keys(this._tools).map(function(key){
-                    return this._tools[key];
+                    return tools[key];
                 });
             }
 
@@ -181,4 +190,48 @@ define("nbtools", ["base/js/namespace",
         };
     })();
 
+    function load_ipython_extension() {
+        console.log("nbtools load_ipython_extension() called");
+    }
+
+    var NBToolView = widgets.DOMWidgetView.extend({
+        render: function () {
+            var cell = this.options.cell;
+            var next_id = this.model.get('next_id');
+
+            console.log("NBToolView render() called");
+
+            // window.NBToolManager = NBToolManager;
+            // window.NBTool = NBTool;
+            //
+            // class GPTool extends NBTool {
+            //     constructor() {
+            //         super({
+            //             origin: "GenePattern Test",
+            //             id: "lsid:1234",
+            //             name: "GenePattern Module"
+            //         });
+            //     }
+            //
+            //     load() {
+            //         console.log("GPTool Loaded");
+            //     }
+            //
+            //     prepare() {
+            //         console.log("GPTool Prepared");
+            //     }
+            //
+            //     render() {
+            //         console.log("GPTool Rendered");
+            //     }
+            // }
+            //
+            // window.gptool = new GPTool();
+        }
+    });
+
+    return {
+        load_ipython_extension: load_ipython_extension,
+        NBToolView: NBToolView
+    }
 });

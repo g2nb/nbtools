@@ -12,6 +12,9 @@ from traitlets import Unicode, Integer, Dict, List
 from ipywidgets import widgets
 
 
+tools = None
+
+
 class NBToolWidget(widgets.DOMWidget):
     """
     Widget object used to coordinate Python and JavaScript components of the Notebook Tool Manager
@@ -32,6 +35,9 @@ class NBToolWidget(widgets.DOMWidget):
             self.errors()
             self.errors(self)
 
+def load_ipython_extension(ipython):
+    ipython.log.info("Notebook Tool Manager ipython loaded!")
+
 
 def _jupyter_server_extension_paths():
     return [{
@@ -51,5 +57,7 @@ def _jupyter_nbextension_paths():
 
 
 def load_jupyter_server_extension(nbapp):
+    global tools
     nbtool_manager = NBToolWidget()
+    tools = Dict(sync=True)
     nbapp.log.info("Notebook Tool Manager enabled!")
