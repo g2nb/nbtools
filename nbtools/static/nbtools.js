@@ -117,6 +117,8 @@ define("nbtools", ["base/js/namespace",
             this._next_id = 1;
             // Whether the Jupyter kernel has been loaded yet
             this._kernel_loaded = false;
+            // Timestamp of when the tool list was last modified
+            this._modified = new Date();
         }
 
         /**
@@ -130,6 +132,7 @@ define("nbtools", ["base/js/namespace",
             if (Singleton._valid_tool(tool)) {
                 var id = this._generate_id();
                 this._tools[id] = tool;
+                this._modified = new Date();
 
                 // If the kernel has already been loaded, immediately call load() for the tool
                 if (this._kernel_loaded) {
@@ -155,6 +158,7 @@ define("nbtools", ["base/js/namespace",
         unregister(id) {
             if (id in this._tools) {
                 delete this._tools[id];
+                this._modified = new Date();
                 return true;
             }
             else {
@@ -172,6 +176,16 @@ define("nbtools", ["base/js/namespace",
             return Object.keys(this._tools).map(function(key){
                 return tools[key];
             });
+        }
+
+        /**
+         * Returns a Date() object representing when the tool
+         * list was last modified. Useful when caching.
+         *
+         * @returns {*}
+         */
+        modified() {
+            return this._modified;
         }
 
         /**
