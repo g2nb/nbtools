@@ -25,16 +25,19 @@ define("nbtools", ["base/js/namespace",
     /**
      * Base Notebook Tool class
      *
-     * The intention is that tool developers can extend this class when
-     * building their own notebook tools. Objects that extend this class
+     * The intention is that tool developers can create an object of this
+     * class when building their own notebook tools. Objects of this class
      * can be passed to the register() function of the NBToolManager.
+     *
+     * This function accepts a JavaScript object with the following
+     * methods and properties:
      *
      * Three methods need to be implemented:
      *      load(): Called when the kernel is loaded
      *      prepare(): Called when the tool has been clicked in the navigation
      *      render(): Called to render the tool in the notebook
      *
-     * In addition, some metadata for the tool should be provided in an object passed to the constructor:
+     * In addition, some metadata for the tool should be provided in an object:
      *      origin: Identifier for the origin of the tool (local execution, specific remote domain, etc.)
      *      id: Identifier unique within an origin (example: LSID)
      *      name: What we display to the user
@@ -43,37 +46,14 @@ define("nbtools", ["base/js/namespace",
      *      tags: Categories or other navigation aids (optional)
      *      attributes: Tool-specific metadata which may be useful to the tool. (optional)
      */
-    class NBTool {
-        constructor(pObj) {
-            // Parameter validation
-            if (!pObj) throw "NBTool.constructor() properties either null or undefined";
-            if (typeof pObj === 'object' && (!pObj.origin || !pObj.id ||!pObj.name)) throw "NBTool.constructor() parameter does not contain origin, id or name";
-            if (typeof pObj.origin !== 'string') throw "NBTool.origin must be a string";
-            if (typeof pObj.id !== 'string') throw "NBTool.id must be a string";
-            if (typeof pObj.name !== 'string') throw "NBTool.name must be a string";
-
-
-            // Identifier for the origin of the tool (local execution, specific GenePattern server, GenomeSpace, etc.)
-            this.origin = pObj.origin;
-
-            // Identifier unique within an origin (example: LSID)
-            this.id = pObj.id;
-
-            // What we display to the user
-            this.name = pObj.name;
-
-            // Brief description of the tool (optional)
-            this.description = typeof pObj.description === 'string' ? pObj.description : null;
-
-            // To identify particular versions of a tool (optional)
-            this.version = typeof pObj.version === 'string' || typeof pObj.version === 'number' ? pObj.version : null;
-
-            // Categories or other navigation aids (optional)
-            this.tags = typeof pObj.tags === 'object' ? pObj.tags : null;
-
-            // Tool-specific metadata which may be useful to the tool. (optional)
-            this.attributes = typeof pObj.attributes === 'object' ? pObj.attributes : null;
-        }
+    function NBTool(pObj) {
+        // Parameter validation
+        if (!pObj) throw "NBTool properties either null or undefined";
+        if (typeof pObj === 'object' && (!pObj.load || !pObj.prepare ||!pObj.render)) throw "NBTool parameter does not contain load(), prepare() or render()";
+        if (typeof pObj === 'object' && (!pObj.origin || !pObj.id ||!pObj.name)) throw "NBTool parameter does not contain origin, id or name";
+        if (typeof pObj.origin !== 'string') throw "NBTool.origin must be a string";
+        if (typeof pObj.id !== 'string') throw "NBTool.id must be a string";
+        if (typeof pObj.name !== 'string') throw "NBTool.name must be a string";
 
         /**
          * Function to call when the notebook kernel is first loaded
@@ -81,7 +61,7 @@ define("nbtools", ["base/js/namespace",
          *
          * @returns {boolean} - Return true if successfully loaded, false otherwise
          */
-        load() {}
+        this.load = pObj.load;
 
         /**
          * Function to call when a tool has been selected in the navigation
@@ -90,7 +70,7 @@ define("nbtools", ["base/js/namespace",
          *
          * @returns {Object} - The Jupyter cell where the tool will be rendered
          */
-        prepare() {}
+        this.prepare = pObj.prepare;
 
         /**
          * Function to call to render the tool in a Jupyter cell
@@ -99,7 +79,28 @@ define("nbtools", ["base/js/namespace",
          * @param cell - The Jupyter cell where the tool is being rendered
          * @returns {boolean}
          */
-        render(cell) {}
+        this.render = pObj.render;
+
+        // Identifier for the origin of the tool (local execution, specific GenePattern server, GenomeSpace, etc.)
+        this.origin = pObj.origin;
+
+        // Identifier unique within an origin (example: LSID)
+        this.id = pObj.id;
+
+        // What we display to the user
+        this.name = pObj.name;
+
+        // Brief description of the tool (optional)
+        this.description = typeof pObj.description === 'string' ? pObj.description : null;
+
+        // To identify particular versions of a tool (optional)
+        this.version = typeof pObj.version === 'string' || typeof pObj.version === 'number' ? pObj.version : null;
+
+        // Categories or other navigation aids (optional)
+        this.tags = typeof pObj.tags === 'object' ? pObj.tags : null;
+
+        // Tool-specific metadata which may be useful to the tool. (optional)
+        this.attributes = typeof pObj.attributes === 'object' ? pObj.attributes : null;
     }
 
     /**
@@ -274,6 +275,7 @@ define("nbtools", ["base/js/namespace",
      * and to the Notebook Tool Manager singleton instance
      */
     return {
+        NBTool: NBTool,
         NBToolView: NBToolView,
         instance: function () {
             if (!_instance) {
@@ -312,6 +314,9 @@ define(["base/js/namespace",
      */
     function load_ipython_extension() {
         console.log("Notebook Tool Manager loaded");
+
+        // Register global reference
+        window.NBToolManager = NBToolManager;
 
         // Wait for the kernel to be ready and then call load() on registered tools
         var interval = setInterval(function() {
