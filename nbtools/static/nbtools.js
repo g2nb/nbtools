@@ -17,7 +17,8 @@
  */
 define("nbtools", ["base/js/namespace",
                    "nbextensions/jupyter-js-widgets/extension",
-                   "jquery"], function (Jupyter, widgets, $) {
+                   "nbextensions/nbtools/toolbox",
+                   "jquery"], function (Jupyter, widgets, NBToolbox, $) {
 
     // Store a reference to the NBToolManager singleton
     var _instance = null;
@@ -210,6 +211,9 @@ define("nbtools", ["base/js/namespace",
                 // Log error to console if tool had trouble loading
                 if (!success) console.log("Problem loading tool: " + to_load[i].name);
             }
+
+            // Load the Toolbox UI
+            NBToolManager.toolbox();
         }
 
         /**
@@ -240,6 +244,15 @@ define("nbtools", ["base/js/namespace",
                     typeof tool.id === "string" &&
                     typeof tool.name === "string";
         }
+    }
+
+    /**
+     * Initialize the default Toolbox UI
+     */
+    function toolbox() {
+        require(["nbtoolbox"], function(NBToolbox) {
+            NBToolbox.init();
+        })
     }
 
     /**
@@ -291,6 +304,7 @@ define("nbtools", ["base/js/namespace",
     return {
         NBTool: NBTool,
         NBToolView: NBToolView,
+        toolbox: toolbox,
         instance: function () {
             if (!_instance) {
                 _instance = new Singleton();

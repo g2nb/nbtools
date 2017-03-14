@@ -1,0 +1,93 @@
+/*
+ * Styles for navigation
+ */
+
+#nbtools {
+    height: 450px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+#nbtools .tab-content {
+    flex: auto;
+    -ms-flex: auto;
+    -moz-flex: auto;
+    -webkit-flex: auto;
+    height: 400px;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    border-left: solid 1px lightgray;
+    border-bottom: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+}
+
+#nbtools-tabs .active {
+    background-color: #ffffff;
+}
+
+#nbtools-tabs .tab-pane {
+    overflow: auto;
+}
+
+#nbtools-filter-box {
+    float: right;
+    padding: 7px;
+    position: absolute;
+    right: 40px;
+    top: -40px;
+}
+
+.nbtools-button {
+    color: white;
+    z-index: 5;
+    box-shadow: 2px 2px 1px #cecece;
+    height: 40px;
+    opacity: 0.5;
+    width: 40px;
+    background-color: #0a2d69;
+    display: inline-block;
+    font-size: 1.7em;
+    line-height: 1.6;
+    text-align: center;
+    border: medium none;
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.nbtools-tool {
+    cursor: pointer;
+    position: relative;
+    margin: 10px;
+}
+
+.nbtools-tool:hover {
+    background-color: #e4e4e4;
+}
+
+.nbtools-tool .nbtools-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nbtools-tool .nbtools-anno {
+    color: gray;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.nbtools-tool .nbtools-desc {
+    color: #333366;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+.nbtools-tool .nbtools-tags {
+    display: block;
+    color: rgba(10, 45, 105, 1);
+    padding: 5px;
+}
