@@ -138,6 +138,14 @@ define("nbtoolbox", ["base/js/namespace",
         return toolbox ? toolbox.find("#" + tab_id) : $("#" + tab_id);
     }
 
+    function sort_tools(tools) {
+        tools.sort(function(a, b) {
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            else if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            else return 0;
+        });
+    }
+
     function update_toolbox(toolbox) {
         // Get the correct list divs
         var nbtools_div = toolbox.find("#nbtools-tabs");
@@ -156,6 +164,9 @@ define("nbtoolbox", ["base/js/namespace",
             // Get the updated list of tools
             var tools = NBToolManager.instance().list();
 
+            // Sort the tools
+            sort_tools(tools);
+
             // Add the tools to the lists
             tools.forEach(function(tool) {
                 var t_button = tool_button(
@@ -166,8 +177,7 @@ define("nbtoolbox", ["base/js/namespace",
                     tool.description ? tool.description : "",
                     tool.tags ? tool.tags : []);
 
-                // Attach the click
-                t_button.click(function() {
+                var click_event = function() {
                     // Prepare the cell
                     var cell = tool.prepare();
 
@@ -183,7 +193,10 @@ define("nbtoolbox", ["base/js/namespace",
 
                     // Close the toolbox dialog
                     $(".modal-dialog button.close").trigger("click");
-                });
+                };
+
+                // Attach the click
+                t_button.click(click_event);
 
                 // Does the origin div exist?
                 var existing_tab = tab_exists(tool.origin, toolbox);
@@ -191,8 +204,15 @@ define("nbtoolbox", ["base/js/namespace",
                 // If it doesn't exist, create it
                 if (!existing_tab) add_tab(tool.origin, toolbox);
 
-                // Get the slider tab and add the tool
+                // Get the tab and add the tool
                 get_tab(tool.origin, toolbox).append(t_button);
+
+                // Add to the All Tools tab, if necessary
+                if (tool.origin !== "Tools") {
+                    var t_button_all = t_button.clone();
+                    t_button_all.click(click_event);
+                    get_tab("Tools", toolbox).append(t_button_all);
+                }
             });
         }
     }
