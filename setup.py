@@ -39,7 +39,7 @@ class NBDevelop(_develop):
 
 setup(name='nbtools',
       packages=['nbtools'],
-      version='0.1.0 RC2',
+      version='0.1.0.RC3',
       description='A lightweight manager for registering and browsing Jupyter tools',
       license='BSD',
       author='Thorin Tabor',
@@ -62,5 +62,5 @@ setup(name='nbtools',
           'ipywidgets>=5.0.0',
       ],
       cmdclass={'install': NBInstall, 'develop': NBDevelop},
-      package_data={'nbtools': ['static/nbtools.js']},
+      package_data={'nbtools': ['static/nbtools.js', 'static/toolbox.js', 'static/toolbox.css']},
       )
