@@ -83,7 +83,7 @@ define("nbtoolbox", ["base/js/namespace",
             .append(
                 $("<h5></h5>")
                     .addClass("nbtools-anno")
-                    .append(anno)
+                    .append(origin + (anno ? ", " + anno : anno))
             )
             .append(
                 $("<span></span>")

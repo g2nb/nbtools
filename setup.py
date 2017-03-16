@@ -37,7 +37,7 @@ class NBDevelop(_develop):
         self.execute(_post_install, [], msg="Running post develop task")
 
 
-setup(name='nbtool-manager',
+setup(name='nbtools',
       packages=['nbtools'],
       version='0.1.0',
       description='A lightweight manager for registering and browsing Jupyter tools',
