@@ -32,7 +32,7 @@ define("nbtoolbox", ["base/js/namespace",
                     .attr("rel", "stylesheet")
                     .attr("type", "text/css")
                     .attr('href', STATIC_PATH + 'toolbox.css')
-            )
+            );
 
         // Add the toolbar button
         Jupyter.toolbar.add_buttons_group([{
@@ -113,8 +113,22 @@ define("nbtoolbox", ["base/js/namespace",
             return;
         }
 
-        // Add the tab
-        var tabs = toolbox.find(".nav-tabs");
+        // Add the tab in the correct order
+        var tabs = toolbox.find(".nav-tabs > li");
+        var after_this = null;
+        tabs.each(function(i, e) {
+            var tab_name = $(e).find("a").attr("name");
+            if (tab_name === "All") {
+                after_this = $(e);
+            }
+            else if (tab_name < origin && tab_name !== "+") {
+                after_this = $(e);
+            }
+            else if (origin === "+") {
+                after_this = $(e);
+            }
+        });
+
         var new_tab = $("<li></li>").append(
             $("<a></a>")
                 .attr("data-toggle", "tab")
@@ -122,7 +136,8 @@ define("nbtoolbox", ["base/js/namespace",
                 .attr("name", origin)
                 .text(origin)
         );
-        tabs.append(new_tab);
+        if (origin === "All") tabs.parent().append(new_tab);
+        else new_tab.insertAfter(after_this);
 
         // Add the content pane
         var contents = toolbox.find(".tab-content");
@@ -208,10 +223,10 @@ define("nbtoolbox", ["base/js/namespace",
                 get_tab(tool.origin, toolbox).append(t_button);
 
                 // Add to the All Tools tab, if necessary
-                if (tool.origin !== "Tools") {
+                if (tool.origin !== "All") {
                     var t_button_all = t_button.clone();
                     t_button_all.click(click_event);
-                    get_tab("Tools", toolbox).append(t_button_all);
+                    get_tab("All", toolbox).append(t_button_all);
                 }
             });
         }
@@ -263,8 +278,8 @@ define("nbtoolbox", ["base/js/namespace",
                                     .append(
                                         $("<a></a>")
                                             .attr("data-toggle", "tab")
-                                            .attr("href", "#nbtools-Tools")
-                                            .attr("name", "Tools")
+                                            .attr("href", "#nbtools-All")
+                                            .attr("name", "All")
                                             .text("All Tools")
                                     )
                             )
@@ -275,7 +290,7 @@ define("nbtoolbox", ["base/js/namespace",
                             .css("height", $(window).height() - 250)
                             .append(
                                 $("<div></div>")
-                                    .attr("id", "nbtools-Tools")
+                                    .attr("id", "nbtools-All")
                                     .addClass("tab-pane active")
                             )
                     )
