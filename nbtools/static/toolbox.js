@@ -193,11 +193,8 @@ define("nbtoolbox", ["base/js/namespace",
                     tool.tags ? tool.tags : []);
 
                 var click_event = function() {
-                    // Prepare the cell
-                    var cell = tool.prepare();
-
                     // Render the tool
-                    tool.render(cell);
+                    var cell = tool.render();
 
                     // Scroll to the cell, if applicable
                     if (cell) {

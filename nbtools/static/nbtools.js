@@ -33,10 +33,9 @@ define("nbtools", ["base/js/namespace",
      * This function accepts a JavaScript object with the following
      * methods and properties:
      *
-     * Three methods need to be implemented:
+     * Two methods need to be implemented:
      *      load(): Called when the kernel is loaded
-     *      prepare(): Called when the tool has been clicked in the navigation
-     *      render(): Called to render the tool in the notebook
+     *      render(): Called when the tool has been clicked in the navigation
      *
      * In addition, some metadata for the tool should be provided in an object:
      *      origin: Identifier for the origin of the tool (local execution, specific remote domain, etc.)
@@ -50,7 +49,7 @@ define("nbtools", ["base/js/namespace",
     function NBTool(pObj) {
         // Parameter validation
         if (!pObj) throw "NBTool properties either null or undefined";
-        if (typeof pObj === 'object' && (!pObj.load || !pObj.prepare ||!pObj.render)) throw "NBTool parameter does not contain load(), prepare() or render()";
+        if (typeof pObj === 'object' && (!pObj.load || !pObj.render)) throw "NBTool parameter does not contain load() or render()";
         if (typeof pObj === 'object' && (!pObj.origin || !pObj.id ||!pObj.name)) throw "NBTool parameter does not contain origin, id or name";
         if (typeof pObj.origin !== 'string') throw "NBTool.origin must be a string";
         if (typeof pObj.id !== 'string') throw "NBTool.id must be a string";
@@ -66,19 +65,11 @@ define("nbtools", ["base/js/namespace",
 
         /**
          * Function to call when a tool has been selected in the navigation
-         * or otherwise is preparing to be rendered.
          * Override and implement this method for the specific tool.
+         * Returns a reference to the cell the tool has been rendered in, if any.
+         * Otherwise returns null.
          *
-         * @returns {Object} - The Jupyter cell where the tool will be rendered
-         */
-        this.prepare = pObj.prepare;
-
-        /**
-         * Function to call to render the tool in a Jupyter cell
-         * Override and implement this method for the specific tool.
-         *
-         * @param cell - The Jupyter cell where the tool is being rendered
-         * @returns {boolean}
+         * @returns {Object}
          */
         this.render = pObj.render;
 
@@ -238,7 +229,6 @@ define("nbtools", ["base/js/namespace",
                     tool !== null &&
                     typeof tool === "object" &&
                     typeof tool.load === "function" &&
-                    typeof tool.prepare === "function" &&
                     typeof tool.render === "function" &&
                     typeof tool.origin === "string" &&
                     typeof tool.id === "string" &&
@@ -256,54 +246,11 @@ define("nbtools", ["base/js/namespace",
     }
 
     /**
-     * Notebook Tool Manager view widget
-     *
-     * Used to synchronize notebook client with notebook kernel.
-     */
-    var NBToolView = widgets.DOMWidgetView.extend({
-        render: function () {
-            var cell = this.options.cell;
-            var next_id = this.model.get('next_id');
-            this.$el.append("Widget UI Loaded");
-
-            console.log("NBToolView render() called");
-
-            // window.NBToolManager = NBToolManager;
-            // window.NBTool = NBTool;
-            //
-            // class GPTool extends NBTool {
-            //     constructor() {
-            //         super({
-            //             origin: "GenePattern Test",
-            //             id: "lsid:1234",
-            //             name: "GenePattern Module"
-            //         });
-            //     }
-            //
-            //     load() {
-            //         console.log("GPTool Loaded");
-            //     }
-            //
-            //     prepare() {
-            //         console.log("GPTool Prepared");
-            //     }
-            //
-            //     render() {
-            //         console.log("GPTool Rendered");
-            //     }
-            // }
-            //
-            // window.gptool = new GPTool();
-        }
-    });
-
-    /**
      * Return reference to the Notebook Tool Manager widget
      * and to the Notebook Tool Manager singleton instance
      */
     return {
         NBTool: NBTool,
-        NBToolView: NBToolView,
         toolbox: toolbox,
         instance: function () {
             if (!_instance) {
