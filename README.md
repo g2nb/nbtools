@@ -15,16 +15,16 @@ as well as a simple interface a tool can implement to provide its metadata and r
     if the tool was successfully unregistered
 * **list(): list**
     * Lists all currently registered tools
+* **modified(): timestamp**
+    * Returns a timestamp of the last time the list of registered tools was modified (register or unregister). This is 
+    useful when caching the list of tools.
 
 ### Notebook Tool Interface
 * **load(): boolean**
     * Function to call when a notebook first loads (for example, import dependencies, add new cell type to the menu, 
     add buttons to the toolbar, etc.).
-* **prepare(): cell**
-    * Function to call when you click on a tool in the navigation. Returns the Jupyter cell to call render() upon, 
-    or None
 * **render(cell): boolean**
-    * Function to render the tool in a cell. Accepts the cell to render itself in. Returns true if it successfully 
+    * Function to call when you click on a tool in the navigation. Returns true if it successfully 
     rendered.
 
 > The following is metadata the tool defines and which may be used to render a description of the tool
