@@ -1,39 +1,188 @@
 """
 Notebook Tool Manager
 """
+from __future__ import print_function
+from .jsobject import JSObject
+import json
+import IPython
 
 __author__ = 'Thorin Tabor'
 __version__ = '0.1.0'
 __status__ = 'Beta'
-__license__ = 'BSD-style'
+__license__ = 'BSD'
 
-
-from traitlets import Unicode, Integer, Dict, List
-from ipywidgets import widgets
-
-
+window = None
+cache_time = None
 tools = None
+_py_funcs = {}
 
 
-class NBToolWidget(widgets.DOMWidget):
+class NBTool:
+    origin = None
+    id = None
+    name = None
+    description = None
+    attributes = None
+    tags = None
+    version = None
+    load = None     # Return value of function is printed to JavaScript console after running
+    render = None   # Return value of function is printed to JavaScript console after running
+
+    def __init__(self, origin=None, id=None, name=None, description=None, attributes=None, tags=None, version=None,
+                 load=None, render=None, tool_dict={}):
+        # Load from tool_dict first
+        if 'origin' in tool_dict:
+            self.origin = tool_dict['origin']
+        if 'id' in tool_dict:
+            self.id = tool_dict['id']
+        if 'name' in tool_dict:
+            self.name = tool_dict['name']
+        if 'description' in tool_dict:
+            self.description = tool_dict['description']
+        if 'attributes' in tool_dict:
+            self.attributes = tool_dict['attributes']
+        if 'tags' in tool_dict:
+            self.tags = tool_dict['tags']
+        if 'version' in tool_dict:
+            self.version = tool_dict['version']
+
+        # Load from named parameters second
+        if origin is not None:
+            self.origin = origin
+        if id is not None:
+            self.id = id
+        if name is not None:
+            self.name = name
+        if description is not None:
+            self.description = description
+        if attributes is not None:
+            self.attributes = attributes
+        if tags is not None:
+            self.tags = tags
+        if version is not None:
+            self.version = version
+        if load is not None:
+            self.load = load
+        if render is not None:
+            self.render = render
+
+
+def _lazy_init():
+    global window, cache_time, tools
+
+    # Init DOM object
+    if window is None:
+        window = JSObject()
+
+    # Init last modified date
+    if cache_time is None:
+        cache_time = window.NBToolManager.instance().modified().toString()
+
+    # Get the current last modified date
+    current_modified = window.NBToolManager.instance().modified().toString()
+
+    # Init the tools list
+    if tools is None or cache_time != current_modified:
+        tools = json.loads(window.JSON.stringify(window.NBToolManager.instance().list()))
+
+
+def list():
     """
-    Widget object used to coordinate Python and JavaScript components of the Notebook Tool Manager
+    Get the list of registered tools
+    :return:
     """
-    _view_name = Unicode('NBToolView').tag(sync=True)
-    _view_module = Unicode('nbtools').tag(sync=True)
+    global tools
+    _lazy_init()
+    return tools
 
-    tools = Dict(sync=True)
-    next_id = Integer(0).tag(sync=True)
 
-    def __init__(self, **kwargs):
-        widgets.DOMWidget.__init__(self, **kwargs)
-        self.errors = widgets.CallbackDispatcher(accepted_nargs=[0, 1])
-        self.on_msg(self._handle_custom_msg)
+def modified():
+    """
+    Get the timestamp of when the tool list was last modified
+    """
+    global cache_time
+    _lazy_init()
+    return cache_time
 
-    def _handle_custom_msg(self, content, **kwargs):
-        if 'event' in content and content['event'] == 'error':
-            self.errors()
-            self.errors(self)
+
+def register(nbtool):
+    """
+    Register the provided NBTool object
+    """
+    global _py_funcs
+    _lazy_init()
+
+    # Save references to the tool's load() and render() functions
+    load_key = nbtool.origin + '|' + nbtool.id + '|load'
+    render_key = nbtool.origin + '|' + nbtool.id + '|render'
+    _py_funcs[load_key] = nbtool.load
+    _py_funcs[render_key] = nbtool.render
+
+    # Clean optional metadata for inclusion in JavaScript
+    clean_description = "null" if nbtool.description is None else '"' + nbtool.description.replace('"','\\"') + '"'
+    clean_version = "null" if nbtool.version is None else '"' + nbtool.version.replace('"','\\"') + '"'
+    clean_tags = "null" if nbtool.tags is None else json.dumps(nbtool.tags)
+    clean_attributes = "null" if nbtool.attributes is None else json.dumps(nbtool.attributes)
+
+    # Pass the metadata to JavaScript
+    IPython.display.display_javascript("""
+        console.log('ok');
+        NBToolManager.instance().register(new NBToolManager.NBTool({
+            origin: "%s",
+            id: "%s",
+            name: "%s",
+            description: %s,
+            version: %s,
+            tags: %s,
+            attributes: %s,
+            load: function() {
+                var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["%s"]()',
+                    {
+                        iopub: {
+                            output: function(response) {
+                                // Print the return value of the Python code to the console
+                                console.log(response.content.data["text/plain"]);
+                            }
+                        }
+                    },
+                    {
+                        silent: false,
+                        store_history: false,
+                        stop_on_error: true
+                    });
+                return true;
+            },
+            render: function() {
+                var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["%s"]()',
+                    {
+                        iopub: {
+                            output: function(response) {
+                                // Print the return value of the Python code to the console
+                                console.log(response.content.data["text/plain"]);
+                            }
+                        }
+                    },
+                    {
+                        silent: false,
+                        store_history: false,
+                        stop_on_error: true
+                    });
+                return null;
+            },
+        }));
+    """ % (nbtool.origin, nbtool.id, nbtool.name,
+           clean_description, clean_version, clean_tags, clean_attributes,
+           load_key, render_key), raw=True)
+    return True
+
+
+def unregister(id):
+    """
+    Unregister the tool with the associated id
+    """
+    _lazy_init()
+    window.NBToolManager.instance().unregister(id)
+
 
 def load_ipython_extension(ipython):
     ipython.log.info("Notebook Tool Manager ipython loaded!")
@@ -57,7 +206,4 @@ def _jupyter_nbextension_paths():
 
 
 def load_jupyter_server_extension(nbapp):
-    global tools
-    nbtool_manager = NBToolWidget()
-    tools = Dict(sync=True)
     nbapp.log.info("Notebook Tool Manager enabled!")
