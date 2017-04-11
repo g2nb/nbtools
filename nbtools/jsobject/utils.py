@@ -1,4 +1,5 @@
 import time
+from IPython import get_ipython
 
 ip = get_ipython()
 

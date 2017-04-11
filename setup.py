@@ -39,13 +39,13 @@ class NBDevelop(_develop):
 
 setup(name='nbtools',
       packages=['nbtools'],
-      version='0.1.2',
+      version='0.1.3',
       description='A lightweight manager for registering and browsing Jupyter tools',
       license='BSD',
       author='Thorin Tabor',
       author_email='thorin@broadinstitute.org',
       url='https://github.com/genepattern/nbtool-manager',
-      download_url='https://github.com/genepattern/nbtool-manager/archive/0.1.2.tar.gz',
+      download_url='https://github.com/genepattern/nbtool-manager/archive/0.1.3.tar.gz',
       keywords=['genepattern', 'genomics', 'bioinformatics', 'ipython', 'jupyter'],
       classifiers=[
           'Development Status :: 4 - Beta',
