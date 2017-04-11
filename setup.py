@@ -39,7 +39,7 @@ class NBDevelop(_develop):
 
 setup(name='nbtools',
       packages=['nbtools'],
-      version='0.1.0.RC3',
+      version='0.1.0',
       description='A lightweight manager for registering and browsing Jupyter tools',
       license='BSD',
       author='Thorin Tabor',
