@@ -54,7 +54,7 @@ setup(name='nbtools',
           'Topic :: Scientific/Engineering :: Bio-Informatics',
           'License :: OSI Approved :: BSD License',
           'Programming Language :: Python',
-          'Framework :: IPython',
+          'Framework :: Jupyter',
       ],
       install_requires=[
           'jupyter',
