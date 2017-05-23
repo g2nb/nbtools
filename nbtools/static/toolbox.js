@@ -102,7 +102,7 @@ define("nbtoolbox", ["base/js/namespace",
     }
 
     function dom_encode(str) {
-        return str.replace(/^[^a-z]+|[^\w:.-]+/gi, "");
+        return str.replace(/\W+/g, "_");
     }
 
     function add_tab(origin, toolbox) {
