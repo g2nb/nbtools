@@ -25,7 +25,7 @@ define("nbtoolbox", ["base/js/namespace",
      */
     function init() {
         // Add the CSS stylesheet
-        var STATIC_PATH = Jupyter.notebook.base_url + "nbextensions/nbtools/";
+        const STATIC_PATH = Jupyter.notebook.base_url + "nbextensions/nbtools/";
         $('head')
             .append(
                 $('<link rel="stylesheet" type="text/css" />')
@@ -36,15 +36,21 @@ define("nbtoolbox", ["base/js/namespace",
 
         // Add the toolbar button
         Jupyter.toolbar.add_buttons_group([{
-            'label'   : 'Notebook Tool Manager',
+            'label'   : 'Tools',
             'icon'    : 'fa-th',
             'id'    : 'nbtools-toolbar',
             'callback': function() {
-                var cell = tool_dialog_check();
+                const cell = tool_dialog_check();
                 tool_dialog(cell);
             }
         }]);
-        $("#nbtools-toolbar").append(" Tools");
+
+        // Add the label, if necessary (in Jupyter <= 5.0)
+        const tool_button = $("#nbtools-toolbar");
+        if (tool_button.text().indexOf("Tools") < 0) {
+            tool_button.append(" Tools");
+        }
+
     }
 
     /**
