@@ -7,7 +7,7 @@ import json
 import IPython
 
 __author__ = 'Thorin Tabor'
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 __status__ = 'Beta'
 __license__ = 'BSD'
 

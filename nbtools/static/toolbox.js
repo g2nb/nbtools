@@ -304,7 +304,7 @@ define("nbtoolbox", ["base/js/namespace",
     }
 
     function tool_dialog(cell) {
-        var dialog = require('base/js/dialog');
+        const dialog = require('base/js/dialog');
         dialog.modal({
             notebook: Jupyter.notebook,
             keyboard_manager: this.keyboard_manager,
@@ -312,6 +312,11 @@ define("nbtoolbox", ["base/js/namespace",
             body : build_toolbox(),
             buttons : {}
         });
+
+        // Give focus to the search box
+        setTimeout(function() {
+            $("#nbtools-filter").focus();
+        }, 200);
     }
 
     /**
