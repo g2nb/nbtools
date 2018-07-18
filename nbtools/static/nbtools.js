@@ -21,7 +21,7 @@ define("nbtools", ["base/js/namespace",
                    "jquery"], function (Jupyter, widgets, NBToolbox, $) {
 
     // Store a reference to the NBToolManager singleton
-    var _instance = null;
+    let _instance = null;
 
     /**
      * Base Notebook Tool class
@@ -122,13 +122,13 @@ define("nbtools", ["base/js/namespace",
          */
         register(tool) {
             if (Singleton._valid_tool(tool)) {
-                var id = this._generate_id();
+                const id = this._generate_id();
                 this._tools[id] = tool;
                 this._modified = new Date();
 
                 // If the kernel has already been loaded, immediately call load() for the tool
                 if (this._kernel_loaded) {
-                    var success = tool.load();
+                    const success = tool.load();
 
                     // Log error to console if tool had trouble loading
                     if (!success) console.log("Problem loading tool: " + tool.name);
@@ -164,7 +164,7 @@ define("nbtools", ["base/js/namespace",
          * @returns {Array} - A list of registered tools
          */
         list() {
-            var tools = this._tools;
+            const tools = this._tools;
             return Object.keys(this._tools).map(function(key){
                 return tools[key];
             });
@@ -190,14 +190,14 @@ define("nbtools", ["base/js/namespace",
          */
         _load_kernel() {
             // Get the list to load
-            var to_load = this.list();
+            const to_load = this.list();
 
             // Update manager state
             this._kernel_loaded = true;
 
             // Load each tool in the list
-            for (var i in to_load) {
-                var success = to_load[i].load();
+            for (let i in to_load) {
+                const success = to_load[i].load();
 
                 // Log error to console if tool had trouble loading
                 if (!success) console.log("Problem loading tool: " + to_load[i].name);
@@ -266,7 +266,7 @@ define(["base/js/namespace",
         "nbtools",
         "jquery"], function (Jupyter, widgets, NBToolManager, $) {
     // Has the Tool Manager been initialized yet?
-    var done_init = false;
+    let done_init = false;
 
     /**
      * Poll, waiting for the kernel to be loaded, then inform the Tool Manager
@@ -294,7 +294,7 @@ define(["base/js/namespace",
         window.NBToolManager = NBToolManager;
 
         // Wait for the kernel to be ready and then call load() on registered tools
-        var interval = setInterval(function() {
+        const interval = setInterval(function() {
             wait_for_kernel(interval);
         }, 500);
     }

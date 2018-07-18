@@ -59,8 +59,8 @@ define("nbtoolbox", ["base/js/namespace",
      * Return the cell.
      */
     function tool_dialog_check() {
-        var cell = Jupyter.notebook.get_selected_cell();
-        var contents = cell.get_text().trim();
+        let cell = Jupyter.notebook.get_selected_cell();
+        const contents = cell.get_text().trim();
 
         // Insert a new cell if the current one has contents
         if (contents !== "") {
@@ -74,7 +74,7 @@ define("nbtoolbox", ["base/js/namespace",
     }
 
     function tool_button(id, name, origin, anno, desc, tags) {
-        var tagString = tags.join(", ");
+        const tagString = tags.join(", ");
         return $("<div></div>")
             .addClass("well well-sm nbtools-tool")
             .attr("name", id)
@@ -113,17 +113,17 @@ define("nbtoolbox", ["base/js/namespace",
 
     function add_tab(origin, toolbox) {
         // Check to see if the tab already exists
-        var tab_id = "nbtools-" + dom_encode(origin);
+        const tab_id = "nbtools-" + dom_encode(origin);
         if (tab_exists(origin)) {
             console.log("WARNING: Attempting to add slider tab that already exists");
             return;
         }
 
         // Add the tab in the correct order
-        var tabs = toolbox.find(".nav-tabs > li");
-        var after_this = null;
+        const tabs = toolbox.find(".nav-tabs > li");
+        let after_this = null;
         tabs.each(function(i, e) {
-            var tab_name = $(e).find("a").attr("name");
+            const tab_name = $(e).find("a").attr("name");
             if (tab_name === "All") {
                 after_this = $(e);
             }
@@ -135,7 +135,7 @@ define("nbtoolbox", ["base/js/namespace",
             }
         });
 
-        var new_tab = $("<li></li>").append(
+        const new_tab = $("<li></li>").append(
             $("<a></a>")
                 .attr("data-toggle", "tab")
                 .attr("href", "#" + tab_id)
@@ -146,7 +146,7 @@ define("nbtoolbox", ["base/js/namespace",
         else new_tab.insertAfter(after_this);
 
         // Add the content pane
-        var contents = toolbox.find(".tab-content");
+        const contents = toolbox.find(".tab-content");
         contents.append(
             $("<div></div>")
                 .attr("id", tab_id)
@@ -155,7 +155,7 @@ define("nbtoolbox", ["base/js/namespace",
     }
 
     function get_tab(origin, toolbox) {
-        var tab_id = "nbtools-" + dom_encode(origin);
+        const tab_id = "nbtools-" + dom_encode(origin);
         return toolbox ? toolbox.find("#" + tab_id) : $("#" + tab_id);
     }
 
@@ -169,10 +169,10 @@ define("nbtoolbox", ["base/js/namespace",
 
     function update_toolbox(toolbox) {
         // Get the correct list divs
-        var nbtools_div = toolbox.find("#nbtools-tabs");
+        const nbtools_div = toolbox.find("#nbtools-tabs");
 
         // Do we need to refresh the cache?
-        var refresh = nbtools_div.data("cached") !== NBToolManager.instance().modified().toString();
+        const refresh = nbtools_div.data("cached") !== NBToolManager.instance().modified().toString();
 
         // Refresh the cache, if necessary
         if (refresh) {
@@ -183,14 +183,14 @@ define("nbtoolbox", ["base/js/namespace",
             nbtools_div.data("cached", NBToolManager.instance().modified().toString());
 
             // Get the updated list of tools
-            var tools = NBToolManager.instance().list();
+            const tools = NBToolManager.instance().list();
 
             // Sort the tools
             sort_tools(tools);
 
             // Add the tools to the lists
             tools.forEach(function(tool) {
-                var t_button = tool_button(
+                const t_button = tool_button(
                     tool.id,
                     tool.name,
                     tool.origin,
@@ -198,9 +198,9 @@ define("nbtoolbox", ["base/js/namespace",
                     tool.description ? tool.description : "",
                     tool.tags ? tool.tags : []);
 
-                var click_event = function() {
+                const click_event = function() {
                     // Render the tool
-                    var cell = tool.render();
+                    const cell = tool.render();
 
                     // Scroll to the cell, if applicable
                     if (cell) {
@@ -217,7 +217,7 @@ define("nbtoolbox", ["base/js/namespace",
                 t_button.click(click_event);
 
                 // Does the origin div exist?
-                var existing_tab = tab_exists(tool.origin, toolbox);
+                const existing_tab = tab_exists(tool.origin, toolbox);
 
                 // If it doesn't exist, create it
                 if (!existing_tab) add_tab(tool.origin, toolbox);
@@ -227,7 +227,7 @@ define("nbtoolbox", ["base/js/namespace",
 
                 // Add to the All Tools tab, if necessary
                 if (tool.origin !== "All") {
-                    var t_button_all = t_button.clone();
+                    const t_button_all = t_button.clone();
                     t_button_all.click(click_event);
                     get_tab("All", toolbox).append(t_button_all);
                 }
@@ -236,7 +236,7 @@ define("nbtoolbox", ["base/js/namespace",
     }
 
     function build_toolbox() {
-        var toolbox = $("<div></div>")
+        const toolbox = $("<div></div>")
             .attr("id", "nbtools")
             .css("height", $(window).height() - 200)
 
@@ -253,9 +253,9 @@ define("nbtoolbox", ["base/js/namespace",
                                 event.stopPropagation();
                             })
                             .keyup(function() {
-                                var search = $("#nbtools-filter").val().toLowerCase();
+                                const search = $("#nbtools-filter").val().toLowerCase();
                                 $.each($("#nbtools-tabs").find(".nbtools-tool"), function(index, element) {
-                                    var raw = $(element).text().toLowerCase();
+                                    const raw = $(element).text().toLowerCase();
                                     if (raw.indexOf(search) === -1) {
                                         $(element).hide();
                                     }

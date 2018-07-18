@@ -1,5 +1,7 @@
-import os
 from distutils.core import setup
+
+
+__version__ = '0.2.0'
 
 
 def get_data_files():
@@ -18,27 +20,29 @@ def get_data_files():
 
 setup(name='nbtools',
       packages=['nbtools'],
-      version='0.1.7',
-      description='A lightweight manager for registering and browsing Jupyter tools',
+      version=__version__,
+      description='A framework for creating user-friendly widgets and tools in Jupyter Notebook. ',
       license='BSD',
       author='Thorin Tabor',
-      author_email='thorin@broadinstitute.org',
-      url='https://github.com/genepattern/nbtool-manager',
-      download_url='https://github.com/genepattern/nbtool-manager/archive/0.1.7.tar.gz',
-      keywords=['genepattern', 'genomics', 'bioinformatics', 'ipython', 'jupyter'],
+      author_email='tmtabor@cloud.ucsd.edu',
+      url='https://github.com/genepattern/nbtools',
+      download_url='https://github.com/genepattern/nbtools/archive/' + __version__ + '.tar.gz',
+      keywords=['genepattern', 'ipython', 'jupyter', 'nbextensions'],
       classifiers=[
           'Development Status :: 4 - Beta',
           'Intended Audience :: Science/Research',
           'Intended Audience :: Developers',
-          'Topic :: Scientific/Engineering :: Bio-Informatics',
           'License :: OSI Approved :: BSD License',
-          'Programming Language :: Python',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Framework :: Jupyter',
       ],
       install_requires=[
           'jupyter',
-          'notebook>=4.2.0',
-          'ipywidgets>=5.0.0',
+          'IPython>=5.0.0',
+          'notebook>=5.3.0',
+          'ipywidgets>=7.0.0',
       ],
       package_data={'nbtools': ['static/nbtools.js', 'static/toolbox.js', 'static/toolbox.css',
                                 'jsobject/backend_context.js', 'jsobject/jsobject.py', 'jsobject/utils.py', 'jsobject/__init__.py']},
