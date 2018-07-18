@@ -43,3 +43,46 @@ as well as a simple interface a tool can implement to provide its metadata and r
     * Categories or other navigation aids
 * **attributes: dict** (optional)
     * Tool-specific metadata which may be useful to the tool.
+    
+# Hello World Examples
+
+Below are two examples of how to define and register a new notebook tool. One example uses Javascript; its intended use is to define tools inside an nbextension or within a Javascript cell. The other example uses Python, and its intended use is to define tools either inside a Jupyter server exension or within a cell in a specific notebook.
+
+## Javascript Example
+
+```javascript
+// Import nbtools using RequireJS
+require(["nbtools"], function(nbtools) {
+
+    // Instantiate the NBTool object with necessary metadata
+    const hello_tool = new nbtools.NBTool({
+        id: 'hello_tool',
+        name: 'Hello World Tool',
+        origin: 'Notebook',
+        
+        load: function() {},  // Called when registered
+        
+        render: function() {  // Called when the tool is selected
+            const cell = Jupyter.notebook.get_selected_cell();
+            cell.set_text('Hello World');
+        }
+    });
+    
+    // Register the tool
+    nbtools.instance().register(hello_tool);
+});
+```
+
+## Python Example
+
+```python
+import nbtools
+
+# Instantiate the NBTool object with necessary metadata
+hello_tool = nbtools.NBTool(id='hello_tool', name='Hello World Tool', origin='Notebook')
+hello.tool_load = lambda: None                    # Called when registered
+hello_tool.render = lambda: print('Hello World')  # Called when the tool is selected
+
+# Register the tool with the tool manager
+nbtools.register(hello_tool)
+```
