@@ -1,4 +1,4 @@
-## Notebook Tool Manager API
+# Notebook Tool Manager API
 
 The Notebook Tool Manager API consists of two components: a singleton manager which registers and lists tools,
 as well as a simple interface a tool can implement to provide its metadata and rendering instructions.
