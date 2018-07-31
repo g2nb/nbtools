@@ -176,8 +176,7 @@ define("nbtools/uioutput", ["base/js/namespace",
 
             // Trigger gp.widgetRendered event on cell element
             setTimeout(function () {
-                // TODO: FIXME MOVE WIDGET RENDERED TO NBTOOLS NAMESPACE
-                widget.element.closest(".cell").trigger("gp.widgetRendered");
+                widget.element.closest(".cell").trigger("nbtools.widget_rendered");
             }, 10);
 
             return this;

@@ -20,7 +20,7 @@ def get_data_files():
 setup(name='nbtools',
       packages=['nbtools'],
       version=__version__,
-      description='A framework for creating user-friendly widgets and tools in Jupyter Notebook.',
+      description='A framework for user-friendly widgets and tools in Jupyter Notebook.',
       license='BSD',
       author='Thorin Tabor',
       author_email='tmtabor@cloud.ucsd.edu',
