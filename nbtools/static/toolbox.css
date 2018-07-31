@@ -91,3 +91,286 @@
     color: rgba(10, 45, 105, 1);
     padding: 5px;
 }
+
+
+/*
+ * output_subarea and selected cell fix
+ */
+
+div.output_subarea {
+    overflow: visible;
+}
+
+div.cell.selected {
+    z-index: 10;
+}
+
+
+/*
+ * Choice Input Styles
+ */
+
+.nbtools-choice-select {
+    position: relative;
+    left: -10px;
+}
+
+
+/*
+ * File Input Styles
+ */
+
+.nbtools-file {
+    border: 2px dashed darkgray;
+    display: inline-block;
+    min-width: 450px;
+    width: 100%;
+    padding: 9px 10px 10px;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.nbtools-file-upload {
+    position: relative;
+}
+
+.nbtools-file-upload-file {
+    margin-right: 7px;
+}
+
+.nbtools-file-input-file {
+    display: none;
+    position: absolute;
+    z-index: -1000;
+}
+
+.nbtools-file-drop {
+    color: darkgray;
+    letter-spacing: 1px;
+    position: absolute;
+    display: block;
+    float: right;
+    bottom: 0;
+    right: 0;
+}
+
+.nbtools-file-size {
+    font-size: 0.9em;
+    font-style: italic;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.nbtools-file-value {
+    background-color: #f7f7f7;
+    margin-top: 10px;
+    overflow: hidden;
+    padding: 4px;
+    line-height: 2.2em;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.nbtools-file-value-upload {
+    background-color: #dadada;
+}
+
+.nbtools-file-value-erase {
+    float: right;
+}
+
+.nbtools-file-path-label {
+    font-weight: bold;
+    text-align: left !important;
+}
+
+.nbtools-file-path-buttons {
+    margin-top: 5px;
+    text-align: right;
+}
+
+.nbtools-file-warning {
+    margin-top: 10px;
+}
+
+/*
+ * Typeahead Styles
+ */
+
+.nbtools-typeahead {
+    display: inline-block;
+}
+
+.nbtools-typeahead-arrow {
+    font-size: 20px;
+    line-height: 32px;
+    cursor: pointer;
+}
+
+.nbtools-typeahead-input {
+    display: inline-block;
+}
+
+.nbtools-typeahead-group {
+    margin-bottom: 0;
+}
+
+.nbtools-typeahead-list {
+    min-width: 100%;
+    margin-top: -1px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.nbtools-typeahead-list .dropdown-header {
+    font-weight: bold;
+}
+
+.nbtools-typeahead-list .dropdown-file {
+    padding-left: 40px;
+}
+
+/*
+ * UI Output Styles
+ */
+
+.nbtools-output-text {
+    margin-top: 20px;
+}
+
+.nbtools-output-text > pre {
+    word-break: normal;
+}
+
+.nbtools-output-status {
+    padding-bottom: 3px;
+    text-align: right;
+    padding-right: 20px;
+    color: #303F9F;
+    font-family: monospace;
+}
+
+.nbtools-output-right {
+    float: right;
+    position: relative;
+    z-index: 1;
+    top: 6px;
+    right: 7px;
+}
+
+/*
+ * General widget styles
+ */
+
+.nbtools-widget.panel {
+    margin-bottom: 0;
+}
+
+.nbtools-widget {
+    width: 100%;
+    max-width: 100%;
+    border-color: rgba(43, 43, 43, 0.8);
+    overflow: visible !important;
+}
+
+.nbtools-widget .panel-heading {
+    background-color: rgba(43, 43, 43, 0.8);
+    color: white;
+}
+
+.nbtools-widget-right {
+    float: right;
+    position: relative;
+    top: -3px;
+    left: 7px;
+}
+
+.nbtools-widget-logo {
+    height: 20px !important;
+    float: left;
+    padding-right: 10px;
+    position: relative;
+    left: -5px;
+    top: -2px;
+}
+
+.nbtools-widget label {
+    font-weight: bold;
+}
+
+.nbtools-widget .btn-primary {
+    border-color: rgba(43, 43, 43, 0.8);
+    background-color: rgba(43, 43, 43, 0.8);
+}
+
+/*
+ * UI Builder styles
+ */
+
+
+.nbtools-uibuilder > .panel-body {
+    padding: 0;
+}
+
+.nbtools-uibuilder-subheader {
+    border-bottom: 1px solid rgba(10, 45, 105, 0.8);
+    background: #d3d3d355;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nbtools-uibuilder-form {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.nbtools-uibuilder-footer {
+    border-top: 1px solid rgba(10, 45, 105, 0.8);
+    padding-top: 10px;
+    background: #d3d3d355;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.nbtools-uibuilder-run {
+    overflow: auto;
+    margin-left: 20px;
+    font-size: 0.9em;
+    padding-top: 10px;
+    float: right;
+}
+
+.nbtools-uibuilder-run > button {
+    float: right;
+    position: relative;
+    top: -10px;
+}
+
+.nbtools-uibuilder-param {
+    margin-right: 15px;
+    margin-left: 15px;
+    padding-right: 20px;
+}
+
+.nbtools-uibuilder-param-name {
+    display: inline-block;
+    min-width: 150px;
+    font-weight: bold;
+    font-size: 0.9em;
+    vertical-align: top;
+    padding-top: 10px;
+    padding-right: 10px;
+}
+
+.nbtools-uibuilder-param-wrapper {
+    vertical-align: top;
+    padding-left: 10px;
+}
+
+.nbtools-uibuilder-param-desc {
+    font-size: 0.9em;
+    margin-top: 5px;
+}

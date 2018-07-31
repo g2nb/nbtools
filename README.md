@@ -1,5 +1,5 @@
-# nbtool-manager
-A lightweight manager for registering and browsing Jupyter tools
+# nbtools
+A framework for creating user-friendly widgets and tools in Jupyter Notebook.
 
 ## Notebook Tool Manager API
 

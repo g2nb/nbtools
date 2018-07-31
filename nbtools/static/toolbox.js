@@ -9,14 +9,14 @@
  * Notebook Tools Manager package
  *
  * To use, load using require.js like so:
- *      require(["nbtools", "nbtoolbox"], function (NBToolManager, NBToolbox) {
+ *      require(["nbtools", "nbtools/toolbox"], function (NBToolManager, NBToolbox) {
  *          // Your code using the notebook tools manager here
  *          ...
  *          // Initialize the Toolbox UI
  *          NBToolbox.init();
  *      }
  */
-define("nbtoolbox", ["base/js/namespace",
+define("nbtools/toolbox", ["base/js/namespace",
         "nbextensions/jupyter-js-widgets/extension",
         "jquery"], function (Jupyter, widgets, $) {
 

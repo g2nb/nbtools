@@ -1,3 +1,4 @@
+import os
 from distutils.core import setup
 
 
@@ -9,11 +10,9 @@ def get_data_files():
     Get the data files for the package.
     """
     return [
-        ('share/jupyter/nbextensions/nbtools', [
-            'nbtools/static/nbtools.js',
-            'nbtools/static/toolbox.css',
-            'nbtools/static/toolbox.js',
-        ]),
+        ('share/jupyter/nbextensions/nbtools',
+         ['nbtools/static/' + f for f in os.listdir('nbtools/static')]
+         ),
         ('etc/jupyter/nbconfig/notebook.d', ['nbtools.json']),
     ]
 
@@ -21,7 +20,7 @@ def get_data_files():
 setup(name='nbtools',
       packages=['nbtools'],
       version=__version__,
-      description='A framework for creating user-friendly widgets and tools in Jupyter Notebook. ',
+      description='A framework for creating user-friendly widgets and tools in Jupyter Notebook.',
       license='BSD',
       author='Thorin Tabor',
       author_email='tmtabor@cloud.ucsd.edu',
@@ -44,7 +43,7 @@ setup(name='nbtools',
           'notebook>=5.3.0',
           'ipywidgets>=7.0.0',
       ],
-      package_data={'nbtools': ['static/nbtools.js', 'static/toolbox.js', 'static/toolbox.css',
+      package_data={'nbtools': ['static/*',
                                 'jsobject/backend_context.js', 'jsobject/jsobject.py', 'jsobject/utils.py', 'jsobject/__init__.py']},
       data_files=get_data_files(),
       )
