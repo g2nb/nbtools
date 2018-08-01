@@ -49,7 +49,7 @@ define("nbtools/utils", ["base/js/namespace",
 
         const markdown_cells = $(".cell.text_cell");
         markdown_cells.each(function(i, cell) {
-            const file_links = $(cell).find("a.nbtools-file");
+            const file_links = $(cell).find("a.nbtools-markdown-file");
             file_links.each(function(j, link) {
                 file_dict[$(link).text()] = $(link).attr("href");
             });
