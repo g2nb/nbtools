@@ -92,6 +92,11 @@ define("nbtools/utils", ["base/js/namespace",
         return matches;
     }
 
+    function is_url(path_or_url) {
+        const url_exp = new RegExp('^(?:http|ftp)s?://');
+        return url_exp.test(path_or_url);
+    }
+
     /**
      * Return references to the Metadata Manager functions
      */
@@ -100,6 +105,7 @@ define("nbtools/utils", ["base/js/namespace",
         cell_index: cell_index,
         display_name: display_name,
         markdown_files: markdown_files,
-        output_files_by_kind: output_files_by_kind
+        output_files_by_kind: output_files_by_kind,
+        is_url: is_url
     };
 });

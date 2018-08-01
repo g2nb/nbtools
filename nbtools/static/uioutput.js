@@ -12,10 +12,11 @@ define("nbtools/uioutput", ["base/js/namespace",
                              "nbtools",
                              "nbtools/variables",
                              "nbtools/metadata",
+                             "nbtools/utils",
                              "nbtools/text",
                              "nbtools/choice",
                              "nbtools/file",
-                             "nbtools/typeahead"], function (Jupyter, widgets, NBToolManager, VariableManager, MetadataManager) {
+                             "nbtools/typeahead"], function (Jupyter, widgets, NBToolManager, VariableManager, MetadataManager, Utils) {
 
     /**
      * Widget for representing Python output as an interactive interface
@@ -239,11 +240,12 @@ define("nbtools/uioutput", ["base/js/namespace",
 
         // TODO: FIXME ADD DATAFRAME OPTION FROM GPNB PACKAGE
         dataframe_cell: function(path, file_name, kind) {
+            const to_open = Utils.is_url(path) ? path : file_name;
             const var_name = file_name.toLowerCase().replace(/\./g, '_') + "_dataframe";
             const kind_import = kind === "gct" ? "gct" : "odf";
             const code = "# The code below will only run if pandas is installed: http://pandas.pydata.org\n" +
                        "from gp.data import " + kind_import.toUpperCase() + "\n" +
-                       var_name + " = " + kind_import.toUpperCase() + "(nbtools.open(\"" + file_name + "\"))\n" +
+                       var_name + " = " + kind_import.toUpperCase() + "(nbtools.open(\"" + to_open + "\"))\n" +
                        var_name;
             const cell = Jupyter.notebook.insert_cell_below();
             cell.code_mirror.setValue(code);
