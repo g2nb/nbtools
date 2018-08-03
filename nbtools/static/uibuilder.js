@@ -585,6 +585,8 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         _type: p["type"],
                         _maxValues: 1,
                         _kinds: p["kinds"],
+                        _id: !!p["id"] ? p["id"] : false,
+                        _events: p["events"] && Object.keys(p["events"]).length ? p["events"] : false,
 
                         name: function() { return this._name; },
                         label: function() { return this._label; },
@@ -595,7 +597,9 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         defaultValue: function() { return this._defaultValue; },
                         hidden: function() { return this._hidden; },
                         maxValues: function() { return this._maxValues; },
-                        kinds: function() { return this._kinds; }
+                        kinds: function() { return this._kinds; },
+                        id: function() { return this._id; },
+                        events: function() { return this._events; }
                     };
 
                     const pDiv = widget._addParam(param, form);
@@ -626,6 +630,8 @@ define("nbtools/uibuilder", ["base/js/namespace",
             const v_desc = output_var_param && output_var_param['description'] ? output_var_param['description'] : "The returned value of the function will be assigned to this variable, if provided.";
             const v_hide = output_var_param && output_var_param['hide'] ? output_var_param['hide'] : false;
             const v_default = output_var_param && output_var_param['default'] ? output_var_param['default'] : widget.options.output_var;
+            const v_id = output_var_param && output_var_param['id'] ? output_var_param['id'] : false;
+            const v_events = output_var_param && output_var_param['events'] ? output_var_param['events'] : false;
 
             try {
                 const output_param = {
@@ -636,7 +642,9 @@ define("nbtools/uibuilder", ["base/js/namespace",
                     description: function() {return v_desc; },
                     choices: function() {return false; },
                     defaultValue: function() { return v_default; },
-                    hidden: function() { return v_hide; }
+                    hidden: function() { return v_hide; },
+                    id: function() { return v_id; },
+                    events: function() { return v_events; }
                 };
 
                 const footer = this.element.find(".nbtools-widget-ui-output");
@@ -712,6 +720,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                                 .text(param.description())
                         )
                 );
+            if (param.id()) paramBox.attr("id", param.id());
             if (required) paramBox.addClass("nbtools-widget-task-required");
 
             // Add the correct input widget
@@ -765,8 +774,15 @@ define("nbtools/uibuilder", ["base/js/namespace",
             }
 
             // Hide the parameter if param.hidden() is true
-            if (param.hidden()) {
-                paramBox.hide();
+            if (param.hidden()) paramBox.hide();
+
+            // Attach the events, if any are specified
+            if (param.events()) {
+                Object.keys(param.events()).forEach(function(key) {
+                    const str_func = param.events()[key];
+                    const func = new Function(str_func);
+                    paramBox.on(key, func); // Apply the event
+                });
             }
 
             addTo.append(paramBox);

@@ -158,7 +158,9 @@ class UIBuilder(widgets.DOMWidget):
                 "hide": False,
                 "type": 'text',
                 "kinds": None,
-                "choices": []
+                "choices": [],
+                "id": None,
+                "events": None
             })
 
         # Iterate through each parameters in the function
@@ -193,6 +195,14 @@ class UIBuilder(widgets.DOMWidget):
                 # Handle giving the parameter a list of choices
                 if 'choices' in p_meta:
                     param['choices'] = p_meta['choices']
+
+                # Handle assigning the parameter an ID
+                if 'id' in p_meta:
+                    param['id'] = p_meta['id']
+
+                # Handle giving the parameter a dict of events
+                if 'events' in p_meta:
+                    param['events'] = p_meta['events']
 
     @staticmethod
     def _docstring(function_or_method):
@@ -254,7 +264,9 @@ class UIBuilder(widgets.DOMWidget):
                 "hide": False,
                 "type": type,
                 "kinds": None,
-                "choices": []
+                "choices": [],
+                "id": None,
+                "events": None
             }
 
             # Special choices handling for boolean parameters
