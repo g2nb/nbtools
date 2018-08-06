@@ -92,9 +92,27 @@ define("nbtools/utils", ["base/js/namespace",
         return matches;
     }
 
+    /**
+     * Decides if a string represents a valid URL or not
+     *
+     * @param path_or_url
+     * @returns {boolean}
+     */
     function is_url(path_or_url) {
         const url_exp = new RegExp('^(?:http|ftp)s?://');
         return url_exp.test(path_or_url);
+    }
+
+    /**
+     * Converts a name (like a file name) to a valid Python variable name
+     *
+     * @param name
+     * @returns {string}
+     */
+    function make_python_safe(name) {
+        let safe = name.replace(/[\W_]+/g,"_"); // Replace non-alphanumeric characters
+        safe = !!name.match(/^\d/) ? 'var' + safe : safe; // If it starts with a number, prepend 'var'
+        return safe;
     }
 
     /**
@@ -106,6 +124,7 @@ define("nbtools/utils", ["base/js/namespace",
         display_name: display_name,
         markdown_files: markdown_files,
         output_files_by_kind: output_files_by_kind,
-        is_url: is_url
+        is_url: is_url,
+        make_python_safe: make_python_safe
     };
 });

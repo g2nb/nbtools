@@ -221,10 +221,9 @@ define("nbtools/uioutput", ["base/js/namespace",
          * @param file_name
          */
         code_cell: function(path, file_name) {
-            const is_path_url = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('ftp://');
-            const open_string = is_path_url ? path : file_name;
+            const open_string = Utils.is_url(path) ? path : file_name;
 
-            const var_name = file_name.toLowerCase().replace(/\./g, '_') + "_file";
+            const var_name = Utils.make_python_safe(file_name.toLowerCase() + "_file");
             const code = "# More information can be obtained by calling help(" + var_name + ").\n" +
                        var_name + " = nbtools.open(\"" + open_string + "\")\n" +
                        var_name;
@@ -241,7 +240,7 @@ define("nbtools/uioutput", ["base/js/namespace",
         // TODO: FIXME ADD DATAFRAME OPTION FROM GPNB PACKAGE
         dataframe_cell: function(path, file_name, kind) {
             const to_open = Utils.is_url(path) ? path : file_name;
-            const var_name = file_name.toLowerCase().replace(/\./g, '_') + "_dataframe";
+            const var_name = Utils.make_python_safe(file_name.toLowerCase() + "_dataframe");
             const kind_import = kind === "gct" ? "gct" : "odf";
             const code = "# The code below will only run if pandas is installed: http://pandas.pydata.org\n" +
                        "from gp.data import " + kind_import.toUpperCase() + "\n" +
@@ -321,10 +320,8 @@ define("nbtools/uioutput", ["base/js/namespace",
         },
 
         _build_url: function(path) {
-            const is_already_url = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('ftp://');
-
-            if (is_already_url) return path;
-            else return this._get_current_dir_url() + this._extract_file_name(path);
+            if (Utils.is_url(path)) return path;
+            else return this._get_current_dir_url() + path;
         },
 
         _get_current_dir_url: function() {
@@ -332,11 +329,12 @@ define("nbtools/uioutput", ["base/js/namespace",
         },
 
         _extract_file_kind: function(path) {
-            return path.split('.').pop()
+            return path.split('.').pop();
         },
 
         _extract_file_name: function(path) {
-            return path.split('/').pop()
+            if (Utils.is_url(path)) return path.split('/').pop();
+            else return path;
         },
 
         toggle_code: function() {
