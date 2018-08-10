@@ -239,3 +239,25 @@ def example_function(param_1, param_2):
     . . .
 ```
 
+## Client-side Interactivity
+
+Notebook authors who wish to integrate the UI Builder with client-side programmatic functionality can make use of the `id` and `events` attribute of parameters.
+
+The `id` attribute allows the author to specify an ID for the parameter's element in the DOM. As with all DOM IDs, it must be both unique and follow [adhere to the naming rules in the HTML specification](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).
+
+The `events` attribute allows the author to attach Javascript functionality to the parameter. It should be specified a a dict, where the keys are Javascript events and the values are strings containing the Javascript code to be executed.
+
+An example of using both of these attributes is given below.
+
+```
+@nbtools.build_ui(parameters={
+    "param_1": {
+        "id": "example_function_param_1",
+        "events": {
+            "click": "console.log('Hello World!');"
+        }
+    }
+})
+def example_function(first_parameter, second_parameter):
+    . . .
+```
