@@ -6,7 +6,7 @@ import re
 import urllib.request
 from IPython.core.display import display
 from ipywidgets import widgets
-from traitlets import Unicode, List, Bool
+from traitlets import Unicode, List, Bool, Dict
 
 
 def open(path_or_url):
@@ -96,6 +96,7 @@ class UIBuilder(widgets.DOMWidget):
     params = List(sync=True)
     function_import = Unicode('', sync=True)
     register_tool = Bool(True, sync=True)
+    events = Dict(sync=True)
     function_or_method = None
 
     def __init__(self, function_or_method, **kwargs):
@@ -135,6 +136,7 @@ class UIBuilder(widgets.DOMWidget):
         self.params = params
         self.function_import = custom_import or function_import
         self.register_tool = custom_register
+        self.events = self.events
         self.function_or_method = function_or_method
 
     @staticmethod

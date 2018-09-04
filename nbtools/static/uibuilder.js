@@ -33,6 +33,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             append_output: true,
             register_tool: true,
             params: null,
+            events: null,
             function_import: null,
             cell: null
         },
@@ -231,6 +232,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             setTimeout(function() {
                 widget._widgetRendered = true;
                 widget.element.closest(".cell").trigger("nbtools.widget_rendered");
+                widget._init_events();
             }, 10);
 
             return this;
@@ -270,6 +272,31 @@ define("nbtools/uibuilder", ["base/js/namespace",
          */
         _setOption: function(key, value) {
             this._super(key, value);
+        },
+
+        /**
+         * Initialize any custom events, if any are specified
+         * @private
+         */
+        _init_events: function() {
+            const widget = this;
+
+            // Attach the events, if any are specified
+            if (!!widget.options.events) {
+                Object.keys(widget.options.events).forEach(function(key) {
+                    const str_func = widget.options.events[key];
+                    const func = new Function(str_func);
+
+                    // Handle load event as a special case (run now)
+                    if (key === 'load') func.call();
+
+                    // Handle the run event as a special case (bind as click on Run button)
+                    else if (key === 'run') widget.element.find('.nbtools-uibuilder-run > button').on('click', func);
+
+                    // Otherwise, attach the event
+                    else widget.element.on(key, func); // Apply the event
+                });
+            }
         },
 
         /**
@@ -1585,6 +1612,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             const description = widget.model.get('description');
             const output_var = widget.model.get('output_var');
             const params = widget.model.get('params');
+            const events = widget.model.get('events');
             const function_import = widget.model.get('function_import');
             const register_tool = widget.model.get('register_tool');
 
@@ -1599,6 +1627,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         description: description,
                         output_var: output_var,
                         params: params,
+                        events: events,
                         function_import: function_import,
                         register_tool: register_tool,
                         cell: cell
