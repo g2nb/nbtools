@@ -38,7 +38,6 @@ setup(name='nbtools',
           'Framework :: Jupyter',
       ],
       install_requires=[
-          'jupyter',
           'IPython>=5.0.0',
           'notebook>=5.3.0',
           'ipywidgets>=7.0.0',
