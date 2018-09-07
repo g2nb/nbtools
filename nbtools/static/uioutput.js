@@ -237,12 +237,13 @@ define("nbtools/uioutput", ["base/js/namespace",
             }, 100);
         },
 
-        // TODO: FIXME ADD DATAFRAME OPTION FROM GPNB PACKAGE
+        // TODO: FIXME MOVE DATAFRAME OPTION TO GPNB PACKAGE
         dataframe_cell: function(path, file_name, kind) {
             const to_open = Utils.is_url(path) ? path : file_name;
             const var_name = Utils.make_python_safe(file_name.toLowerCase() + "_dataframe");
             const kind_import = kind === "gct" ? "gct" : "odf";
             const code = "# The code below will only run if pandas is installed: http://pandas.pydata.org\n" +
+                       "import nbtools\n" +
                        "from gp.data import " + kind_import.toUpperCase() + "\n" +
                        var_name + " = " + kind_import.toUpperCase() + "(nbtools.open(\"" + to_open + "\"))\n" +
                        var_name;
