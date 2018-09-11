@@ -77,7 +77,7 @@ import nbtools
 
 # Instantiate the NBTool object with necessary metadata
 hello_tool = nbtools.NBTool(id='hello_tool', name='Hello World Tool', origin='Notebook')
-hello.tool_load = lambda: None                    # Called when registered
+hello_tool.load = lambda: None                    # Called when registered
 hello_tool.render = lambda: print('Hello World')  # Called when the tool is selected
 
 # Register the tool with the tool manager
