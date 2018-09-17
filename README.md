@@ -45,9 +45,9 @@ statement and one line of code. Update the code to what is shown below and execu
 import nbtools
 
 @nbtools.build_ui
-def say_hello(whom='World'):
+def say_hello(to_whom='World'):
     """Say hello to the world or whomever."""
-    print('Hello ' + whom)
+    print('Hello ' + to_whom)
 ```
 
 You should now see a widget containing a web form. This form will prompt for the value of the `to_whom` parameter. The docstrong will also appear as a
