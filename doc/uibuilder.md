@@ -10,7 +10,7 @@ annotations as helpful text near each input.
 The simplest way to render a function using the UI Builder is to import the `nbtools` package and then attach the `@build_ui` decorator to the function's
 definition. A code example for this is given below:
 
-```
+```python
 import nbtools
 
 @nbtools.build_ui
@@ -22,7 +22,7 @@ Alternatively, the UI Builder widget may defined and referenced directly. To ren
 `nbtools` package and pass the function to the `UIBuilder` constructor. To display the widget, just return the `UIBuilder` object in a Jupyter code cell or call
 `IPython.display.display()`, passing the `UIBuilder` object as a parameter. A code example is provided below:
 
-```
+```python
 from nbtools import UIBuilder
 
 def example_function(first_parameter, second_parameter):
@@ -42,7 +42,7 @@ Conversely, to ensure that an input value is evaluated as a string literal rathe
 either single or double quotes (' or "). This tells the UI Builder to skip checking for variable names and to treat the value in quotes as a literal string. For
 example, forcing the string foo to be treated as a string literal would be entered in the input field as:
 
-```
+```python
 "foo"
 ```
 
@@ -64,7 +64,7 @@ Existing Python functions, such as those included in third-party Python librarie
 import it and then pass the function into the constructor of the `UIBuilder` object. Return this object in a cell to display the resulting widget. For example,
 the code for displaying scikit-learn's `KMeans` function is given below.
 
-```
+```python
 import nbtools
 import sklearn.cluster
 
@@ -91,7 +91,7 @@ def example_function(param_1, param_2):
 
 The same effect can be also achieved when directly instantiating the UIBuilder object.
 
-```
+```python
 nbtools.UIBuilder(sklearn.cluster.KMeans,
                   name="KMeans Clustering",
                   description="Groups data into K clusters",
@@ -105,7 +105,7 @@ The names and descriptions of individual parameters may also be overridden. In t
 
 A code example is given below which overrides the name of a parameter, the description of the parameter and the default value of the parameter.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "param_1": {
         "name": "foo",
@@ -126,7 +126,7 @@ input.
 
 A code example is given below in which several parameters of scikit-learn's KMeans implementation are hidden.
 
-```
+```python
 nbtools.UIBuilder(sklearn.cluster.KMeans, parameters={
     "init": { "hide": True },
     "verbose": { "hide": True },
@@ -141,7 +141,7 @@ The result of a UI Builder function can optionally be assigned to a Python varia
 each UI Builder widget. This field can be overridden just like any other parameter using the `output_var` parameter name. This includes the ability to change
 the label, description, assign a default value or hide the parameter. A code example is given below.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "output_var": {
         "name": "results",
@@ -172,7 +172,7 @@ The UI Builder will infer a parameter's type from its default value, defaulting 
 doesn't match one of the known types above. Alternatively, the developer can specify a parameter's type in the code. A code example is provided below,
 illustrating how to specify each type - except for choice and file parameters, which are each detailed in their own sections.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "a_text_param": {
         "type": "text"
@@ -198,7 +198,7 @@ Sometimes a parameter only accepts a limited set of valid input values. This is 
 Builder has support for this functionality. To change a particular parameter into a dropdown input, simply provide the parameter with a dictionary of available
 choices. A code example is given below.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "param_1": {
         "default": "some_value",
@@ -228,7 +228,7 @@ perform any desired tasks.
 
 A code example is provided below.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "param_1": {
         "type": "file",
@@ -249,7 +249,7 @@ The `events` attribute allows the author to attach Javascript functionality to t
 
 An example of using both of these attributes is given below.
 
-```
+```python
 @nbtools.build_ui(parameters={
     "param_1": {
         "id": "example_function_param_1",
@@ -261,6 +261,25 @@ An example of using both of these attributes is given below.
 def example_function(first_parameter, second_parameter):
     . . .
 ```
+
+Additionally, the top-level `events` attribute is available for handling events associated with the UI Builder widget itself, rather than individual parameters. It accepts a dictionary pairing event names to strings containing Javscript to be executed when the event occurs. Supported events are presented below:
+                
+* **load:** Executed when the widget is initialized.
+* **run:** Event fires when the Run button is clicked.
+* **click:** Executed when the widget is clicked.
+* **focus:** Event fires when the widget obtains focus.
+                
+```python
+@nbtools.build_ui(
+    events={
+        "load": "console.log('Write to the Javascript console when the widget is loaded.')",
+        "run": "console.log('Write to the Javascript console when the Run button is clicked.')"
+    }
+)
+def example_function(first_parameter, second_parameter):
+    . . .
+```
+
 ## Other Options
 
 The following minor features are available available in the UI Builder.
@@ -268,8 +287,8 @@ The following minor features are available available in the UI Builder.
 * **register_tool:** Sets whether to register this function with the Notebook Tool Manager. Defaults to True.
 * **function_import:** Override the import name of an existing function.
                 
-```
+```python
 @nbtools.build_ui(register_tool=False, function_import='example_package.example_function')
 def example_function(first_parameter, second_parameter):
-. . .
+    . . .
 ```
