@@ -108,13 +108,13 @@ define("nbtools/file", ["base/js/namespace",
                             },
                             blur: function(twidget) {
                                 const typeahead_input = twidget.element.find(".nbtools-typeahead-input");
-                                const typeahead_value = typeahead_input.val();
+                                const typeahead_value = typeahead_input.val().trim();
 
                                 // Clear the input
                                 twidget.element.find(".nbtools-typeahead-input").val("");
 
                                 // Disregard if the value is blank
-                                if (typeahead_value.trim() === "") {
+                                if (typeahead_value === "") {
                                     return;
                                 }
 
