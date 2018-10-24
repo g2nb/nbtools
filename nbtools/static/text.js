@@ -18,7 +18,7 @@
 
 define("nbtools/text", ["base/js/namespace",
                         "nbextensions/jupyter-js-widgets/extension",
-                        "jqueryui",
+                        "jquery",
                         "nbextensions/nbtools/nbtools"], function (Jupyter, widgets, $) {
 
     // Define the widget

@@ -20,7 +20,7 @@
 
 define("nbtools/file", ["base/js/namespace",
                         "nbextensions/jupyter-js-widgets/extension",
-                        "jqueryui",
+                        "jquery",
                         "nbtools/variables",
                         "nbtools/utils"], function (Jupyter, widgets, $, VariableManager, Utils) {
 

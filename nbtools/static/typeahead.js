@@ -9,7 +9,7 @@
 
 define("nbtools/typeahead", ["base/js/namespace",
                             "nbextensions/jupyter-js-widgets/extension",
-                            "jqueryui",
+                            "jquery",
                             "nbtools/utils"], function (Jupyter, widgets, $, Utils) {
 
     const widget = $.widget("nbtools.type_ahead", {

@@ -6,6 +6,7 @@
 define(["base/js/namespace",
         "nbextensions/jupyter-js-widgets/extension",
         "jquery",
+        "jqueryui",
 
         // Bootstrap loading the nbtools requirejs modules
         "nbextensions/nbtools/tool_manager",

@@ -17,7 +17,7 @@
 
 define("nbtools/choice", ["base/js/namespace",
                         "nbextensions/jupyter-js-widgets/extension",
-                        "jqueryui"], function (Jupyter, widgets, $) {
+                        "jquery"], function (Jupyter, widgets, $) {
 
     // Define the widget
     $.widget("nbtools.choiceInput", {
