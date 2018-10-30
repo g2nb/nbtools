@@ -413,19 +413,15 @@ define("nbtools/file", ["base/js/namespace",
 
             for (let i in files) {
                 const file = files[i];
+                const file_name = Utils.extract_file_name(file);
                 let match = false;
 
-                for (let j in accepts) {
-                    const kind = accepts[j];
-                    if (file.endsWith(kind)) {
-                        match = true;
-                    }
+                accepts.forEach(function(kind) {
+                    if (Utils.wildcard_match(file_name, kind)) match = true;
 
                     // Special case for ODF files
-                    if (file.toLowerCase().endsWith("odf") && kind.length > 5) {
-                        match = true;
-                    }
-                }
+                    if (file.toLowerCase().endsWith("odf") && kind.length > 5) match = true;
+                });
 
                 if (!match) foundWarning = true;
             }

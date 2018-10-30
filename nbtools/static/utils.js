@@ -59,6 +59,17 @@ define("nbtools/utils", ["base/js/namespace",
     }
 
     /**
+     * Determine if a file name is of a particular kind, using the matching rules:
+     *      - Must either end with the provided string literal
+     *      - OR match the given string with * wildcard characters
+     *
+     * @param str
+     * @param rule
+     * @returns {boolean}
+     */
+    const wildcard_match = (str, rule) => new RegExp("^" + rule.split("*").join(".*") + "$").test(str) || new RegExp("^.*" + rule + "$").test(str);
+
+    /**
      * Return a list of output files that match the indicated kind
      *
      * @param kinds
@@ -78,11 +89,19 @@ define("nbtools/utils", ["base/js/namespace",
 
         // For each out file, see if it is the right kind
         $(".nbtools-widget-job-output-file").each(function(index, output) {
-            const kind = $(output).data("kind");
-            if (match_all || kind_list.indexOf(kind) >= 0) {
+            const file_name = $(output).text().trim();
+
+            // Does the file match one or more of the kinds?
+            let matched = match_all;
+            kind_list.forEach(function(kind) {
+                if (wildcard_match(file_name, kind)) matched = true;
+            });
+
+            // If it does, add it to the list
+            if (matched) {
                 const job_desc = $(output).closest(".nbtools-widget").find(".nbtools-widget-job-task").text().trim();
                 matches.push({
-                    name: $(output).text().trim(),
+                    name: file_name,
                     url: $(output).attr("href"),
                     job: job_desc
                 });
@@ -116,6 +135,17 @@ define("nbtools/utils", ["base/js/namespace",
     }
 
     /**
+     * Extracts a file name from a URL
+     *
+     * @param path
+     * @returns {*}
+     */
+    function extract_file_name(path) {
+        if (is_url(path)) return path.split('/').pop();
+        else return path;
+    }
+
+    /**
      * Return references to the Metadata Manager functions
      */
     return {
@@ -123,8 +153,10 @@ define("nbtools/utils", ["base/js/namespace",
         cell_index: cell_index,
         display_name: display_name,
         markdown_files: markdown_files,
+        wildcard_match: wildcard_match,
         output_files_by_kind: output_files_by_kind,
         is_url: is_url,
-        make_python_safe: make_python_safe
+        make_python_safe: make_python_safe,
+        extract_file_name: extract_file_name
     };
 });

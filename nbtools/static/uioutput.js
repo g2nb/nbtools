@@ -274,7 +274,7 @@ define("nbtools/uioutput", ["base/js/namespace",
                     const wrapper = $("<div></div>");
                     const output = outputs[i];
 
-                    const name = widget._extract_file_name(output);
+                    const name = Utils.extract_file_name(output);
                     const kind = widget._extract_file_kind(output);
                     const href = widget._build_url(output);
 
@@ -331,11 +331,6 @@ define("nbtools/uioutput", ["base/js/namespace",
 
         _extract_file_kind: function(path) {
             return path.split('.').pop();
-        },
-
-        _extract_file_name: function(path) {
-            if (Utils.is_url(path)) return path.split('/').pop();
-            else return path;
         },
 
         toggle_code: function() {
