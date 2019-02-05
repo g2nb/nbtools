@@ -186,6 +186,10 @@ class UIBuilder(widgets.DOMWidget):
                 if 'hide' in p_meta:
                     param['hide'] = p_meta['hide']
 
+                # Handle optional parameters
+                if 'optional' in p_meta:
+                    param['optional'] = p_meta['optional']
+
                 # Handle specifying the parameter's type
                 if 'type' in p_meta:
                     param['type'] = UIBuilder._safe_type(p_meta['type'])
