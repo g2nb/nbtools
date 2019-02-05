@@ -945,7 +945,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 let literal = in_obj.string_literal;
 
                 // Handle numbers
-                if (!isNaN(value)) {
+                if (!isNaN(value) && !!value.trim()) {
                     reference = true;
                 }
 
@@ -1589,7 +1589,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
         _prepare_variables: function(value) {
             // Handle numbers
-            if (!isNaN(parseFloat(value))) return parseFloat(value);
+            if (!isNaN(value) && !!value.trim()) return parseFloat(value);
 
             console.log(value);
 
