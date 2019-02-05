@@ -945,7 +945,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 let literal = in_obj.string_literal;
 
                 // Handle numbers
-                if (!isNaN(parseFloat(value))) {
+                if (!isNaN(value)) {
                     reference = true;
                 }
 
