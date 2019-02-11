@@ -330,6 +330,7 @@ class UIOutput(widgets.DOMWidget):
 
     name = Unicode('', sync=True)
     description = Unicode('', sync=True)
+    status = Unicode('', sync=True)
     files = List(sync=True)
     text = Unicode('', sync=True)
     visualization = Unicode('', sync=True)
@@ -340,6 +341,10 @@ class UIOutput(widgets.DOMWidget):
         # Assign the traitlets, if specified
         self.name = kwargs['name'] if 'name' in kwargs else 'Python Results'
         self.description = kwargs['description'] if 'description' in kwargs else ''
+        self.status = kwargs['status'] if 'status' in kwargs else ''
         self.files = kwargs['files'] if 'files' in kwargs else []
         self.text = kwargs['text'] if 'text' in kwargs else ''
         self.visualization = kwargs['visualization'] if 'visualization' in kwargs else ''
+
+    # def update_status(self, new_status):
+    #     xxx

@@ -25,6 +25,7 @@ define("nbtools/uioutput", ["base/js/namespace",
         options: {
             name: null,             // Widget name
             description: null,      // Widget description
+            status: null,           // Widget status
             files: [],              // List of result files
             text: null,             // Text output
             visualization: null,    // Output visualization
@@ -147,7 +148,7 @@ define("nbtools/uioutput", ["base/js/namespace",
                                     .append(
                                         $("<div></div>")
                                             .addClass("nbtools-output-status col-md-3")
-                                            .append(input_number)
+                                            .append(widget.options.status ? widget.options.status : input_number)
                                     )
                                     .append(
                                         $("<div></div>")
@@ -212,6 +213,17 @@ define("nbtools/uioutput", ["base/js/namespace",
          */
         _setOption: function (key, value) {
             this._super(key, value);
+
+            if (key === 'status') this.update_status(value);
+        },
+
+        /**
+         * Update the status in the widget
+         *
+         * @param new_status
+         */
+        update_status: function(new_status) {
+            this.element.find('.nbtools-output-status').text(new_status);
         },
 
         /**
@@ -410,6 +422,7 @@ define("nbtools/uioutput", ["base/js/namespace",
 
             const name = this.model.get('name');
             const description = this.model.get('description');
+            const status = this.model.get('status');
             const files = this.model.get('files');
             const text = this.model.get('text');
             const visualization = this.model.get('visualization');
@@ -418,6 +431,7 @@ define("nbtools/uioutput", ["base/js/namespace",
             $(this.$el).outputWidget({
                 name: name,
                 description: description,
+                status: status,
                 files: files,
                 text: text,
                 visualization: visualization,
@@ -437,6 +451,11 @@ define("nbtools/uioutput", ["base/js/namespace",
                 }
             };
             setTimeout(hideCode, 1);
+        },
+
+        update: function() {
+            // Update the widget with what's changed
+            Object.keys(this.model.changed).forEach(i => $(this.$el).outputWidget('option', i, this.model.changed[i]));
         }
     });
 
