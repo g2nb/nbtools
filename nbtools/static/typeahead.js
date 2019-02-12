@@ -15,7 +15,7 @@ define("nbtools/typeahead", ["base/js/namespace",
     const widget = $.widget("nbtools.type_ahead", {
         options: {
             placeholder: "Add File or URL...",
-            width: "400px",
+            width: "100%",
             data: [],
             click: function(widget) {},
             blur: function(widget) {}

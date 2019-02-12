@@ -136,6 +136,7 @@ div.cell.selected {
 
 .nbtools-file-upload-file {
     margin-right: 7px;
+    position: absolute;
 }
 
 .nbtools-file-input-file {
@@ -204,6 +205,7 @@ div.cell.selected {
 
 .nbtools-typeahead {
     display: inline-block;
+    width: 100%;
 }
 
 .nbtools-typeahead-arrow {

@@ -630,13 +630,13 @@ define("nbtools/file", ["base/js/namespace",
         _setDisplayOptions: function() {
             if (!this.options.allowJobUploads) {
                 this.element.find(".nbtools-file-upload-file").hide();
-                this.element.find(".nbtools-typeahead").css("width", "100%");
+                this.element.find(".nbtools-typeahead").css("padding-left", "0");
                 this.element.css("border", "none");
                 this.element.css("padding", 0);
             }
             else {
                 this.element.find(".nbtools-file-upload-file").show();
-                this.element.find(".nbtools-typeahead").css("width", "400px");
+                this.element.find(".nbtools-typeahead").css("padding-left", "110px");
                 this.element.removeAttr("style");
             }
         },
