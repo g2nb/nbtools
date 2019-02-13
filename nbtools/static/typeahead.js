@@ -17,6 +17,7 @@ define("nbtools/typeahead", ["base/js/namespace",
             placeholder: "Add File or URL...",
             width: "100%",
             data: [],
+            show_arrow: true,
             click: function(widget) {},
             blur: function(widget) {}
         },
@@ -42,6 +43,7 @@ define("nbtools/typeahead", ["base/js/namespace",
                         .append(
                             $("<span></span>")
                                 .addClass("fa fa-caret-down form-control-feedback nbtools-typeahead-arrow")
+                                .css("display", this.options.show_arrow ? "inline-block" : "none")
                         )
                         .append(
                             $("<ul></ul>")
@@ -60,12 +62,13 @@ define("nbtools/typeahead", ["base/js/namespace",
             const menu = widget.element.find(".nbtools-typeahead-list");
 
             // Make the click callback if one is defined
+            let show_menu = null;
             if (widget.options.click) {
-                widget.options.click(widget);
+                show_menu = widget.options.click(widget);
             }
 
             // Show the menu
-            menu.show();
+            if (show_menu) menu.show();
         },
 
         _blur: function(event) {
@@ -89,7 +92,7 @@ define("nbtools/typeahead", ["base/js/namespace",
             }
         },
 
-        _update_menu: function(menu, kind, choices={}, markdown={}) {
+        _update_menu: function(menu, kind=[], choices={}, markdown={}, text={}) {
             // Clear the menu
             menu.empty();
 
@@ -97,7 +100,8 @@ define("nbtools/typeahead", ["base/js/namespace",
             let output_files = Utils.output_files_by_kind(kind);
 
             // Handle the special case of no matching output files
-            if (output_files.length === 0 && Object.keys(choices).length === 0 && Object.keys(markdown).length === 0) {
+            if (output_files.length === 0 && Object.keys(choices).length === 0 &&
+                Object.keys(markdown).length === 0 && Object.keys(text).length === 0) {
                 menu.append(this._create_menu_header("No Matching Files"));
                 return;
             }
@@ -137,6 +141,18 @@ define("nbtools/typeahead", ["base/js/namespace",
                     menu.append(this._create_menu_file(choice, "markdown"));
                 }
             }
+
+            // Add text options, if available
+            if (Object.keys(text).length > 0) {
+                menu.append(this._create_menu_header("Text Options", "text"));
+                for (let key in text) {
+                    const choice = {
+                        name: key,
+                        url: key
+                    };
+                    menu.append(this._create_menu_file(choice, "text"));
+                }
+            }
         },
 
         /**
@@ -153,6 +169,7 @@ define("nbtools/typeahead", ["base/js/namespace",
             if (type === "job") type_class = "nbtools-typeahead-job-file";
             if (type === "ftp") type_class = "nbtools-typeahead-ftp-file";
             if (type === "markdown") type_class = "nbtools-typeahead-markdown-file";
+            if (type === "text") type_class = "nbtools-typeahead-text-header";
 
             return $("<li></li>")
                 .append(
@@ -187,6 +204,7 @@ define("nbtools/typeahead", ["base/js/namespace",
             if (type === "job") type_class = "nbtools-typeahead-job-header";
             if (type === "ftp") type_class = "nbtools-typeahead-ftp-header";
             if (type === "markdown") type_class = "nbtools-typeahead-markdown-header";
+            if (type === "text") type_class = "nbtools-typeahead-text-header";
 
            return $("<li></li>")
                .addClass("dropdown-header")

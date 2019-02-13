@@ -19,7 +19,7 @@
 define("nbtools/text", ["base/js/namespace",
                         "nbextensions/jupyter-js-widgets/extension",
                         "jquery",
-                        "nbextensions/nbtools/nbtools"], function (Jupyter, widgets, $) {
+                        "nbtools/utils"], function (Jupyter, widgets, $, Utils) {
 
     // Define the widget
     $.widget("nbtools.textInput", {
@@ -54,16 +54,51 @@ define("nbtools/text", ["base/js/namespace",
 
             // Add classes and child elements
             this.element.addClass("nbtools-text");
-            this.element.append(
-                $("<input />")
-                    .addClass("form-control nbtools-text-input")
-                    .attr("type", this.options.type)
-                    .val(this._value)
-                    .change(function() {
-                        widget._value = $(this).val();
-                        widget._updateCode();
+
+            // Use a typeahead widget for text inputs
+            if (this.options.type === "text") {
+                this.element.append(
+                    $("<div></div>").type_ahead({
+                        placeholder: "",
+                        show_arrow: false,
+                        click: function(twidget) {
+                            const menu = twidget.element.find(".nbtools-typeahead-list");
+
+                            // Get the list of .nbtools-text-option
+                            const text_options = Utils.text_options();
+
+                            // Update the menu
+                            twidget._update_menu(menu, undefined, undefined, undefined, text_options);
+
+                            return !!Object.keys(text_options).length;
+                        },
+                        blur: function(twidget) {
+                            const typeahead_input = twidget.element.find(".nbtools-typeahead-input");
+
+                            widget._value = typeahead_input.val().trim();
+                            widget._updateCode();
+                        }
                     })
-            );
+                );
+
+                // Set the initial text value
+                const typeahead_input = this.element.find(".nbtools-typeahead-input");
+                typeahead_input.val(this._value);
+            }
+
+            // Use a simple HTML input element for other input types (number, password)
+            else {
+                this.element.append(
+                    $("<input />")
+                        .addClass("form-control nbtools-text-input")
+                        .attr("type", this.options.type)
+                        .val(this._value)
+                        .change(function() {
+                            widget._value = $(this).val();
+                            widget._updateCode();
+                        })
+                );
+            }
 
             // Hide elements if not in use by options
             this._setDisplayOptions();
@@ -162,7 +197,7 @@ define("nbtools/text", ["base/js/namespace",
             // Do setter
             if (val || force_setter) {
                 this._value = val;
-                this.element.find(".nbtools-text-input").val(val);
+                this.element.find(".nbtools-text-input, .nbtools-typeahead-input").val(val);
             }
             // Do getter
             else {

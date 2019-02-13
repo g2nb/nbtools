@@ -105,6 +105,9 @@ define("nbtools/file", ["base/js/namespace",
 
                                 // Update the menu
                                 twidget._update_menu(menu, kinds, choices, markdown);
+
+                                // Show the menu
+                                return true;
                             },
                             blur: function(twidget) {
                                 const typeahead_input = twidget.element.find(".nbtools-typeahead-input");

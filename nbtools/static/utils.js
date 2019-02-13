@@ -59,6 +59,25 @@ define("nbtools/utils", ["base/js/namespace",
     }
 
     /**
+     * Get all options in the notebook annotated with the nbtools-text-option HTML class
+     *
+     * Returns dict where the key and values are both the text (to match the result of markdown_files)
+     */
+    function text_options() {
+        const option_dict = {};
+
+        const cells = $(".cell");
+        cells.each(function(i, cell) {
+            const options = $(cell).find(".nbtools-text-option");
+            options.each(function(j, text) {
+                option_dict[$(text).text()] = $(text).text();
+            });
+        });
+
+        return option_dict;
+    }
+
+    /**
      * Determine if a file name is of a particular kind, using the matching rules:
      *      - Must either end with the provided string literal
      *      - OR match the given string with * wildcard characters
@@ -153,6 +172,7 @@ define("nbtools/utils", ["base/js/namespace",
         cell_index: cell_index,
         display_name: display_name,
         markdown_files: markdown_files,
+        text_options: text_options,
         wildcard_match: wildcard_match,
         output_files_by_kind: output_files_by_kind,
         is_url: is_url,
