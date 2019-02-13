@@ -4,7 +4,7 @@
  * @author Thorin Tabor
  * @requires - jQuery
  *
- * Copyright 2018 Regents of the University of California and the Broad Institute
+ * Copyright 2019 Regents of the University of California and the Broad Institute
  */
 
 define("nbtools/uibuilder", ["base/js/namespace",

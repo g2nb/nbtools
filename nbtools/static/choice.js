@@ -12,7 +12,7 @@
  *      File choice input
  *      Dynamic choice parameters
  *
- * Copyright 2015-2018 Regents of the University of California & The Broad Institute
+ * Copyright 2015-2019 Regents of the University of California & The Broad Institute
  */
 
 define("nbtools/choice", ["base/js/namespace",

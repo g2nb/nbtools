@@ -12,7 +12,7 @@ from .manager import NBTool, list, modified, register, unregister
 
 
 __author__ = 'Thorin Tabor'
-__copyright__ = 'Copyright 2016-2018, Regents of the University of California & Broad Institute'
-__version__ = '0.2.3'
+__copyright__ = 'Copyright 2016-2019, Regents of the University of California & Broad Institute'
+__version__ = '0.2.4'
 __status__ = 'Beta'
 __license__ = 'BSD'
