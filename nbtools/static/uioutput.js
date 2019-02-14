@@ -223,7 +223,7 @@ define("nbtools/uioutput", ["base/js/namespace",
          * @param new_status
          */
         update_status: function(new_status) {
-            this.element.find('.nbtools-output-status').text(new_status);
+            this.element.find('.nbtools-output-status').html(new_status);
         },
 
         /**
