@@ -153,7 +153,9 @@ define("nbtools/choice", ["base/js/namespace",
             select.append(
                 $("<option></option>")
                     .text("Custom Value (developer)")
+                    .addClass("nbtools-custom-value")
                     .val("")
+                    .hide()
             );
         },
 
