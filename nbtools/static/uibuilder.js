@@ -469,12 +469,16 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 cell.element.find(".input").hide();
             }
 
+            // Set parameters in the metadata
             if (widget.options.params) {
                 if (!cell.metadata.nbtools.param_values) cell.metadata.nbtools.param_values = {};
                 widget.options.params.forEach(function(p) {
                     const param = widget._get_parameter(p.name);
                     const value = widget._get_parameter_metadata(p.name);
                     if (param && !value) MetadataManager.set_parameter_metadata(cell, p.name, param.value());
+
+                    // Always set the output_var in the metadata
+                    if (p.name === "output_var") MetadataManager.set_parameter_metadata(cell, p.name, param.value());
                 });
             }
 
