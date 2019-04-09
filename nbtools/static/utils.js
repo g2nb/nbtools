@@ -116,6 +116,12 @@ define("nbtools/utils", ["base/js/namespace",
                 if (wildcard_match(file_name, kind)) matched = true;
             });
 
+            // Does the file explicitly match the kind attribute?
+            const kind_attribute = $(output).data("kind");
+            kind_list.forEach(function(kind) {
+                if (kind_attribute === kind) matched = true;
+            });
+
             // If it does, add it to the list
             if (matched) {
                 const job_desc = $(output).closest(".nbtools-widget").find(".nbtools-widget-job-task").text().trim();
