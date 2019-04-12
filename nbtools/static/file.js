@@ -101,7 +101,7 @@ define("nbtools/file", ["base/js/namespace",
                                 if (!choices) choices = {};
 
                                 // Get the list of embedded markdown file links
-                                const markdown = Utils.markdown_files();
+                                const markdown = Utils.markdown_files_by_kind(kinds);
 
                                 // Update the menu
                                 twidget._update_menu(menu, kinds, choices, markdown);

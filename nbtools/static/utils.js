@@ -137,6 +137,42 @@ define("nbtools/utils", ["base/js/namespace",
     }
 
     /**
+     * Return a list of markdown files that match the indicated kind
+     * @param kinds
+     * @returns {Array}
+     */
+    function markdown_files_by_kind(kinds) {
+        let kind_list = kinds;
+
+        // Handle the special case of * (match all)
+        const match_all = kinds === "*";
+
+        // If passing in a single kind as a string, wrap it in a list
+        if (typeof kinds === 'string') {
+            kind_list = [kinds];
+        }
+
+        // For each out file, see if it is the right kind
+        const markdown_files_map = markdown_files();
+        Object.keys(markdown_files_map).forEach(function(key) {
+            const file_url = markdown_files_map[key];
+
+            // Does the file match one or more of the kinds?
+            let matched = match_all;
+            kind_list.forEach(function(kind) {
+                if (wildcard_match(file_url, kind)) matched = true;
+            });
+
+            // If not matched, remove it from the map
+            if (!matched) {
+                delete markdown_files_map[key];
+            }
+        });
+
+        return markdown_files_map;
+    }
+
+    /**
      * Decides if a string represents a valid URL or not
      *
      * @param path_or_url
@@ -177,7 +213,7 @@ define("nbtools/utils", ["base/js/namespace",
         ensure_rendering: ensure_rendering,
         cell_index: cell_index,
         display_name: display_name,
-        markdown_files: markdown_files,
+        markdown_files_by_kind: markdown_files_by_kind,
         text_options: text_options,
         wildcard_match: wildcard_match,
         output_files_by_kind: output_files_by_kind,
