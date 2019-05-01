@@ -32,6 +32,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             output_var: null,
             append_output: true,
             register_tool: true,
+            collapse: true,
             params: null,
             events: null,
             function_import: null,
@@ -1062,7 +1063,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                                     scrollTop: $(widget.options.cell.element).position().top
                                 }, 500);
 
-                                widget.expandCollapse(false);
+                                if (widget.options.collapse) widget.expandCollapse(false);
                                 code = widget.buildFunctionCode(funcInput, funcOutput);
                             }
                             catch(e) {
@@ -1624,6 +1625,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             const events = widget.model.get('events');
             const function_import = widget.model.get('function_import');
             const register_tool = widget.model.get('register_tool');
+            const collapse = widget.model.get('collapse');
 
             // Render the cell and hide code by default
             const element = widget.$el;
@@ -1639,6 +1641,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         events: events,
                         function_import: function_import,
                         register_tool: register_tool,
+                        collapse: collapse,
                         cell: cell
                     });
                 }

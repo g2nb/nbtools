@@ -96,6 +96,7 @@ class UIBuilder(widgets.DOMWidget):
     params = List(sync=True)
     function_import = Unicode('', sync=True)
     register_tool = Bool(True, sync=True)
+    collapse = Bool(True, sync=True)
     events = Dict(sync=True)
     function_or_method = None
 
@@ -120,6 +121,7 @@ class UIBuilder(widgets.DOMWidget):
         custom_output = kwargs['output_var'] if 'output_var' in kwargs else None
         custom_import = kwargs['function_import'] if 'function_import' in kwargs else None
         custom_register = kwargs['register_tool'] if 'register_tool' in kwargs else True
+        custom_collapse = kwargs['collapse'] if 'collapse' in kwargs else True
 
         # Apply output_var deprecation warning
         if 'output_var' in kwargs:
@@ -136,6 +138,7 @@ class UIBuilder(widgets.DOMWidget):
         self.params = params
         self.function_import = custom_import or function_import
         self.register_tool = custom_register
+        self.collapse = custom_collapse
         self.events = self.events
         self.function_or_method = function_or_method
 
