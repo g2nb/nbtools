@@ -286,9 +286,10 @@ The following minor features are available available in the UI Builder.
 
 * **register_tool:** Sets whether to register this function with the Notebook Tool Manager. Defaults to True.
 * **function_import:** Override the import name of an existing function.
+* **collapse:** Set whether the widget collapses upon submission (default=True).
                 
 ```python
-@nbtools.build_ui(register_tool=False, function_import='example_package.example_function')
+@nbtools.build_ui(register_tool=False, function_import='example_package.example_function', collapse=False)
 def example_function(first_parameter, second_parameter):
     . . .
 ```
