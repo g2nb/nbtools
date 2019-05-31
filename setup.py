@@ -2,7 +2,17 @@ import os
 from distutils.core import setup
 
 
-__version__ = '19.06'
+__version__ = '19.05'
+
+
+def _long_description():
+    """
+    Read long description from markdown
+    :return:
+    """
+    with open("README.md", "r") as fh:
+        long_description = fh.read()
+    return long_description
 
 
 def get_data_files():
@@ -21,6 +31,8 @@ setup(name='nbtools',
       packages=['nbtools'],
       version=__version__,
       description='A framework for user-friendly widgets and tools in Jupyter Notebook.',
+      long_description=_long_description(),
+      long_description_content_type="text/markdown",
       license='BSD',
       author='Thorin Tabor',
       author_email='tmtabor@cloud.ucsd.edu',

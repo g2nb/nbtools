@@ -13,6 +13,6 @@ from .manager import NBTool, list, modified, register, unregister
 
 __author__ = 'Thorin Tabor'
 __copyright__ = 'Copyright 2016-2019, Regents of the University of California & Broad Institute'
-__version__ = '19.06'
+__version__ = '19.05'
 __status__ = 'Beta'
 __license__ = 'BSD'
