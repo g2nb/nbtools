@@ -1,6 +1,5 @@
 import ast
 import inspect
-import nbtools
 from IPython.core.magic import register_cell_magic
 
 
@@ -80,6 +79,9 @@ def r_build_ui(spec, code):
     read line, use this to create UI Builder
     on Run, turn parameters into R variables, send cell to R, the return value of R becomes Python var
     """
+    global _tmp_r_wrapper
+    import nbtools
+
     # Parse the UI Builder spec from the magics line
     spec = ast.literal_eval(spec)
 
@@ -89,7 +91,6 @@ def r_build_ui(spec, code):
     # Create and return the UIBuilder object
     uib = nbtools.UIBuilder(nbtools._tmp_r_wrapper.signature(), function_import='nbtools._tmp_r_wrapper', **spec)
     return uib
-
 
 def load_ipython_extension(ipython):
     ipython.extension_manager.load_extension('rpy2.ipython')
