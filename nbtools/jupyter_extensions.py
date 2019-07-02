@@ -1,6 +1,6 @@
 from IPython.core.magic import Magics, magics_class, line_magic
 
-from .r_support import load_ipython_extension
+from .r_support import load_ipython_extension as r_load_ipython_extension
 
 """
 Jupyter-related extensions for nbtools
@@ -9,7 +9,7 @@ Jupyter-related extensions for nbtools
 
 def load_ipython_extension(ipython):
     try:  # Try to load R support, ignore if rpy2 not installed
-        load_ipython_extension(ipython)
+        r_load_ipython_extension(ipython)
     except ImportError:
         pass
     ipython.log.info("Notebook Tool Manager IPython loaded!")

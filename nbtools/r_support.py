@@ -1,6 +1,5 @@
 import ast
 import inspect
-from IPython.core.magic import register_cell_magic
 
 
 class RWrapper:
@@ -73,7 +72,6 @@ class RWrapper:
         return r_output
 
 
-@register_cell_magic
 def r_build_ui(spec, code):
     """
     read line, use this to create UI Builder
