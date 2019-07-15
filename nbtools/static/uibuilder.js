@@ -655,7 +655,10 @@ define("nbtools/uibuilder", ["base/js/namespace",
             if (collapse) form.hide();
 
             // Hide footer if output var is hidden
-            if (collapse && override_output_var['hide']) widget.element.find('.nbtools-uibuilder-footer').hide();
+            if (collapse && override_output_var['hide']) {
+                widget.element.find('.nbtools-uibuilder-footer').hide();
+                widget.element.find('.nbtools-uibuilder-subheader').css("border-bottom", "none");
+            }
 
             // Otherwise, hide the lower run button only
             if (collapse && !override_output_var['hide']) widget.element.find('.nbtools-uibuilder-run:last').hide();
