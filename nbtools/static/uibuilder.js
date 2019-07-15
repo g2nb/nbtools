@@ -603,12 +603,16 @@ define("nbtools/uibuilder", ["base/js/namespace",
             const widget = this;
             const params = widget.options.params;
             const form = widget.element.find(".nbtools-uibuilder-form");
+            let override_output_var = false;
 
             for (let i = 0; i < params.length; i++) {
                 const p = params[i];
 
                 // Special case for output_var
-                if (p['name'] === 'output_var') continue;
+                if (p['name'] === 'output_var') {
+                    override_output_var = p;
+                    continue;
+                }
 
                 try {
                     const param = {
@@ -646,6 +650,17 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 }
             }
 
+            // Hide the form if no parameters
+            const collapse = !params.length || (params.length === 1 && override_output_var);
+            if (collapse) form.hide();
+
+            // Hide footer if output var is hidden
+            if (collapse && override_output_var['hide']) widget.element.find('.nbtools-uibuilder-footer').hide();
+
+            // Otherwise, hide the lower run button only
+            if (collapse && !override_output_var['hide']) widget.element.find('.nbtools-uibuilder-run:last').hide();
+
+            // Trigger the paramLoad event
             $(widget.element).trigger("runTask.paramLoad");
         },
 
