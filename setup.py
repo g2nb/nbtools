@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 
-__version__ = '19.07.2'
+__version__ = '19.07.3'
 
 
 with open('README.md') as f:
@@ -38,7 +38,6 @@ setup(name='nbtools',
           'Intended Audience :: Science/Research',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: BSD License',
-          'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Framework :: Jupyter',
