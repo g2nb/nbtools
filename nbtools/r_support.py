@@ -77,7 +77,6 @@ def r_build_ui(spec, code):
     read line, use this to create UI Builder
     on Run, turn parameters into R variables, send cell to R, the return value of R becomes Python var
     """
-    global _tmp_r_wrapper
     import nbtools
 
     # Parse the UI Builder spec from the magics line
@@ -92,4 +91,4 @@ def r_build_ui(spec, code):
 
 def load_ipython_extension(ipython):
     ipython.extension_manager.load_extension('rpy2.ipython')
-    ipython.register_magic_function(r_build_ui)
+    ipython.register_magic_function(r_build_ui, magic_kind='cell')
