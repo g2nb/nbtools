@@ -28,6 +28,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
         options: {
             name: null,
+            origin: null,
             description: null,
             output_var: null,
             append_output: true,
@@ -311,7 +312,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             if (!widget.options.register_tool) return;
 
             const UIBuilderTool = new NBToolManager.NBTool({
-                origin: "Notebook",
+                origin: widget.options.origin,
                 id: widget.options.name,
                 name: widget.options.name,
                 description: widget.options.description,
@@ -463,7 +464,8 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
             // Add the current name and description of the widget
             cell.metadata.nbtools.name = widget.options.name;
-            cell.metadata.nbtools.description = widget.options.description;
+            cell.metadata.nbtools.origin = widget.options.origin;
+	    cell.metadata.nbtools.description = widget.options.description;
 
             // Hide or show code
             if (!cell.metadata.nbtools.show_code) {
@@ -1620,6 +1622,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
             const name = widget.model.get('name');
             const description = widget.model.get('description');
+            const origin = widget.model.get('origin');
             const output_var = widget.model.get('output_var');
             const params = widget.model.get('params');
             const events = widget.model.get('events');
@@ -1636,6 +1639,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                     $(widget.$el).uibuilder({
                         name: name,
                         description: description,
+			origin: origin,
                         output_var: output_var,
                         params: params,
                         events: events,
