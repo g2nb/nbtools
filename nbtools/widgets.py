@@ -93,6 +93,7 @@ class UIBuilder(widgets.DOMWidget):
     name = Unicode('', sync=True)
     description = Unicode('', sync=True)
     output_var = Unicode('', sync=True)
+    origin = Unicode('', sync=True)
     params = List(sync=True)
     function_import = Unicode('', sync=True)
     register_tool = Bool(True, sync=True)
@@ -119,6 +120,7 @@ class UIBuilder(widgets.DOMWidget):
         custom_name = kwargs['name'] if 'name' in kwargs else None
         custom_desc = kwargs['description'] if 'description' in kwargs else None
         custom_output = kwargs['output_var'] if 'output_var' in kwargs else None
+        custom_origin = kwargs['origin'] if 'origin' in kwargs else ""
         custom_import = kwargs['function_import'] if 'function_import' in kwargs else None
         custom_register = kwargs['register_tool'] if 'register_tool' in kwargs else True
         custom_collapse = kwargs['collapse'] if 'collapse' in kwargs else True
@@ -135,6 +137,7 @@ class UIBuilder(widgets.DOMWidget):
         self.name = custom_name or function_or_method.__qualname__
         self.description = custom_desc or docstring
         self.output_var = custom_output or ''
+        self.origin = custom_origin or 'Notebook'
         self.params = params
         self.function_import = custom_import or function_import
         self.register_tool = custom_register
