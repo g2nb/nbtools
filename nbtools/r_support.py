@@ -43,7 +43,7 @@ class RWrapper:
 
     @staticmethod
     def wrap_var(to_wrap):
-        if type(to_wrap) == 'str':
+        if type(to_wrap) == type('str'):
             return f'"{to_wrap}"'
         else:
             return to_wrap
