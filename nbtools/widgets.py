@@ -156,7 +156,7 @@ class UIBuilder(widgets.DOMWidget):
     @staticmethod
     def _apply_custom_parameter_info(params, metadata):
         # If output_var is overridden as a parameter, add to the parameters list as a special case
-        if 'output_var' in metadata:
+        if 'output_var' in metadata and not any(p['name'] == 'output_var' for p in params):
             params.append({
                 "name": 'output_var',
                 "label": 'output_variable',
