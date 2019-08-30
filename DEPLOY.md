@@ -26,7 +26,7 @@
 
 1. Deploy to Production PyPi
 2. Navigate to Anaconda directory
-> cd anaconda
+> cd /anaconda3
 3. Activate a clean environment.
 > conda activate clean
 4. Run the following, removing the existing directory if necessary:

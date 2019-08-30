@@ -45,41 +45,58 @@ class build_ui:
     """
     func = None
     kwargs = None
+    __widget__ = None
 
     def __init__(self, *args, **kwargs):
+        import nbtools
+
         # Display if decorator with no arguments
         if len(args) > 0:
-            self.func = args[0]              # Set the function
-            display(UIBuilder(self.func))  # Display
+            self.func = args[0]                     # Set the function
+            self.__widget__ = UIBuilder(self.func)  # Set the widget
+            self.func.__widget__ = self.__widget__  # Ensure function has access to widget
+            nbtools.register(self.__widget__)
+
+            # Display if defined directly in a notebook
+            # Don't display if loading from a library
+            if self.func.__module__ == "__main__":
+                display(self.__widget__)
         else:
             # Save the kwargs for decorators with arguments
             self.kwargs = kwargs
 
     def __call__(self, *args, **kwargs):
+        import nbtools
+
         # Decorators with arguments make this call at define time, while decorators without
         # arguments make this call at runtime. That's the reason for this madness.
 
-        # Figure out what type of call this is, then figure out func and args
-        decorator_args = self.func is None
-        if decorator_args:
-            func = args[0]
-            func_args = args[1:]
-        else:
-            func = self.func
-            func_args = args
+        # Figure out what type of call this is
+        if self.func is None:
+            # This is a call at define time for a decorator with arguments
+            self.func = args[0]                                      # Set the function
+            self.__widget__ = UIBuilder(self.func, **self.kwargs)    # Set the widget
+            self.func.__widget__ = self.__widget__                   # Ensure function has access to widget
+            self.func._ipython_display_ = self._ipython_display_     # Render widget when function returned
+            nbtools.register(self.__widget__)
 
-        # Display if decorator has arguments
-        if decorator_args:
-            display(UIBuilder(func, **self.kwargs))
+            if self.func.__module__ == "__main__":  # Don't automatically display if loaded from library
+                display(self.__widget__)            # Display if defined in a notebook
 
             # Return wrapped function
-            @functools.wraps(func)
+            @functools.wraps(self.func)
             def decorated(*args, **kwargs):
-                return func(*args, **kwargs)
+                return self.func(*args, **kwargs)
             return decorated
+
+        # This is a call at runtime for a decorator without arguments
         else:
-            # Otherwise, just call the function
-            return func(*func_args, **kwargs)
+            # Just call the function
+            return self.func(*args, **kwargs)
+
+    def _ipython_display_(self):
+        """Display widget when returned in a notebook cell"""
+        display(self.__widget__)
 
 
 class UIBuilder(widgets.DOMWidget):
@@ -120,7 +137,7 @@ class UIBuilder(widgets.DOMWidget):
         custom_name = kwargs['name'] if 'name' in kwargs else None
         custom_desc = kwargs['description'] if 'description' in kwargs else None
         custom_output = kwargs['output_var'] if 'output_var' in kwargs else None
-        custom_origin = kwargs['origin'] if 'origin' in kwargs else ""
+        custom_origin = kwargs['origin'] if 'origin' in kwargs else self._determine_origin(function_or_method)
         custom_import = kwargs['function_import'] if 'function_import' in kwargs else None
         custom_register = kwargs['register_tool'] if 'register_tool' in kwargs else True
         custom_collapse = kwargs['collapse'] if 'collapse' in kwargs else True
@@ -144,6 +161,14 @@ class UIBuilder(widgets.DOMWidget):
         self.collapse = custom_collapse
         self.events = self.events
         self.function_or_method = function_or_method
+
+        # Add widget reference to function
+        function_or_method.__widget__ = self
+
+    @staticmethod
+    def _determine_origin(function_or_method):
+        """Use the library name for the origin, or "Notebook" for tools defined in a notebook"""
+        return "Notebook" if function_or_method.__module__ == '__main__' else function_or_method.__module__
 
     @staticmethod
     def _safe_type(raw_type):

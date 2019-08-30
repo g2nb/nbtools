@@ -1657,7 +1657,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                     $(widget.$el).uibuilder({
                         name: name,
                         description: description,
-			origin: origin,
+                        origin: origin,
                         output_var: output_var,
                         params: params,
                         events: events,

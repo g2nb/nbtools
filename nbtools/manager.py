@@ -101,12 +101,36 @@ def modified():
     return cache_time
 
 
-def register(nbtool):
+def _send_to_frontend(origin, id, name, load, render, description=None, version=None, tags=None, attributes=None):
+    _lazy_init()
+
+    # Clean optional metadata for inclusion in JavaScript
+    clean_description = "null" if description is None else description.replace('"', '\\"')
+    clean_version = "null" if version is None else version.replace('"', '\\"')
+    clean_tags = "null" if tags is None else json.dumps(tags)
+    clean_attributes = "null" if attributes is None else json.dumps(attributes)
+
+    # Pass the metadata to JavaScript
+    IPython.display.display_javascript(f"""
+            NBToolManager.instance().register(new NBToolManager.NBTool({{
+                origin: "{origin}",
+                id: "{id}",
+                name: "{name}",
+                description: "{clean_description}",
+                version: "{clean_version}",
+                tags: {clean_tags},
+                attributes: {clean_attributes},
+                load: function() {{ {load} }},
+                render: function() {{ {render} }},
+            }}));""", raw=True)
+    return True
+
+
+def _register_nbtool(nbtool):
     """
     Register the provided NBTool object
     """
     global _py_funcs
-    _lazy_init()
 
     # Save references to the tool's load() and render() functions
     load_key = nbtool.origin + '|' + nbtool.id + '|load'
@@ -114,62 +138,76 @@ def register(nbtool):
     _py_funcs[load_key] = nbtool.load
     _py_funcs[render_key] = nbtool.render
 
-    # Clean optional metadata for inclusion in JavaScript
-    clean_description = "null" if nbtool.description is None else '"' + nbtool.description.replace('"','\\"') + '"'
-    clean_version = "null" if nbtool.version is None else '"' + nbtool.version.replace('"','\\"') + '"'
-    clean_tags = "null" if nbtool.tags is None else json.dumps(nbtool.tags)
-    clean_attributes = "null" if nbtool.attributes is None else json.dumps(nbtool.attributes)
+    load = f"""var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["{load_key}"]()',
+                        {{
+                            iopub: {{
+                                output: function(response) {{
+                                    // Print the return value of the Python code to the console
+                                    console.log(response.content.data["text/plain"]);
+                                }}
+                            }}
+                        }},
+                        {{
+                            silent: false,
+                            store_history: false,
+                            stop_on_error: true
+                        }});
+                    return true;"""
 
-    # Pass the metadata to JavaScript
-    IPython.display.display_javascript("""
-        console.log('ok');
-        NBToolManager.instance().register(new NBToolManager.NBTool({
-            origin: "%s",
-            id: "%s",
-            name: "%s",
-            description: %s,
-            version: %s,
-            tags: %s,
-            attributes: %s,
-            load: function() {
-                var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["%s"]()',
-                    {
-                        iopub: {
-                            output: function(response) {
-                                // Print the return value of the Python code to the console
-                                console.log(response.content.data["text/plain"]);
-                            }
-                        }
-                    },
-                    {
-                        silent: false,
-                        store_history: false,
-                        stop_on_error: true
-                    });
-                return true;
-            },
-            render: function() {
-                var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["%s"]()',
-                    {
-                        iopub: {
-                            output: function(response) {
-                                // Print the return value of the Python code to the console
-                                console.log(response.content.data["text/plain"]);
-                            }
-                        }
-                    },
-                    {
-                        silent: false,
-                        store_history: false,
-                        stop_on_error: true
-                    });
-                return null;
-            },
-        }));
-    """ % (nbtool.origin, nbtool.id, nbtool.name,
-           clean_description, clean_version, clean_tags, clean_attributes,
-           load_key, render_key), raw=True)
-    return True
+    render = f"""var x = Jupyter.notebook.kernel.execute('nbtools._py_funcs["{render_key}"]()',
+                        {{
+                            iopub: {{
+                                output: function(response) {{
+                                    // Print the return value of the Python code to the console
+                                    console.log(response.content.data["text/plain"]);
+                                }}
+                            }}
+                        }},
+                        {{
+                            silent: false,
+                            store_history: false,
+                            stop_on_error: true
+                        }});
+                    return null;"""
+
+
+    _send_to_frontend(nbtool.origin, nbtool.id, nbtool.name, load, render, description=nbtool.description,
+                      version=nbtool.version, tags=nbtool.tags, attributes=nbtool.attributes)
+
+
+def _register_widget(widget):
+    """Register a UI Builder widget with the manager"""
+    load = "return true;"
+    render = f"""let code =  "{widget.function_import}.__widget__";
+                let cell = Jupyter.notebook.get_selected_cell();
+                const is_empty = cell.get_text().trim() === "";
+
+                // If this cell is not empty, insert a new cell and use that
+                // Otherwise just use this cell
+                if (!is_empty) {{
+                    cell = Jupyter.notebook.insert_cell_below();
+                    Jupyter.notebook.select_next();
+                }}
+
+                cell.set_text(code);
+                cell.execute();
+
+                return cell;"""
+
+    return _send_to_frontend(origin=widget.origin, id=widget.name, name=widget.name,
+                             load=load, render=render, description=widget.description)
+
+
+def register(tool):
+    import nbtools
+
+    """Register a NBTool or UIBuilder object"""
+    if isinstance(tool, NBTool):
+       return  _register_nbtool(tool)
+    elif isinstance(tool, nbtools.UIBuilder):
+        return _register_widget(tool)
+    else:
+        raise ValueError("register() must be passed an NBTool or UIBuilder object")
 
 
 def unregister(id):
