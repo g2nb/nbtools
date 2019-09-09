@@ -130,7 +130,6 @@ def _register_nbtool(nbtool):
     """
     Register the provided NBTool object
     """
-    global _py_funcs
 
     # Save references to the tool's load() and render() functions
     load_key = nbtool.origin + '|' + nbtool.id + '|load'
@@ -177,8 +176,10 @@ def _register_nbtool(nbtool):
 
 def _register_widget(widget):
     """Register a UI Builder widget with the manager"""
+    _py_funcs[widget.origin + '|' + widget.name + '|widget'] = widget
+
     load = "return true;"
-    render = f"""let code =  "{widget.function_import}.__widget__";
+    render = f"""let code = "nbtools.tool(id='{widget.name}', origin='{widget.origin}')";
                 let cell = Jupyter.notebook.get_selected_cell();
                 const is_empty = cell.get_text().trim() === "";
 
@@ -216,3 +217,10 @@ def unregister(id):
     """
     _lazy_init()
     window.NBToolManager.instance().unregister(id)
+
+
+def tool(id, origin='Notebook'):
+    """
+    Return reference to tool widget given the id and origin
+    """
+    return _py_funcs[origin + '|' + id + '|widget']

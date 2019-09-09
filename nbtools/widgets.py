@@ -1,7 +1,6 @@
 import builtins
 import inspect
 import functools
-import sys
 import re
 import urllib.request
 from IPython.core.display import display
@@ -121,6 +120,8 @@ class UIBuilder(widgets.DOMWidget):
     def __init__(self, function_or_method, **kwargs):
         widgets.DOMWidget.__init__(self, **kwargs)
 
+        import nbtools
+
         # Read call signature
         sig = inspect.signature(function_or_method)
 
@@ -129,9 +130,6 @@ class UIBuilder(widgets.DOMWidget):
 
         # Read docstring
         docstring = self._docstring(function_or_method)
-
-        # Determine how the function is imported in the namespace
-        function_import = self._import(function_or_method)
 
         # Do arguments override the default name, description or output?
         custom_name = kwargs['name'] if 'name' in kwargs else None
@@ -156,7 +154,7 @@ class UIBuilder(widgets.DOMWidget):
         self.output_var = custom_output or ''
         self.origin = custom_origin or 'Notebook'
         self.params = params
-        self.function_import = custom_import or function_import
+        self.function_import = custom_import or self._import(function_or_method)
         self.register_tool = custom_register
         self.collapse = custom_collapse
         self.events = self.events
@@ -164,6 +162,9 @@ class UIBuilder(widgets.DOMWidget):
 
         # Add widget reference to function
         function_or_method.__widget__ = self
+
+        # Store reference to widget
+        nbtools.manager._py_funcs[self.origin + '|' + self.name + '|widget'] = self
 
     @staticmethod
     def _determine_origin(function_or_method):
@@ -317,39 +318,20 @@ class UIBuilder(widgets.DOMWidget):
             params.append(p_attr)
         return params
 
-    @staticmethod
-    def _import(func):
+    def _import(self, func):
         """Return the namespace path to the function"""
-        func_name = func.__name__
+        # # If defined in notebook / main script, return function name
+        # if func.__module__ == "__main__":
+        #     return func.__name__
+        #
+        # # If defined in a module and the module name is in globals() return module.function()
+        # if func.__module__ in globals():  # WARNING: globals() may be bugged in IPython
+        #     return func.__module__ + "." + func.__name__
+        #
+        # # If module is not in globals(), assume the function was imported directly
+        # return func.__name__
 
-        # from foo.bar import func // func()
-        # WARNING: May be broken in IPython, in which case the widget will use a fallback
-        if func_name in globals():
-            return func_name
-
-        # import foo.bar // foo.bar.func()
-        module_name = func.__module__
-        submodules = module_name.split('.')
-
-        if submodules[0] in globals():
-            return module_name + '.' + func_name
-
-        # from foo import bar // bar.func()
-        for i in range(len(submodules)):
-            m = submodules[i]
-            if m in globals():
-                return '.'.join(submodules[i:]) + '.' + func_name
-
-        # import foo.bar as fb // fb.func()
-        module_ref = sys.modules[func.__module__]
-        all_globals = globals()
-
-        for n in all_globals:
-            if all_globals[n] == module_ref:
-                return n + '.' + func_name
-
-        # Not Found, return function name
-        return func_name
+        return f'nbtools.tool(id="{self.name}", origin="{self.origin}").function_or_method'
 
 
 class UIOutput(widgets.DOMWidget):
@@ -377,5 +359,3 @@ class UIOutput(widgets.DOMWidget):
         self.text = kwargs['text'] if 'text' in kwargs else ''
         self.visualization = kwargs['visualization'] if 'visualization' in kwargs else ''
 
-    # def update_status(self, new_status):
-    #     xxx

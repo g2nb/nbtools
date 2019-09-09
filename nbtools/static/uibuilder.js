@@ -227,7 +227,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             widget._buildFooter();
             widget._handle_metadata();
 
-            // Register the widget with the Tool Manager
+            // Register the widget with the Tool Manager, if necessary
             widget.register_tool();
 
             // Trigger gp.widgetRendered event on cell element
@@ -310,6 +310,9 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
             // Skip registering with the Tool Manager, if register_tool flag is false
             if (!widget.options.register_tool) return;
+
+            // Skip registering with the Tool Manager, if already registered
+            if (NBToolManager.instance().has_tool(widget.options.origin, widget.options.name)) return;
 
             const UIBuilderTool = new NBToolManager.NBTool({
                 origin: widget.options.origin,
@@ -945,7 +948,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
         buildFunctionCode: function(input, output_variable) {
             let import_path = null;
-            let toReturn = '';
+            let toReturn = 'import nbtools\n';
 
             if (output_variable) {
                 toReturn += output_variable + " = ";

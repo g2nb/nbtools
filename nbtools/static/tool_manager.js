@@ -11,7 +11,8 @@
 define("nbtools", ["base/js/namespace",
                    "nbextensions/jupyter-js-widgets/extension",
                    "jquery",
-                   "nbextensions/nbtools/toolbox"], function (Jupyter, widgets, $, NBToolbox) {
+                   "nbtools/variables",
+                   "nbextensions/nbtools/toolbox"], function (Jupyter, widgets, $, VariableManager, NBToolbox) {
 
     // NBTools confuguration
 
@@ -170,6 +171,23 @@ define("nbtools", ["base/js/namespace",
         }
 
         /**
+         * Has this tool already been registered?
+         *
+         * @param origin
+         * @param id
+         * @returns {boolean}
+         */
+        has_tool(origin, id) {
+            let found_tool = false;
+
+            this.list().forEach(tool => {
+                if (tool.id === id && tool.origin === origin) found_tool = true;
+            });
+
+            return found_tool;
+        }
+
+        /**
          * Returns a Date() object representing when the tool
          * list was last modified. Useful when caching.
          *
@@ -204,6 +222,9 @@ define("nbtools", ["base/js/namespace",
 
             // Load the Toolbox UI
             NBToolManager.toolbox();
+
+            // Ensure nbtools is available
+            VariableManager.getKernelValue("import nbtools", text => text);
         }
 
         /**
