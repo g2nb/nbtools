@@ -1391,45 +1391,85 @@ define("nbtools/uibuilder", ["base/js/namespace",
          * @private
          */
         _jupyter_upload: function (pObj) {
-            // Get the notebook's current directory
+            const widget = this;
             const dir_path = Jupyter.notebook.notebook_path.substring(0, Jupyter.notebook.notebook_path.lastIndexOf("\/") + 1);
 
-            // Create the base model object
-            const model = {
-                format: 'base64',
-                type: 'file'
+            const chunk_size = 1024 * 1024 * 8;
+            let offset = 0;
+            let chunk = 0;
+            let chunk_reader = null;
+
+            const large_reader_onload = function (event) {
+                if (event.target.error == null) {
+                    offset += chunk_size;
+                    if (offset >= pObj.file.size) chunk = -1;
+                    else chunk += 1;
+                    upload_file(event, chunk);  // Do the upload
+                }
+                else {
+                    console.log("Read error: " + event.target.error);
+                    if (pObj.error) pObj.error();
+                }
             };
 
-            // Instantiate the file reader
-            const reader = new FileReader();
+            const on_error = function (event) {
+                Jupyter.notebook.contents.delete(path);
+                if (pObj.error) pObj.error();
+            };
 
-            // Closure to capture the file information.
-            reader.onload = (function (the_file) {
-                return function (e) {
-                    // Construct the path to the uploaded file
-                    const path = dir_path + the_file.name;
+            chunk_reader = function (_offset, _f) {
+                const reader = new FileReader();
+                const blob = _f.slice(_offset, chunk_size + _offset);
+                // Load everything as ArrayBuffer
+                reader.readAsArrayBuffer(blob);
+                reader.onload = large_reader_onload;
+                reader.onerror = on_error;
+            };
 
-                    // Attach the file data to the model
-                    model.content = btoa(e.target.result);
+            // This approach avoids triggering multiple GC pauses for large files.
+            const Uint8ToString = function(u8a) {
+                const CHUNK_SZ = 0x8000;
+                const c = [];
+                for (let i = 0; i < u8a.length; i += CHUNK_SZ) {
+                  c.push(String.fromCharCode.apply(null, u8a.subarray(i, i + CHUNK_SZ)));
+                }
+                return c.join("");
+            };
 
-                    // Start the file upload
-                    const promise = Jupyter.notebook.contents.save(path, model);
+             const upload_percent = function() {
+                 const number_of_chunks = Math.ceil(pObj.file.size/chunk_size);
+                 return Math.round((chunk / number_of_chunks) * 100);
+             };
 
-                    // Make the success callback
-                    promise.then(function(response) {
-                        pObj.success(response, the_file.name);
-                    });
+            // These codes to upload file in original class
+            const upload_file = function(event, chunk) {
+                let filedata = event.target.result;
+                if (filedata instanceof ArrayBuffer) {
+                    // base64-encode binary file data
+                    const buf = new Uint8Array(filedata);
+                    filedata = btoa(Uint8ToString(buf));
+                }
+
+                const model = { name: pObj.file.name, path: dir_path + pObj.file.name };
+
+                // Treat everything as generic file
+                model.type = 'file';
+                model.format = 'base64';
+                model.chunk = chunk;
+                model.content = filedata;
+
+                const on_success = function () {
+                    if (chunk !== -1) widget.successMessage("Uploading " + pObj.file.name + "... " + upload_percent() + "% complete");
+                    else widget.successMessage("Successfully uploaded " + pObj.file.name);
+                    if (offset < pObj.file.size) chunk_reader(offset, pObj.file);
+                    else if (pObj.success) pObj.success('Successfully uploaded file', pObj.file.name);
                 };
-            })(pObj.file);
 
-            // Begin reading the file
-            try {
-                reader.readAsBinaryString(pObj.file);
-            }
-            catch (e) {
-                // Make the error callback if something goes wrong
-                pObj.error(e);
-            }
+                Jupyter.notebook.contents.save(dir_path + pObj.file.name, model).then(on_success, on_error);
+            };
+
+            // now let's start the read with the first block
+            chunk_reader(offset, pObj.file);
         },
 
         /**
