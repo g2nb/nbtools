@@ -596,7 +596,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
 
             widget.element.find(".nbtools-uibuilder-subheader").show();
             widget.element.find(".nbtools-uibuilder-footer").show();
-            widget.element.find(".nbtools-widget-task-desc").empty().text(description);
+            widget.element.find(".nbtools-widget-task-desc").empty().html(description);
         },
 
         /**
@@ -765,7 +765,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 .append(
                     $("<label></label>")
                         .addClass("col-sm-3 control-label nbtools-uibuilder-param-name")
-                        .text(Utils.display_name(param.label()) + required)
+                        .html(Utils.display_name(param.label()) + required)
                 )
                 .append(
                     $("<div></div>")
@@ -777,7 +777,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         .append(
                             $("<div></div>")
                                 .addClass("nbtools-uibuilder-param-desc")
-                                .text(param.description())
+                                .html(param.description())
                         )
                 );
             if (param.id()) paramBox.attr("id", param.id());
@@ -1399,7 +1399,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             let chunk = 0;
             let chunk_reader = null;
 
-            const large_reader_onload = function (event) {
+            const large_reader_onload = function(event) {
                 if (event.target.error == null) {
                     offset += chunk_size;
                     if (offset >= pObj.file.size) chunk = -1;
@@ -1412,12 +1412,12 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 }
             };
 
-            const on_error = function (event) {
+            const on_error = function(event) {
                 Jupyter.notebook.contents.delete(path);
                 if (pObj.error) pObj.error();
             };
 
-            chunk_reader = function (_offset, _f) {
+            chunk_reader = function(_offset, _f) {
                 const reader = new FileReader();
                 const blob = _f.slice(_offset, chunk_size + _offset);
                 // Load everything as ArrayBuffer
@@ -1458,7 +1458,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 model.chunk = chunk;
                 model.content = filedata;
 
-                const on_success = function () {
+                const on_success = function() {
                     if (chunk !== -1) widget.successMessage("Uploading " + pObj.file.name + "... " + upload_percent() + "% complete");
                     else widget.successMessage("Successfully uploaded " + pObj.file.name);
                     if (offset < pObj.file.size) chunk_reader(offset, pObj.file);
