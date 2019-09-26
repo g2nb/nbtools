@@ -51,9 +51,9 @@ class build_ui:
 
         # Display if decorator with no arguments
         if len(args) > 0:
-            self.func = args[0]                     # Set the function
-            self.__widget__ = UIBuilder(self.func)  # Set the widget
-            self.func.__widget__ = self.__widget__  # Ensure function has access to widget
+            self.func = args[0]                                 # Set the function
+            self.__widget__ = UIBuilder(self.func)              # Set the widget
+            self.func.__dict__["__widget__"] = self.__widget__  # Ensure function has access to widget
             nbtools.register(self.__widget__)
 
             # Display if defined directly in a notebook
@@ -73,10 +73,10 @@ class build_ui:
         # Figure out what type of call this is
         if self.func is None:
             # This is a call at define time for a decorator with arguments
-            self.func = args[0]                                      # Set the function
-            self.__widget__ = UIBuilder(self.func, **self.kwargs)    # Set the widget
-            self.func.__widget__ = self.__widget__                   # Ensure function has access to widget
-            self.func._ipython_display_ = self._ipython_display_     # Render widget when function returned
+            self.func = args[0]                                                  # Set the function
+            self.__widget__ = UIBuilder(self.func, **self.kwargs)                # Set the widget
+            self.func.__dict__["__widget__"] = self.__widget__                   # Ensure function has access to widget
+            self.func._ipython_display_ = self._ipython_display_                 # Render widget when function returned
             nbtools.register(self.__widget__)
 
             if self.func.__module__ == "__main__":  # Don't automatically display if loaded from library
@@ -161,7 +161,7 @@ class UIBuilder(widgets.DOMWidget):
         self.function_or_method = function_or_method
 
         # Add widget reference to function
-        function_or_method.__widget__ = self
+        function_or_method.__dict__["__widget__"] = self
 
         # Store reference to widget
         nbtools.manager._py_funcs[self.origin + '|' + self.name + '|widget'] = self
