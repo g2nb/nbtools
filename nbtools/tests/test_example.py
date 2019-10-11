@@ -6,7 +6,7 @@
 
 import pytest
 
-from ..example import ExampleWidget
+from ..uioutput import ExampleWidget
 
 
 def test_example_creation_blank():
