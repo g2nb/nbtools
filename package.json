@@ -1,7 +1,7 @@
 {
-  "name": "nbtools-uioutput",
+  "name": "@genepattern/nbtools",
   "version": "0.1.0",
-  "description": "NBTools is a framework for creating user-friendly Jupyter notebooks that are assessible to both programming and non-programming users alike.",
+  "description": "Framework for creating user-friendly Jupyter notebooks, assessible to both programming and non-programming users alike.",
   "keywords": [
     "jupyter",
     "jupyterlab",

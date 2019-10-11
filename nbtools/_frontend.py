@@ -8,5 +8,5 @@
 Information about the frontend package of the widgets.
 """
 
-module_name = "nbtools-uioutput"
+module_name = "@genepattern/nbtools"
 module_version = "^0.1.0"

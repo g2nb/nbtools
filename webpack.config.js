@@ -39,7 +39,7 @@ module.exports = [
   },
 
   /**
-   * Embeddable nbtools-uioutput bundle
+   * Embeddable nbtools bundle
    *
    * This bundle is almost identical to the notebook extension bundle. The only
    * difference is in the configuration of the webpack public path for the
@@ -54,8 +54,8 @@ module.exports = [
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'amd',
-        library: "nbtools-uioutput",
-        publicPath: 'https://unpkg.com/nbtools-uioutput@' + version + '/dist/'
+        library: "@genepattern/nbtools",
+        publicPath: 'https://unpkg.com/nbtools@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {
@@ -76,7 +76,7 @@ module.exports = [
     output: {
       filename: 'embed-bundle.js',
       path: path.resolve(__dirname, 'docs', 'source', '_static'),
-      library: "nbtools-uioutput",
+      library: "@genepattern/nbtools",
       libraryTarget: 'amd'
     },
     module: {

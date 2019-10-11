@@ -19,7 +19,7 @@ import {
   MODULE_NAME, MODULE_VERSION
 } from './version';
 
-const EXTENSION_ID = 'nbtools-uioutput:plugin';
+const EXTENSION_ID = '@genepattern/nbtools:plugin';
 
 /**
  * The example plugin.
