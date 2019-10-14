@@ -1,0 +1,29 @@
+.nbtools-widget {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-color: rgba(43, 43, 43, 0.8);
+    overflow: visible !important;
+}
+
+.nbtools-widget-header {
+    background-color: rgba(43, 43, 43, 0.8);
+    color: white;
+    padding: 5px;
+    height: 20px;
+}
+
+.nbtools-widget-title {
+    float: left;
+    margin: 0;
+}
+
+.nbtools-widget-controls {
+    float: right;
+}
+
+.nbtools-widget-logo {
+    height: 20px !important;
+    float: left;
+    padding-right: 10px;
+}

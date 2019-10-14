@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/genepattern/nbtools-lab-prototype/branch/master/graph/badge.svg)](https://codecov.io/gh/genepattern/nbtools-lab-prototype)
 
 
-NBTools is a framework for creating user-friendly Jupyter notebooks that are assessible to both programming and non-programming users alike.
+NBTools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike.
 
 Prerequisites
 

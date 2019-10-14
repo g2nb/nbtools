@@ -61,7 +61,7 @@ cmdclass['jsdeps'] = combine_commands(
 
 setup_args = dict(
     name            = name,
-    description     = 'NBTools is a framework for creating user-friendly Jupyter notebooks that are assessible to both programming and non-programming users alike.',
+    description     = 'NBTools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike.',
     version         = version,
     scripts         = glob(pjoin('scripts', '*')),
     cmdclass        = cmdclass,
