@@ -2,8 +2,8 @@
     margin-bottom: 0;
     width: 100%;
     max-width: 100%;
-    border-color: rgba(43, 43, 43, 0.8);
     overflow: visible !important;
+    border: 1px solid rgba(43, 43, 43, 0.8);
 }
 
 .nbtools-widget-header {
@@ -11,6 +11,12 @@
     color: white;
     padding: 5px;
     height: 20px;
+}
+
+.nbtools-widget-logo {
+    height: 20px !important;
+    float: left;
+    padding-right: 10px;
 }
 
 .nbtools-widget-title {
@@ -22,8 +28,91 @@
     float: right;
 }
 
-.nbtools-widget-logo {
-    height: 20px !important;
+.nbtools-widget-collapse,
+.nbtools-widget-gear {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.nbtools-widget-menu {
+    display: block;
+    position: absolute;
+    top: 23px;
+    right: 7px;
+    margin: 0;
+    background: white;
+    color: black;
+    border: solid 1px darkgray;
+    padding: 5px 0 5px 0;
+    list-style-type: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.nbtools-widget-menu > li {
+    padding: 0 10px 0 10px;
+}
+
+.nbtools-widget-menu > li:hover {
+    background-color: #eeeeee;
+}
+
+.nbtools-widget-body {
+    padding: 10px;
+}
+
+.nbtools-widget-description {
+    position: relative;
+    left: -10px;
+    top: -10px;
+    width: 100%;
+    background-color: #eeeeee;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.nbtools-widget-status {
+    width: 33%;
     float: left;
     padding-right: 10px;
+    text-align: right;
+    color: #303F9F;
+    font-family: monospace;
+}
+
+.nbtools-widget-files {
+    width: calc(66% - 30px);
+    float: right;
+    padding-left: 20px;
+}
+
+.nbtools-widget-file {
+    display: block;
+    color: #296eaa;
+    text-decoration: none;
+}
+
+.nbtools-widget-status::after,
+.nbtools-widget-files::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.nbtools-widget-text {
+    font-family: monospace;
+    padding-top: 20px !important;
+    width: 100%;
+}
+
+.nbtools-widget-visualization {
+    margin-top: 20px;
+}
+
+.nbtools-widget-visualization-iframe {
+    width: 100%;
+    height: 500px;
+    overflow: auto;
+    border: 1px solid rgba(82, 82, 82, 1);
 }
