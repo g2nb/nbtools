@@ -1,46 +1,34 @@
-// Copyright (c) Thorin Tabor
-// Distributed under the terms of the Modified BSD License.
+import { Application, IPlugin } from '@phosphor/application';
+import { Widget } from '@phosphor/widgets';
+import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
+import { MODULE_NAME, MODULE_VERSION } from './version';
+import * as widget_exports from './widget';
+import * as uioutput_exports from './uioutput';
 
-import {
-  Application, IPlugin
-} from '@phosphor/application';
 
-import {
-  Widget
-} from '@phosphor/widgets';
-
-import {
-  IJupyterWidgetRegistry
- } from '@jupyter-widgets/base';
-
-import * as widgetExports from './widget';
-
-import {
-  MODULE_NAME, MODULE_VERSION
-} from './version';
-
+const all_exports = {...widget_exports, ...uioutput_exports };
 const EXTENSION_ID = '@genepattern/nbtools:plugin';
 
 /**
  * The example plugin.
  */
-const examplePlugin: IPlugin<Application<Widget>, void> = {
+const nbtools_plugin: IPlugin<Application<Widget>, void> = {
   id: EXTENSION_ID,
   requires: [IJupyterWidgetRegistry],
-  activate: activateWidgetExtension,
+  activate: activate_widget_extension,
   autoStart: true
 };
 
-export default examplePlugin;
+export default nbtools_plugin;
 
 
 /**
  * Activate the widget extension.
  */
-function activateWidgetExtension(app: Application<Widget>, registry: IJupyterWidgetRegistry): void {
+function activate_widget_extension(app: Application<Widget>, registry: IJupyterWidgetRegistry): void {
   registry.registerWidget({
     name: MODULE_NAME,
     version: MODULE_VERSION,
-    exports: widgetExports,
+    exports: all_exports,
   });
 }
