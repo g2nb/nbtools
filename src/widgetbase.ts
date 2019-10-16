@@ -6,7 +6,7 @@ export class BaseWidgetView extends DOMWidgetView {
     element:HTMLElement = document.createElement('div');
     traitlets:string[] = [];
     renderers:any = {};
-    template:string = `<div class="nbtools-widget"></div>`;
+    template:string = `<div class="nbtools"></div>`;
 
     render() {
         // Build the widget
@@ -25,22 +25,22 @@ export class BaseWidgetView extends DOMWidgetView {
     build() {
         // Parse the template
         this.element = new DOMParser().parseFromString(this.template, "text/html")
-            .querySelector('div.nbtools-widget') as HTMLElement;
+            .querySelector('div.nbtools') as HTMLElement;
 
         // Set the logo
-        const logo = this.element.querySelector("img.nbtools-widget-logo") as HTMLImageElement;
+        const logo = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
         logo.src = "https://notebook.genepattern.org/hub/logo"; // FIXME: NBToolManager.options.logo;
 
         // Attach collapse event
-        const collapse = this.element.querySelector("button.nbtools-widget-collapse") as HTMLButtonElement;
+        const collapse = this.element.querySelector("button.nbtools-collapse") as HTMLButtonElement;
         collapse.addEventListener("click", () => this.toggle_collapse());
 
         // Attach the gear event
-        const gear = this.element.querySelector("button.nbtools-widget-gear") as HTMLButtonElement;
+        const gear = this.element.querySelector("button.nbtools-gear") as HTMLButtonElement;
         gear.addEventListener("click", () => this.toggle_menu());
 
         // Attach toggle code event
-        const toggle_code = this.element.querySelector("li.nbtools-widget-toggle-code") as HTMLLIElement;
+        const toggle_code = this.element.querySelector("li.nbtools-toggle-code") as HTMLLIElement;
         toggle_code.addEventListener("click", () => this.toggle_code());
 
         // Set the element
@@ -72,7 +72,7 @@ export class BaseWidgetView extends DOMWidgetView {
     }
 
     toggle_collapse() {
-        const body = this.element.querySelector(".nbtools-widget-body") as HTMLElement;
+        const body = this.element.querySelector(".nbtools-body") as HTMLElement;
         const collapsed = body.style.display === "none";
 
         // Hide or show widget body
@@ -80,7 +80,7 @@ export class BaseWidgetView extends DOMWidgetView {
         else body.style.display = "none";
 
         // Toggle the collapse button
-        const button = this.element.querySelector(".nbtools-widget-collapse > span") as HTMLElement;
+        const button = this.element.querySelector(".nbtools-collapse > span") as HTMLElement;
         if (collapsed) {
             button.classList.add('fa-minus');
             button.classList.remove('fa-plus');
@@ -92,8 +92,8 @@ export class BaseWidgetView extends DOMWidgetView {
     }
 
     toggle_menu() {
-        const gear = this.element.querySelector("button.nbtools-widget-gear") as HTMLButtonElement;
-        const menu = this.element.querySelector(".nbtools-widget-menu") as HTMLElement;
+        const gear = this.element.querySelector("button.nbtools-gear") as HTMLButtonElement;
+        const menu = this.element.querySelector(".nbtools-menu") as HTMLElement;
         const collapsed = menu.style.display === "none";
 
         // Hide or show the menu

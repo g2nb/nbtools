@@ -2,11 +2,12 @@ import { Application, IPlugin } from '@phosphor/application';
 import { Widget } from '@phosphor/widgets';
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import * as widget_exports from './widget';
+import * as base_exports from './widgetbase';
 import * as uioutput_exports from './uioutput';
+import * as uibuilder_exports from './uibuilder';
 
 
-const all_exports = {...widget_exports, ...uioutput_exports };
+const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports };
 const EXTENSION_ID = '@genepattern/nbtools:plugin';
 
 /**

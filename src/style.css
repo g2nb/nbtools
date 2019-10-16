@@ -1,4 +1,4 @@
-.nbtools-widget {
+.nbtools {
     margin-bottom: 0;
     width: 100%;
     max-width: 100%;
@@ -6,36 +6,36 @@
     border: 1px solid rgba(43, 43, 43, 0.8);
 }
 
-.nbtools-widget-header {
+.nbtools-header {
     background-color: rgba(43, 43, 43, 0.8);
     color: white;
     padding: 5px;
     height: 20px;
 }
 
-.nbtools-widget-logo {
+.nbtools-logo {
     height: 20px !important;
     float: left;
     padding-right: 10px;
 }
 
-.nbtools-widget-title {
+.nbtools-title {
     float: left;
     margin: 0;
 }
 
-.nbtools-widget-controls {
+.nbtools-controls {
     float: right;
 }
 
-.nbtools-widget-collapse,
-.nbtools-widget-gear {
+.nbtools-collapse,
+.nbtools-gear {
     color: #333;
     background-color: #fff;
     border-color: #ccc;
 }
 
-.nbtools-widget-menu {
+.nbtools-menu {
     display: block;
     position: absolute;
     top: 23px;
@@ -50,19 +50,19 @@
     z-index: 1;
 }
 
-.nbtools-widget-menu > li {
+.nbtools-menu > li {
     padding: 0 10px 0 10px;
 }
 
-.nbtools-widget-menu > li:hover {
+.nbtools-menu > li:hover {
     background-color: #eeeeee;
 }
 
-.nbtools-widget-body {
+.nbtools-body {
     padding: 10px;
 }
 
-.nbtools-widget-description {
+.nbtools-description {
     position: relative;
     left: -10px;
     top: -10px;
@@ -72,7 +72,7 @@
     padding: 10px;
 }
 
-.nbtools-widget-status {
+.nbtools-status {
     width: 33%;
     float: left;
     padding-right: 10px;
@@ -81,36 +81,36 @@
     font-family: monospace;
 }
 
-.nbtools-widget-files {
+.nbtools-files {
     width: calc(66% - 30px);
     float: right;
     padding-left: 20px;
 }
 
-.nbtools-widget-file {
+.nbtools-file {
     display: block;
     color: #296eaa;
     text-decoration: none;
 }
 
-.nbtools-widget-status::after,
-.nbtools-widget-files::after {
+.nbtools-status::after,
+.nbtools-files::after {
   content: "";
   clear: both;
   display: table;
 }
 
-.nbtools-widget-text {
+.nbtools-text {
     font-family: monospace;
     padding-top: 20px !important;
     width: 100%;
 }
 
-.nbtools-widget-visualization {
+.nbtools-visualization {
     margin-top: 20px;
 }
 
-.nbtools-widget-visualization-iframe {
+.nbtools-visualization-iframe {
     width: 100%;
     height: 500px;
     overflow: auto;
