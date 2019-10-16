@@ -1,4 +1,4 @@
-import './style.css'
+import './basewidget.css'
 import { DOMWidgetView } from '@jupyter-widgets/base';
 
 

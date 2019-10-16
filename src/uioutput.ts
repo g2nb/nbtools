@@ -5,10 +5,10 @@
  *
  * Copyright 2019 Regents of the University of California and the Broad Institute
  */
-import './style.css'
+import './uioutput.css'
 import { DOMWidgetModel, ISerializers } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { BaseWidgetView } from "./widgetbase";
+import { BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, is_url } from './utils';
 
 

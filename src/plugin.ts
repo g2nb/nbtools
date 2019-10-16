@@ -2,7 +2,7 @@ import { Application, IPlugin } from '@phosphor/application';
 import { Widget } from '@phosphor/widgets';
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import * as base_exports from './widgetbase';
+import * as base_exports from './basewidget';
 import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
 
