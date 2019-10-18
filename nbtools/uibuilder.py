@@ -4,8 +4,8 @@ import functools
 import re
 import urllib.request
 from IPython.core.display import display
-from traitlets import Unicode, List, Bool, Dict
-from ipywidgets import DOMWidget
+from traitlets import Unicode, List, Bool, Dict, Instance, default
+from ipywidgets import DOMWidget, interactive, widget_serialization
 from ._frontend import module_name, module_version
 
 
@@ -121,10 +121,23 @@ class UIBuilder(DOMWidget):
     register_tool = Bool(True, sync=True)
     collapse = Bool(True, sync=True)
     events = Dict(sync=True)
+    form = Instance(interactive).tag(sync=True, **widget_serialization)
     function_or_method = None
+
+    @default('form')
+    def _form_default(self):
+        return interactive(None)
 
     def __init__(self, function_or_method, **kwargs):
         DOMWidget.__init__(self, **kwargs)
+
+        self.form = interactive(function_or_method, {
+            'manual': True,
+            'manual_name': 'Run',
+            'auto_display': True
+        })
+
+        kwargs['function_or_method'] = function_or_method
         for key, value in kwargs.items():
             setattr(self, key, value)
 

@@ -6,9 +6,10 @@
  * Copyright 2019 Regents of the University of California and the Broad Institute
  */
 import './uibuilder.css'
-import { DOMWidgetModel, ISerializers } from '@jupyter-widgets/base';
+import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetView } from "./basewidget";
+import { ManagerBase } from '@jupyter-widgets/base/lib/manager-base';
 
 
 export class UIBuilderModel extends DOMWidgetModel {
@@ -19,7 +20,13 @@ export class UIBuilderModel extends DOMWidgetModel {
     static view_module = MODULE_NAME;
     static view_module_version = MODULE_VERSION;
 
-    static serializers: ISerializers = { ...DOMWidgetModel.serializers, };
+    static serializers: ISerializers = {
+        ...DOMWidgetModel.serializers,
+        form: {
+            deserialize: (value: any, manager: ManagerBase<any>|undefined) =>
+                unpack_models(value, manager as ManagerBase<any>)
+        }
+    };
 
     defaults() {
         return {
@@ -37,14 +44,15 @@ export class UIBuilderModel extends DOMWidgetModel {
             function_import: '',
             register_tool: true,
             collapse: true,
-            events: {}
+            events: {},
+            form: undefined // TODO: TEMP
         };
     }
 }
 
 export class UIBuilderView extends BaseWidgetView {
     element:HTMLElement = document.createElement('div');
-    traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events'];
+    traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form'];
     renderers:any = {};
     template:string = `
             <div class="nbtools nbtools-output">
@@ -66,7 +74,21 @@ export class UIBuilderView extends BaseWidgetView {
                 </div>
                 <div class="nbtools-body">
                     <div class="nbtools-description nbtools-traitlet" data-traitlet="description"></div>
+                    <div class="nbtools-children nbtools-traitlet" data-traitlet="children"></div>
                 </div>
             </div>
         `;
+
+    render() {
+        super.render();
+
+        const body = this.element.querySelector('.nbtools-body') as HTMLElement;
+        const model = this.model.get('form');
+        console.log(model);
+
+        this.create_child_view(model).then((view: DOMWidgetView) => {
+            body.appendChild(view.el);
+            return view;
+        }).catch(reject('Could not add child view to box', true));
+    }
 }
