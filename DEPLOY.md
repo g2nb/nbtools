@@ -4,7 +4,7 @@
 2. Navigate to the correct directory:
 > cd nbtool-manager
 3. Upload the files by running:
-> python setup.py sdist upload -r pypitest
+> python setup.py sdist bdist_wheel; twine upload -r pypitest dist/*
 4. If the upload fails go to [https://testpypi.python.org/pypi](https://testpypi.python.org/pypi) and manually upload dist/nbtools-*.tar.gz.
 5. Test the deploy by uninstalling and reinstalling the package: 
 > sudo pip uninstall nbtools;
