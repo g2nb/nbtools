@@ -6,6 +6,7 @@ import urllib.request
 from IPython.core.display import display
 from ipywidgets import widgets
 from traitlets import Unicode, List, Bool, Dict
+from .manager import register
 
 
 def open(path_or_url):
@@ -47,26 +48,25 @@ class build_ui:
     __widget__ = None
 
     def __init__(self, *args, **kwargs):
-        import nbtools
-
         # Display if decorator with no arguments
         if len(args) > 0:
             self.func = args[0]                                 # Set the function
             self.__widget__ = UIBuilder(self.func)              # Set the widget
             self.func.__dict__["__widget__"] = self.__widget__  # Ensure function has access to widget
-            nbtools.register(self.__widget__)
 
             # Display if defined directly in a notebook
             # Don't display if loading from a library
             if self.func.__module__ == "__main__":
                 display(self.__widget__)
+
+            # Register the widget with the tool manager
+            register(self.__widget__)
+
         else:
             # Save the kwargs for decorators with arguments
             self.kwargs = kwargs
 
     def __call__(self, *args, **kwargs):
-        import nbtools
-
         # Decorators with arguments make this call at define time, while decorators without
         # arguments make this call at runtime. That's the reason for this madness.
 
@@ -77,10 +77,12 @@ class build_ui:
             self.__widget__ = UIBuilder(self.func, **self.kwargs)                # Set the widget
             self.func.__dict__["__widget__"] = self.__widget__                   # Ensure function has access to widget
             self.func._ipython_display_ = self._ipython_display_                 # Render widget when function returned
-            nbtools.register(self.__widget__)
 
             if self.func.__module__ == "__main__":  # Don't automatically display if loaded from library
                 display(self.__widget__)            # Display if defined in a notebook
+
+            # Register the widget with the tool manager
+            register(self.__widget__)
 
             # Return wrapped function
             @functools.wraps(self.func)
