@@ -1,5 +1,5 @@
 # NBTools
-NBTools is a framework for creating user-friendly Jupyter notebooks that are assessible to both programming and non-programming users alike. The framework provides:
+NBTools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike. The framework provides:
 
 * A widget and decorator which can transform any Python function into an interactive user interface.
 * A toolbox interface for encapsulating and adding new computational steps to a notebook.
