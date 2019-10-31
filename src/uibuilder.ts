@@ -45,17 +45,18 @@ export class UIBuilderModel extends DOMWidgetModel {
             register_tool: true,
             collapse: true,
             events: {},
-            form: undefined // TODO: TEMP
+            form: undefined,
+            output: undefined
         };
     }
 }
 
 export class UIBuilderView extends BaseWidgetView {
     element:HTMLElement = document.createElement('div');
-    traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form'];
+    traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
     renderers:any = {};
     template:string = `
-            <div class="nbtools nbtools-output">
+            <div class="nbtools nbtools-uibuilder">
                 <div class="nbtools-header">
                     <img class="nbtools-logo" src="" />
                     <label class="nbtools-title nbtools-traitlet" data-traitlet="name"></label>
@@ -74,7 +75,7 @@ export class UIBuilderView extends BaseWidgetView {
                 </div>
                 <div class="nbtools-body">
                     <div class="nbtools-description nbtools-traitlet" data-traitlet="description"></div>
-                    <div class="nbtools-children nbtools-traitlet" data-traitlet="children"></div>
+                    <div class="nbtools-form"></div>
                 </div>
             </div>
         `;
@@ -82,13 +83,12 @@ export class UIBuilderView extends BaseWidgetView {
     render() {
         super.render();
 
-        const body = this.element.querySelector('.nbtools-body') as HTMLElement;
-        const model = this.model.get('form');
-        console.log(model);
-
-        this.create_child_view(model).then((view: DOMWidgetView) => {
-            body.appendChild(view.el);
+        // Add the interactive form widget
+        const form_element = this.element.querySelector('.nbtools-form') as HTMLElement;
+        const form_model = this.model.get('form');
+        this.create_child_view(form_model).then((view: DOMWidgetView) => {
+            form_element.appendChild(view.el);
             return view;
-        }).catch(reject('Could not add child view to box', true));
+        }).catch(reject('Could not add form to the UI Builder', true));
     }
 }

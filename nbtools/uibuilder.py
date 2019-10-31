@@ -4,8 +4,8 @@ import functools
 import re
 import urllib.request
 from IPython.core.display import display
-from traitlets import Unicode, List, Bool, Dict, Instance, default
-from ipywidgets import DOMWidget, interactive, widget_serialization
+from traitlets import Unicode, List, Bool, Dict, Instance
+from ipywidgets import DOMWidget, interactive, widget_serialization, Output
 from ._frontend import module_name, module_version
 
 
@@ -99,6 +99,17 @@ class build_ui:
         display(self.__widget__)
 
 
+class UIForm(interactive):
+    def __init__(self, function_or_method, **kwargs):
+        interactive.__init__(self, function_or_method, {
+            'manual': True,
+            'manual_name': 'Run',
+            'auto_display': False
+        }, **kwargs)
+
+        self.children = self.children[:len(self.children)-1]
+
+
 class UIBuilder(DOMWidget):
     """
     Widget used to render Python output in a UI
@@ -112,34 +123,115 @@ class UIBuilder(DOMWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     # Declare the Traitlet values for the widget
-    name = Unicode('', sync=True)
-    description = Unicode('', sync=True)
-    output_var = Unicode('', sync=True)
-    origin = Unicode('', sync=True)
-    params = List(sync=True)
-    function_import = Unicode('', sync=True)
-    register_tool = Bool(True, sync=True)
-    collapse = Bool(True, sync=True)
+    name = Unicode(sync=True)
+    description = Unicode(sync=True)
+    output_var = Unicode(sync=True)
+    origin = Unicode(sync=True)
+    parameters = List(sync=True)
+    function_import = Unicode(sync=True)  # Deprecated
+    register_tool = Bool(sync=True)
+    collapse = Bool(sync=True)
     events = Dict(sync=True)
-    form = Instance(interactive).tag(sync=True, **widget_serialization)
+    form = Instance(interactive, (None, )).tag(sync=True, **widget_serialization)
+    output = Instance(Output, ()).tag(sync=True, **widget_serialization)
     function_or_method = None
-
-    @default('form')
-    def _form_default(self):
-        return interactive(None)
 
     def __init__(self, function_or_method, **kwargs):
         DOMWidget.__init__(self, **kwargs)
 
-        self.form = interactive(function_or_method, {
-            'manual': True,
-            'manual_name': 'Run',
-            'auto_display': True
-        })
+        # Apply defaults based on function docstring/annotations
+        self._apply_defaults(function_or_method)
 
+        # Apply custom overrides
         kwargs['function_or_method'] = function_or_method
         for key, value in kwargs.items():
-            setattr(self, key, value)
+            if key == 'parameters': self._param_customs(value)  # Special handling for params
+            else: setattr(self, key, value)
+
+        # Create the form and output child widgets
+        self.form = interactive(function_or_method, { 'manual': True, 'manual_name': 'Run', 'auto_display': False, })
+        self.form.children = self.form.children[:len(self.form.children) - 1]  # Don't display output in the form
+        self.output = self.form.out
+
+        # Display the output underneath the UI Builder widget
+        self.on_displayed(lambda widget: display(widget.output))
+
+    def _apply_defaults(self, function_or_method):
+        # Set the name based on the function name
+        self.name = function_or_method.__qualname__
+
+        # Set the description based on the docstring
+        self.description = inspect.getdoc(function_or_method) or ''
+
+        # Set the origin based on the package name or "Notebook"
+        self.origin = 'Notebook' if function_or_method.__module__ == '__main__' else function_or_method.__module__
+
+        # register_tool and collapse are True by default
+        self.register_tool = True
+        self.collapse = True
+
+        # Read parameters, values and annotations from the signature
+        sig = inspect.signature(function_or_method)
+        self.parameters = self._param_defaults(sig)
+
+    @staticmethod
+    def _param_defaults(sig):
+        """Read params, values and annotations from the signature"""
+        params = []  # Return a list of parameter dicts
+
+        for param in sig.parameters.values():
+            params.append({
+                "name": param.name,
+                "label": param.name,
+                "optional": param.default != inspect.Signature.empty,
+                "default": UIBuilder._safe_default(param.default),
+                "description": param.annotation if param.annotation != inspect.Signature.empty else '',
+                "hide": False,
+                "type": UIBuilder._guess_type(param.default),
+                "kinds": None,
+                "choices": UIBuilder._choice_defaults(param),
+                "id": None,
+                "events": None
+            })
+
+        return params
+
+    def _param_customs(self, customs):
+        """Apply custom overrides to parameters"""
+        for param in self.parameters:   # Iterate over parameters
+            if param['name'] in customs:  # If there are custom values
+                for key, value in customs.items():
+                    if key == 'name': customs['label'] = value  # Override display name only
+                    else: setattr(param, key, value)
+
+        # TODO: Special handling for output_var
+
+    @staticmethod
+    def _safe_default(default):
+        """If not safe to serialize in a traitlet, cast to a string"""
+        if default == inspect.Signature.empty: return ''
+        elif isinstance(default, (int, str, bool, float)): return default
+        else: return str(default)
+
+    @staticmethod
+    def _guess_type(val):
+        """Guess the input type of the parameter based off the default value, if unknown use text"""
+        if isinstance(val, bool): return "choice"
+        elif isinstance(val, int): return "number"
+        elif isinstance(val, float): return "number"
+        elif isinstance(val, str): return "text"
+        elif hasattr(val, 'read'): return "file"
+        else: return "text"
+
+    @staticmethod
+    def _choice_defaults(param):
+        # Handle boolean parameters
+        if isinstance(param.default, bool):
+            return { 'True': True, 'False': False }
+        # TODO: Handle enums here in the future
+        else:
+            return None
+
 
         # TODO: Old code below this -- UPDATE IT!
     #     import nbtools
