@@ -102,8 +102,6 @@ def modified():
 
 
 def _send_to_frontend(origin, id, name, load, render, description=None, version=None, tags=None, attributes=None):
-    _lazy_init()
-
     # Clean optional metadata for inclusion in JavaScript
     clean_description = "null" if description is None else description.replace('"', '\\"')
     clean_version = "null" if version is None else version.replace('"', '\\"')
