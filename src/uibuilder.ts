@@ -51,32 +51,11 @@ export class UIBuilderModel extends BaseWidgetModel {
 }
 
 export class UIBuilderView extends BaseWidgetView {
-    element:HTMLElement = document.createElement('div');
     traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
     renderers:any = {};
-    template:string = `
-            <div class="nbtools nbtools-uibuilder">
-                <div class="nbtools-header">
-                    <img class="nbtools-logo" src="" />
-                    <label class="nbtools-title nbtools-traitlet" data-traitlet="name"></label>
-                    <div class="nbtools-controls">
-                        <button class="nbtools-collapse">
-                            <span class="fa fa-minus"></span>
-                        </button>
-                        <button class="nbtools-gear">
-                            <span class="fa fa-cog"></span>
-                            <span class="fa fa-caret-down"></span>
-                        </button>
-                        <ul class="nbtools-menu" style="display: none;">
-                            <li class="nbtools-toggle-code">Toggle Code View</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="nbtools-body">
-                    <div class="nbtools-description nbtools-traitlet" data-traitlet="description"></div>
-                    <div class="nbtools-form"></div>
-                </div>
-            </div>
+    body:string = `
+        <div class="nbtools-description nbtools-traitlet" data-traitlet="description"></div>
+        <div class="nbtools-form"></div>
         `;
 
     render() {

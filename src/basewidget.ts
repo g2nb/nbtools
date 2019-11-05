@@ -10,7 +10,23 @@ export class BaseWidgetView extends DOMWidgetView {
     element:HTMLElement = document.createElement('div');
     traitlets:string[] = [];
     renderers:any = {};
-    template:string = `<div class="nbtools"></div>`;
+    template:string = `<div class="nbtools">
+                           <div class="nbtools-header"></div>
+                           <div class="nbtools-body"></div>
+                       </div>`;
+    header:string = `<img class="nbtools-logo" src="" />
+                     <label class="nbtools-title" data-traitlet="name"></label>
+                     <div class="nbtools-controls">
+                         <button class="nbtools-collapse">
+                             <span class="fa fa-minus"></span>
+                         </button>
+                         <button class="nbtools-gear">
+                             <span class="fa fa-cog"></span>
+                             <span class="fa fa-caret-down"></span>
+                         </button>
+                         <ul class="nbtools-menu" style="display: none;"></ul>
+                     </div>`;
+    body:string = ``;
 
     render() {
         super.render();
@@ -33,6 +49,9 @@ export class BaseWidgetView extends DOMWidgetView {
         this.element = new DOMParser().parseFromString(this.template, "text/html")
             .querySelector('div.nbtools') as HTMLElement;
 
+        // Apply the header
+        (this.element.querySelector('div.nbtools-header') as HTMLElement).innerHTML = this.header;
+
         // Set the logo
         const logo = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
         logo.src = "https://notebook.genepattern.org/hub/logo"; // FIXME: NBToolManager.options.logo;
@@ -46,16 +65,31 @@ export class BaseWidgetView extends DOMWidgetView {
         gear.addEventListener("click", () => this.toggle_menu());
 
         // Attach toggle code event
-        const toggle_code = this.element.querySelector("li.nbtools-toggle-code") as HTMLLIElement;
-        toggle_code.addEventListener("click", () => this.toggle_code());
+        this.add_menu_item('Toggle Code View', () => this.toggle_code());
+
+        // Apply the body
+        (this.element.querySelector('div.nbtools-body') as HTMLElement).innerHTML = this.body;
 
         // Set the element
         this.setElement(this.element);
     }
 
+    add_menu_item(label:string, callback:any) {
+        // Create the menu item
+        const item = new DOMParser().parseFromString(`<li>${label}</li>`, "text/html")
+            .querySelector('li') as HTMLElement;
+
+        // Attach the menu item
+        const menu = this.element.querySelector('.nbtools-menu') as HTMLUListElement;
+        menu.prepend(item);
+
+        // Attach the click event
+        item.addEventListener('click', () => callback());
+    }
+
     traitlet_changed(event:any) {
         const name = typeof event === "string" ? event : Object.keys(event.changed)[0];
-        const elements = this.element.querySelectorAll(`.nbtools-traitlet[data-traitlet=${name}]`);
+        const elements = this.element.querySelectorAll(`[data-traitlet=${name}]`);
         elements.forEach(element => {
             if (name in this.renderers) element.innerHTML = this.renderers[name](this.model.get(name));
             else element.innerHTML = this.model.get(name)
@@ -66,6 +100,7 @@ export class BaseWidgetView extends DOMWidgetView {
         const element = this.element;
 
         // TODO: Implement better event handling for this
+        // TODO: Call some sort of EnvironmentManager that determines whether this is lab or notebook and does the right kind of hide
         setTimeout(() => {
             let input_block = element.closest('.jp-Cell') as HTMLElement;
             if (input_block) input_block = input_block.querySelector('.jp-Cell-inputWrapper') as HTMLElement;
