@@ -8,7 +8,7 @@ from numbers import Integral, Real
 from IPython.core.display import display
 from traitlets import Unicode, List, Bool, Dict, Instance
 from ipython_genutils.py3compat import string_types, unicode_type
-from ipywidgets import DOMWidget, interactive, widget_serialization, Output, Text, Checkbox, IntSlider, FloatSlider, GridBox, Label, Layout, ValueWidget
+from ipywidgets import DOMWidget, interactive, widget_serialization, Output, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown
 from ._frontend import module_name, module_version
 
 
@@ -103,13 +103,15 @@ class build_ui:
 
 
 class TextFormInput(GridBox, ValueWidget):
+    dom_class = 'nbtools-textinput'
     label = Label(layout=Layout(width='auto', grid_area='label'))
     input = Text(layout=Layout(width='auto', grid_area='input'))
     description = Label(layout=Layout(width='auto', grid_area='description'))
 
     def __init__(self, spec, **kwargs):
         self._apply_spec(spec)
-        GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=['nbtools-textinput'], layout=Layout(
+        GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=[self.dom_class],
+             layout=Layout(
                 width='100%',
                 grid_template_rows='auto auto',
                 grid_template_columns='25% 75%',
@@ -137,6 +139,25 @@ class TextFormInput(GridBox, ValueWidget):
 
         self.description.value = spec['description']
         self.description.description = spec['description']
+
+
+class IntegerFormInput(TextFormInput):
+    dom_class = 'nbtools-numberinput'
+    input = IntText(layout=Layout(width='auto', grid_area='input'))
+
+
+class FloatFormInput(TextFormInput):
+    dom_class = 'nbtools-numberinput'
+    input = FloatText(layout=Layout(width='auto', grid_area='input'))
+
+
+class SelectFormInput(TextFormInput):
+    dom_class = 'nbtools-selectinput'
+
+    def __init__(self, spec, **kwargs):
+        choices = spec['choices']
+        self.input = Dropdown(options=choices, layout=Layout(width='auto', grid_area='input'))
+        super(SelectFormInput, self).__init__(spec, **kwargs)
 
 
 class InteractiveForm(interactive):
@@ -169,13 +190,11 @@ class InteractiveForm(interactive):
         if isinstance(default_value, string_types):
             return TextFormInput(spec, value=unicode_type(default_value))
         elif isinstance(default_value, bool):
-            return Checkbox(value=default_value)
+            return SelectFormInput(spec, value=default_value)
         elif isinstance(default_value, Integral):
-            min, max, value = super._get_min_max_value(None, None, default_value)
-            return IntSlider(value=default_value, min=min, max=max)
+            return IntegerFormInput(spec, value=default_value)
         elif isinstance(default_value, Real):
-            min, max, value = super._get_min_max_value(None, None, default_value)
-            return FloatSlider(value=default_value, min=min, max=max)
+            return FloatFormInput(spec, value=default_value)
         else:
             return Text(value=unicode_type(default_value))
 
