@@ -88,7 +88,7 @@ export class UIBuilderView extends BaseWidgetView {
         const form_model = this.model.get('form');
         this.create_child_view(form_model).then((view: DOMWidgetView) => {
             form_element.appendChild(view.el);
-            return view;
+            // return view;
         }).catch(reject('Could not add form to the UI Builder', true));
     }
 }

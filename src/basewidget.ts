@@ -1,5 +1,6 @@
 import './basewidget.css'
-import { DOMWidgetView } from '@jupyter-widgets/base';
+import { DOMWidgetView } from "@jupyter-widgets/base";
+// import { BoxView } from '@jupyter-widgets/controls';
 
 
 export class BaseWidgetView extends DOMWidgetView {
@@ -9,6 +10,8 @@ export class BaseWidgetView extends DOMWidgetView {
     template:string = `<div class="nbtools"></div>`;
 
     render() {
+        super.render();
+
         // Build the widget
         this.build();
 
