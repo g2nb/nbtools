@@ -6,13 +6,12 @@
  * Copyright 2019 Regents of the University of California and the Broad Institute
  */
 import './uibuilder.css'
-import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { BaseWidgetView } from "./basewidget";
-import { ManagerBase } from '@jupyter-widgets/base/lib/manager-base';
+import { ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
+import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 
 
-export class UIBuilderModel extends DOMWidgetModel {
+export class UIBuilderModel extends BaseWidgetModel {
     static model_name = 'UIBuilderModel';
     static model_module = MODULE_NAME;
     static model_module_version = MODULE_VERSION;
@@ -21,7 +20,7 @@ export class UIBuilderModel extends DOMWidgetModel {
     static view_module_version = MODULE_VERSION;
 
     static serializers: ISerializers = {
-        ...DOMWidgetModel.serializers,
+        ...BaseWidgetModel.serializers,
         form: {
             deserialize: (value: any, manager: ManagerBase<any>|undefined) =>
                 unpack_models(value, manager as ManagerBase<any>)
@@ -86,9 +85,9 @@ export class UIBuilderView extends BaseWidgetView {
         // Add the interactive form widget
         const form_element = this.element.querySelector('.nbtools-form') as HTMLElement;
         const form_model = this.model.get('form');
-        this.create_child_view(form_model).then((view: DOMWidgetView) => {
+        this.create_child_view(form_model).then((view) => {
             form_element.appendChild(view.el);
-            // return view;
+            return view;
         }).catch(reject('Could not add form to the UI Builder', true));
     }
 }

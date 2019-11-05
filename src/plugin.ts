@@ -7,7 +7,7 @@ import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
 
 
-const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports };
+const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports } as any;
 const EXTENSION_ID = '@genepattern/nbtools:plugin';
 
 /**

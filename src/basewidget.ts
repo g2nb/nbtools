@@ -1,6 +1,9 @@
 import './basewidget.css'
-import { DOMWidgetView } from "@jupyter-widgets/base";
-// import { BoxView } from '@jupyter-widgets/controls';
+import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";
+
+export class BaseWidgetModel extends DOMWidgetModel {
+    // Placeholder in the inheritance tree, in case it is needed later
+}
 
 
 export class BaseWidgetView extends DOMWidgetView {

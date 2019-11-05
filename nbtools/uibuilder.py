@@ -109,7 +109,7 @@ class TextFormInput(GridBox, ValueWidget):
 
     def __init__(self, spec, **kwargs):
         self._apply_spec(spec)
-        GridBox.__init__(self, [self.label, self.input, self.description], layout=Layout(
+        GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=['nbtools-textinput'], layout=Layout(
                 width='100%',
                 grid_template_rows='auto auto',
                 grid_template_columns='25% 75%',
