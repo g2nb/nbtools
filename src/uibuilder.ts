@@ -7,7 +7,7 @@
  */
 import './uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
+import { DOMWidgetModel, DOMWidgetView, ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 
 
@@ -54,19 +54,65 @@ export class UIBuilderView extends BaseWidgetView {
     traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
     renderers:any = {};
     body:string = `
-        <div class="nbtools-description nbtools-traitlet" data-traitlet="description"></div>
-        <div class="nbtools-form"></div>
-        `;
+        <div class="nbtools-description" data-traitlet="description"></div>
+        <div class="nbtools-form"></div>`;
 
     render() {
+        // super.render();
+        //
+        // // Add the interactive form widget
+        // const form_element = this.element.querySelector('.nbtools-form') as HTMLElement;
+        // const form_model = this.model.get('form');
+        // this.create_child_view(form_model).then((view) => {
+        //     form_element.appendChild(view.el);
+        //     return view;
+        // }).catch(reject('Could not add form to the UI Builder', true));
+
         super.render();
 
+        // Attach the Reset Parameters gear option
+        this.add_menu_item('Reset Parameters', () => this.reset_parameters());
+
         // Add the interactive form widget
-        const form_element = this.element.querySelector('.nbtools-form') as HTMLElement;
-        const form_model = this.model.get('form');
-        this.create_child_view(form_model).then((view) => {
-            form_element.appendChild(view.el);
+        const element = this.element.querySelector('.nbtools-form') as HTMLElement;
+        const model = this.model.get('form');
+
+        this.create_child_view(model).then((view:any) => {
+            element.appendChild(view.el);
+            UIBuilderView._initialize_display(model, view);
             return view;
         }).catch(reject('Could not add form to the UI Builder', true));
+    }
+
+    /**
+     * Recursively trigger the 'displayed' event for all child widgets
+     *
+     * @param {DOMWidgetModel} model
+     * @param {DOMWidgetView | any} view
+     * @private
+     */
+    static _initialize_display(model:DOMWidgetModel, view:DOMWidgetView|any) {
+        // Trigger the display for this widget
+        view.trigger('displayed');
+
+        // Recursively trigger th display for all child widgets
+        if ('children_views' in view) {
+            view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
+                children.forEach((child) => {
+                    UIBuilderView._initialize_display(child.model, child);
+                });
+            });
+        }
+    }
+
+    reset_parameters() {
+        const params = this.model.get('params');
+        params.forEach((spec:any) => {
+            // TODO: Get input element and set value to default
+            // const name = spec['name'];
+            // const value = spec['default'];
+            // this.element.querySelector('.xxx');
+            console.log('reset_parameters')
+        });
     }
 }
