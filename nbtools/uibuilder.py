@@ -104,11 +104,14 @@ class build_ui:
 
 class TextFormInput(GridBox, ValueWidget):
     dom_class = 'nbtools-textinput'
-    label = Label(layout=Layout(width='auto', grid_area='label'))
-    input = Text(layout=Layout(width='auto', grid_area='input'))
-    description = Label(layout=Layout(width='auto', grid_area='description'))
+    input_class = Text
 
     def __init__(self, spec, **kwargs):
+        # Initialize label, input & description, if not already initialized by subclass
+        if not hasattr(self, 'label'): self.label = Label(layout=Layout(width='auto', grid_area='label'))
+        if not hasattr(self, 'input'): self.input = self.input_class(layout=Layout(width='auto', grid_area='input'))
+        if not hasattr(self, 'description'): self.description = Label(layout=Layout(width='auto', grid_area='description'))
+
         self._apply_spec(spec)
         GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=[self.dom_class],
              layout=Layout(
@@ -143,19 +146,20 @@ class TextFormInput(GridBox, ValueWidget):
 
 class IntegerFormInput(TextFormInput):
     dom_class = 'nbtools-numberinput'
-    input = IntText(layout=Layout(width='auto', grid_area='input'))
+    input_class = IntText
 
 
 class FloatFormInput(TextFormInput):
     dom_class = 'nbtools-numberinput'
-    input = FloatText(layout=Layout(width='auto', grid_area='input'))
+    input_class = FloatText
 
 
 class SelectFormInput(TextFormInput):
     dom_class = 'nbtools-selectinput'
+    input_class = Dropdown
 
     def __init__(self, spec, **kwargs):
-        choices = spec['choices']
+        choices = spec['choices']  # Special handling of choices for dropdown
         self.input = Dropdown(options=choices, layout=Layout(width='auto', grid_area='input'))
         super(SelectFormInput, self).__init__(spec, **kwargs)
 
