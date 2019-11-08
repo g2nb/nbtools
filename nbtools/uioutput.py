@@ -1,13 +1,9 @@
-"""
-TODO: Add module docstring
-"""
-
-from ipywidgets import DOMWidget
 from traitlets import Unicode, List
 from ._frontend import module_name, module_version
+from .basewidget import BaseWidget
 
 
-class UIOutput(DOMWidget):
+class UIOutput(BaseWidget):
     """
     Widget used to render Python output in a UI
     """
@@ -25,8 +21,3 @@ class UIOutput(DOMWidget):
     files = List(Unicode, []).tag(sync=True)
     text = Unicode('').tag(sync=True)
     visualization = Unicode('').tag(sync=True)
-
-    def __init__(self, **kwargs):
-        DOMWidget.__init__(self, **kwargs)
-        for key, value in kwargs.items():
-            setattr(self, key, value)

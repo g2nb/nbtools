@@ -58,16 +58,6 @@ export class UIBuilderView extends BaseWidgetView {
         <div class="nbtools-form"></div>`;
 
     render() {
-        // super.render();
-        //
-        // // Add the interactive form widget
-        // const form_element = this.element.querySelector('.nbtools-form') as HTMLElement;
-        // const form_model = this.model.get('form');
-        // this.create_child_view(form_model).then((view) => {
-        //     form_element.appendChild(view.el);
-        //     return view;
-        // }).catch(reject('Could not add form to the UI Builder', true));
-
         super.render();
 
         // Attach the Reset Parameters gear option
