@@ -4,6 +4,9 @@ from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, F
 
 
 class BaseFormInput(GridBox, ValueWidget):
+    """Base class for UI Builder form elements
+
+    This class is not intended to be instantiated directly. Use its subclasses instead."""
     dom_class = 'nbtools-input'
     input_class = Text
 

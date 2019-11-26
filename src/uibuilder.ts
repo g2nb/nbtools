@@ -40,7 +40,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             name: 'Python Function',
             description: '',
             origin: '',
-            params: [],
+            _parameters: [],
             function_import: '',
             register_tool: true,
             collapse: true,
@@ -52,7 +52,7 @@ export class UIBuilderModel extends BaseWidgetModel {
 }
 
 export class UIBuilderView extends BaseWidgetView {
-    traitlets = ['name', 'description', 'origin', 'params', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
+    traitlets = ['name', 'description', 'origin', '_parameters', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
     renderers:any = {};
     body:string = `
         <div class="nbtools-description" data-traitlet="description"></div>
@@ -101,8 +101,20 @@ export class UIBuilderView extends BaseWidgetView {
             else this.el.addEventListener(key, func);
         });
 
-        // Handle parameter IDs and events
-        // const params = this.model.get('params');
+        // Handle parameter IDs and parameter events
+        element_rendered(this.el).then(() => {
+            const json_parameters = this.model.get('_parameters');
+            const dom_parameters = this.el.querySelectorAll('.nbtools-input');
+            for (let i = 0; i < json_parameters.length; i++) {
+                const param_spec = json_parameters[i];
+                const param_el = dom_parameters[i];
+
+                // Attach specified ID as a data-id attribute
+                if (!!param_spec.id) param_el.setAttribute('data-id', param_spec.id);
+
+                // TODO: Attach parameter events
+            }
+        });
     }
 
     /**
