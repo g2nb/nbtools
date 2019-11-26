@@ -3,8 +3,8 @@ from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password
 
 
-class TextFormInput(GridBox, ValueWidget):
-    dom_class = 'nbtools-textinput'
+class BaseFormInput(GridBox, ValueWidget):
+    dom_class = 'nbtools-input'
     input_class = Text
 
     def __init__(self, spec, **kwargs):
@@ -13,8 +13,8 @@ class TextFormInput(GridBox, ValueWidget):
         if not hasattr(self, 'input'): self.input = self.input_class(layout=Layout(width='auto', grid_area='input'))
         if not hasattr(self, 'description'): self.description = Label(layout=Layout(width='auto', grid_area='description'))
 
-        self._apply_spec(spec)
-        GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=[self.dom_class],
+        # Build the GridBox
+        GridBox.__init__(self, [self.label, self.input, self.description], _dom_classes=['nbtools-input', self.dom_class],
              layout=Layout(
                 width='100%',
                 grid_template_rows='auto auto',
@@ -23,6 +23,9 @@ class TextFormInput(GridBox, ValueWidget):
                     "label input"
                     ". description"
                 '''), **kwargs)
+
+        # Apply overrides from the parameters={} spec
+        self._apply_spec(spec)
 
     @property
     def value(self):
@@ -34,33 +37,45 @@ class TextFormInput(GridBox, ValueWidget):
 
     def _apply_spec(self, spec):
         """Apply the parameter spec to the widget"""
-        # TODO: Handle other parameter attributes like hide=True here
-        # Set self.label.description=spec.name etc.?
+
+        # Set the display name
         self.label.value = spec['label']
         self.label.description = spec['label']
 
+        # Set the default value
         self.input.value = spec['default']
 
+        # Set the description
         self.description.value = spec['description']
         self.description.description = spec['description']
 
+        # Hide the parameter if hide=True
+        if spec['hide']: self.layout.display = 'none'
 
-class PasswordFormInput(TextFormInput):
+        # TODO: Handle other parameter attributes like id='foo
+
+
+class TextFormInput(BaseFormInput):
+    dom_class = 'nbtools-textinput'
+    input_class = Text
+
+
+class PasswordFormInput(BaseFormInput):
     dom_class = 'nbtools-passwordinput'
     input_class = Password
 
 
-class IntegerFormInput(TextFormInput):
+class IntegerFormInput(BaseFormInput):
     dom_class = 'nbtools-numberinput'
     input_class = IntText
 
 
-class FloatFormInput(TextFormInput):
+class FloatFormInput(BaseFormInput):
     dom_class = 'nbtools-numberinput'
     input_class = FloatText
 
 
-class SelectFormInput(TextFormInput):
+class SelectFormInput(BaseFormInput):
     dom_class = 'nbtools-selectinput'
     input_class = Dropdown
 
