@@ -29,3 +29,17 @@ export function extract_file_name(path:string) {
 export function extract_file_type(path:string) {
     return path.split('.').pop();
 }
+
+/**
+ * Wait until the specified element is found in the DOM and then execute a promise
+ *
+ * @param {HTMLElement} el
+ */
+export function element_rendered(el:HTMLElement) {
+    return new Promise((resolve, reject) => {
+        (function element_in_dom() {
+            if (document.body.contains(el)) return resolve(el);
+            else setTimeout(element_in_dom, 200);
+        })();
+    });
+}

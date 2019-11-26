@@ -9,6 +9,7 @@ import './uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { DOMWidgetModel, DOMWidgetView, ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
+import { element_rendered } from "./utils";
 
 
 export class UIBuilderModel extends BaseWidgetModel {
@@ -72,6 +73,36 @@ export class UIBuilderView extends BaseWidgetView {
             UIBuilderView._initialize_display(model, view);
             return view;
         }).catch(reject('Could not add form to the UI Builder', true));
+
+        // Attach ID and event callbacks
+        this._attach_callbacks();
+    }
+
+    /**
+     * Attach ID and event callbacks to the UI Builder
+     *
+     * @private
+     */
+    _attach_callbacks() {
+        // Handle widget events
+        const widget_events = this.model.get('events');
+        Object.keys(widget_events).forEach((key) => {
+            const str_func = widget_events[key];
+            const func = new Function(str_func);
+
+            // Handle the load event as a special case (run now)
+            if (key === 'load') element_rendered(this.el).then(() => func.call(this));
+
+            // Handle the run event as a special case (bind as click to the Run button)
+            else if (key === 'run')
+                element_rendered(this.el).then(() => this.el.querySelector('.jupyter-button').addEventListener('click', func));
+
+            // Otherwise, attach the event
+            else this.el.addEventListener(key, func);
+        });
+
+        // Handle parameter IDs and events
+        // const params = this.model.get('params');
     }
 
     /**
