@@ -55,14 +55,19 @@ export class UIBuilderView extends BaseWidgetView {
     traitlets = ['name', 'description', 'origin', '_parameters', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
     renderers:any = {};
     body:string = `
+        <button class="nbtools-run">Run</button>
         <div class="nbtools-description" data-traitlet="description"></div>
-        <div class="nbtools-form"></div>`;
+        <div class="nbtools-form"></div>
+        <button class="nbtools-run">Run</button>`;
 
     render() {
         super.render();
 
         // Attach the Reset Parameters gear option
         this.add_menu_item('Reset Parameters', () => this.reset_parameters());
+
+        // Attach the Run button callbacks
+        this.activate_run_buttons();
 
         // Add the interactive form widget
         const element = this.element.querySelector('.nbtools-form') as HTMLElement;
@@ -76,6 +81,12 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Attach ID and event callbacks once the view is rendered
         element_rendered(this.el).then(() => this._attach_callbacks());
+    }
+
+    activate_run_buttons() {
+        this.el.querySelectorAll('.nbtools-run').forEach((button:HTMLElement) =>
+            button.addEventListener('click', () => this.el.querySelector('.jupyter-button').click())
+        )
     }
 
     /**

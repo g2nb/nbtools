@@ -1,0 +1,32 @@
+.nbtools-run {
+    position: absolute;
+    z-index: 1;
+    background-color: rgba(43, 43, 43, 0.8);
+    color: white;
+    border: 1px solid rgba(43, 43, 43, 0.8);
+    padding: 6px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.nbtools-run:hover {
+    background-color: rgba(43, 43, 43, 0.9);
+}
+
+.nbtools-run:active {
+    background-color: rgba(43, 43, 43, 0.7);
+}
+
+.nbtools-run:first-child {
+    right: 5px;
+    top: 34px;
+}
+
+.nbtools-run:last-child {
+    right: 5px;
+    bottom: 5px;
+}
+
+.nbtools-form .jupyter-button {
+    display: none;
+}
