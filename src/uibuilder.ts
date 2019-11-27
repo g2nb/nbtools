@@ -83,9 +83,18 @@ export class UIBuilderView extends BaseWidgetView {
         element_rendered(this.el).then(() => this._attach_callbacks());
     }
 
+    /**
+     * Attach the click event to each Run button
+     */
     activate_run_buttons() {
         this.el.querySelectorAll('.nbtools-run').forEach((button:HTMLElement) =>
-            button.addEventListener('click', () => this.el.querySelector('.jupyter-button').click())
+            button.addEventListener('click', () => {
+                // Execute the interact instance
+                this.el.querySelector('.jupyter-button').click();
+
+                // Collapse the widget, if collapse=True
+                if (this.model.get('collapse')) this.el.querySelector('.nbtools-collapse').click();
+            })
         )
     }
 
