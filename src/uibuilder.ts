@@ -74,8 +74,8 @@ export class UIBuilderView extends BaseWidgetView {
             return view;
         }).catch(reject('Could not add form to the UI Builder', true));
 
-        // Attach ID and event callbacks
-        this._attach_callbacks();
+        // Attach ID and event callbacks once the view is rendered
+        element_rendered(this.el).then(() => this._attach_callbacks());
     }
 
     /**
@@ -86,34 +86,48 @@ export class UIBuilderView extends BaseWidgetView {
     _attach_callbacks() {
         // Handle widget events
         const widget_events = this.model.get('events');
-        Object.keys(widget_events).forEach((key) => {
-            const str_func = widget_events[key];
-            const func = new Function(str_func);
-
-            // Handle the load event as a special case (run now)
-            if (key === 'load') element_rendered(this.el).then(() => func.call(this));
-
-            // Handle the run event as a special case (bind as click to the Run button)
-            else if (key === 'run')
-                element_rendered(this.el).then(() => this.el.querySelector('.jupyter-button').addEventListener('click', func));
-
-            // Otherwise, attach the event
-            else this.el.addEventListener(key, func);
-        });
+        UIBuilderView._attach_all_events(this.el, widget_events);
 
         // Handle parameter IDs and parameter events
-        element_rendered(this.el).then(() => {
-            const json_parameters = this.model.get('_parameters');
-            const dom_parameters = this.el.querySelectorAll('.nbtools-input');
-            for (let i = 0; i < json_parameters.length; i++) {
-                const param_spec = json_parameters[i];
-                const param_el = dom_parameters[i];
+        const json_parameters = this.model.get('_parameters');
+        const dom_parameters = this.el.querySelectorAll('.nbtools-input');
+        for (let i = 0; i < json_parameters.length; i++) {
+            const param_spec = json_parameters[i];
+            const param_el = dom_parameters[i];
 
-                // Attach specified ID as a data-id attribute
-                if (!!param_spec.id) param_el.setAttribute('data-id', param_spec.id);
+            // Attach specified ID as a data-id attribute
+            if (!!param_spec.id) param_el.setAttribute('data-id', param_spec.id);
 
-                // TODO: Attach parameter events
+            // Attach parameter events
+            if (!!param_spec.events) {
+                UIBuilderView._attach_all_events(param_el, param_spec.events);
             }
+        }
+    }
+
+    /**
+     * Attach a map of events to the given DOM element (widget or parameter)
+     *
+     * @param {HTMLElement} element
+     * @param event_map
+     * @private
+     */
+    static _attach_all_events(element:HTMLElement, event_map:any) {
+        Object.keys(event_map).forEach((key) => {
+            const str_func = event_map[key];
+            const func = new Function(str_func) as EventListener;
+
+            // Handle the load event as a special case (run now)
+            if (key === 'load') func.call(this);
+
+            // Handle the run event as a special case (bind as click to the Run button)
+            else if (key === 'run') {
+                const run_button = element.querySelector('.jupyter-button');
+                if (!!run_button) run_button.addEventListener('click', func);
+            }
+
+            // Otherwise, attach the event
+            else element.addEventListener(key, func);
         });
     }
 

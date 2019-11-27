@@ -109,7 +109,8 @@ class UIBuilder(BaseWidget):
         # Apply defaults based on function docstring/annotations
         self._apply_defaults(function_or_method)
 
-        # Apply custom overrides and call superclass constructor
+        # Set the function and call superclass constructor
+        self.function_or_method = function_or_method
         kwargs['function_or_method'] = function_or_method
         BaseWidget.__init__(self, **kwargs)
 
@@ -137,17 +138,18 @@ class UIBuilder(BaseWidget):
         self.register_tool = True
         self.collapse = True
 
-        # Read parameters, values and annotations from the signature
-        sig = inspect.signature(function_or_method)
-        self._parameters = self._param_defaults(sig)
-
     @property
     def parameters(self):
         return self._parameters
 
     @parameters.setter
     def parameters(self, value):
-        self._param_customs(value)
+        # Read parameters, values and annotations from the signature
+        sig = inspect.signature(self.function_or_method)
+        defaults = self._param_defaults(sig)
+
+        # Merge the default parameter values with the custom overrides
+        self._parameters = self._param_customs(defaults, value)
 
     @staticmethod
     def _param_defaults(sig):
@@ -172,9 +174,9 @@ class UIBuilder(BaseWidget):
 
         return params
 
-    def _param_customs(self, customs):
-        """Apply custom overrides to parameters"""
-        for param in self.parameters:   # Iterate over parameters
+    def _param_customs(self, defaults, customs):
+        """Apply custom overrides to parameter defaults"""
+        for param in defaults:   # Iterate over parameters
             if param['name'] in customs:  # If there are custom values
                 for key, value in customs[param['name']].items():
                     if key == 'name': param['label'] = value  # Override display name only
@@ -182,6 +184,7 @@ class UIBuilder(BaseWidget):
                         param[key] = value
 
         # TODO: Special handling for output_var
+        return defaults
 
     @staticmethod
     def _safe_default(default):
