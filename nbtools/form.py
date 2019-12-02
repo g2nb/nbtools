@@ -46,7 +46,7 @@ class BaseFormInput(GridBox, ValueWidget):
         self.label.description = spec['label']
 
         # Set the default value
-        self.input.value = spec['default']
+        self.input.value = BaseFormInput.type_safe(spec['default'], spec['type'])
 
         # Set the description
         self.description.value = spec['description']
@@ -55,7 +55,23 @@ class BaseFormInput(GridBox, ValueWidget):
         # Hide the parameter if hide=True
         if spec['hide']: self.layout.display = 'none'
 
-        # TODO: Handle other parameter attributes like id='foo
+    @staticmethod
+    def type_safe(val, to_type):
+        # Handle casting to numbers, default to 0 on an error
+        if to_type == 'number':
+            try: return int(val)
+            except (ValueError, TypeError):
+                try: return float(val)
+                except (ValueError, TypeError): return 0
+        # Handle casting to strings, default to empty string
+        if to_type == 'text' or to_type == 'password':
+            try:
+                return str(val)
+            except (ValueError, TypeError):
+                return ''
+        # Otherwise, just return the value
+        else:
+            return val
 
 
 class TextFormInput(BaseFormInput):
@@ -113,9 +129,23 @@ class InteractiveForm(interactive):
     def widget_from_spec(spec):
         """Instantiate a widget based on the default value in the spec"""
         default_value = spec['default']
-        # TODO: Handle type override
 
-        if isinstance(default_value, string_types):
+        # Use specified type, or fall back on default from value
+        type = spec['type']
+
+        if type == 'text':
+            return TextFormInput(spec, value=unicode_type(default_value))
+        elif type == 'password':
+            return PasswordFormInput(spec, value=default_value)
+        elif type == 'choice':
+            return SelectFormInput(spec, value=default_value)
+        elif type == 'number' and isinstance(default_value, Integral):
+            return IntegerFormInput(spec, value=default_value)
+        elif type == 'number' and isinstance(default_value, Real):
+            return FloatFormInput(spec, value=default_value)
+
+        # No known type specified, guess based on default value
+        elif isinstance(default_value, string_types):
             return TextFormInput(spec, value=unicode_type(default_value))
         elif isinstance(default_value, bool):
             return SelectFormInput(spec, value=default_value)

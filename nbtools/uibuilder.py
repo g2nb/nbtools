@@ -210,7 +210,7 @@ class UIBuilder(BaseWidget):
             return { 'True': True, 'False': False }
         # TODO: Handle enums here in the future
         else:
-            return None
+            return {}
 
     @staticmethod
     def _deprecation_warnings(kwargs):
