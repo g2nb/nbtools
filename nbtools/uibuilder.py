@@ -117,6 +117,10 @@ class UIBuilder(BaseWidget):
         # Give deprecation warnings
         self._deprecation_warnings(kwargs)
 
+        # Force the parameters setter to be called before instantiating the form
+        # This is a hack necessary to prevent interact from throwing an error if parameters override is given
+        if not self.parameters: self.parameters = self.parameters
+
         # Create the form and output child widgets
         self.form = InteractiveForm(function_or_method, self.parameters)
         self.output = self.form.out
