@@ -90,6 +90,9 @@ export class UIBuilderView extends BaseWidgetView {
     activate_run_buttons() {
         this.el.querySelectorAll('.nbtools-run').forEach((button:HTMLElement) =>
             button.addEventListener('click', () => {
+                // Validate required parameters and return if not valid
+                if(!this.validate()) return;
+
                 // Execute the interact instance
                 this.el.querySelector('.jupyter-button').click();
 
@@ -97,6 +100,27 @@ export class UIBuilderView extends BaseWidgetView {
                 if (this.model.get('collapse')) this.el.querySelector('.nbtools-collapse').click();
             })
         )
+    }
+
+    /**
+     * Check to make sure required parameters are checked out.
+     * Highlight missing parameters. Return whether valid.
+     */
+    validate() {
+        let valid = true;
+
+        const form = this.el.querySelector('.nbtools-form');
+        form.querySelectorAll('.nbtools-input').forEach((param:HTMLElement) => {
+            if (!param.classList.contains('required')) return;  // Ignore optional parameters
+            const input = param.querySelector('input, select') as HTMLFormElement;
+            if (input.value.trim() === '') {                    // If empty
+                param.classList.add('missing');                 // Add missing style
+                valid = false;                                  // Not all params are valid
+            }
+            else param.classList.remove('missing');      // Remove missing style
+        });
+
+        return valid;
     }
 
     /**

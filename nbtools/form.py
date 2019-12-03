@@ -43,6 +43,7 @@ class BaseFormInput(GridBox, ValueWidget):
 
         # Create required suffix
         required_suffix = '' if spec['optional'] else '*'
+        if not spec['optional']: self.add_class('required')
 
         # Set the display name
         self.label.value = spec['label'] + required_suffix
@@ -158,3 +159,8 @@ class InteractiveForm(interactive):
             return FloatFormInput(spec, value=default_value)
         else:
             return Text(value=unicode_type(default_value))
+
+    def update(self, *args):
+        """Call the superclass update() method after manipulating the call"""
+        # TODO: Handle parameter references, etc.
+        super(InteractiveForm, self).update(*args)

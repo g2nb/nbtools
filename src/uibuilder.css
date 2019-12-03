@@ -34,3 +34,7 @@
 .nbtools-form .jupyter-button {
     display: none;
 }
+
+.nbtools-input.missing {
+    border: red solid 2px;
+}

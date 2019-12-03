@@ -151,7 +151,6 @@ class UIBuilder(BaseWidget):
         # Read parameters, values and annotations from the signature
         sig = inspect.signature(self.function_or_method)
         defaults = self._param_defaults(sig)
-        print(defaults)
 
         # Merge the default parameter values with the custom overrides
         self._parameters = self._param_customs(defaults, value)
