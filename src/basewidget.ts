@@ -7,6 +7,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
 
 
 export class BaseWidgetView extends DOMWidgetView {
+    dom_class = '';
     element:HTMLElement = document.createElement('div');
     traitlets:string[] = [];
     renderers:any = {};
@@ -48,6 +49,9 @@ export class BaseWidgetView extends DOMWidgetView {
         // Parse the template
         this.element = new DOMParser().parseFromString(this.template, "text/html")
             .querySelector('div.nbtools') as HTMLElement;
+
+        // Apply the DOM class
+        if (this.dom_class) this.element.classList.add(this.dom_class);
 
         // Apply the header
         (this.element.querySelector('div.nbtools-header') as HTMLElement).innerHTML = this.header;

@@ -1,3 +1,7 @@
+.nbtools-uibuilder .nbtools-description {
+    min-height: 18px;
+}
+
 .nbtools-run {
     position: absolute;
     z-index: 1;

@@ -41,8 +41,11 @@ class BaseFormInput(GridBox, ValueWidget):
     def _apply_spec(self, spec):
         """Apply the parameter spec to the widget"""
 
+        # Create required suffix
+        required_suffix = '' if spec['optional'] else '*'
+
         # Set the display name
-        self.label.value = spec['label']
+        self.label.value = spec['label'] + required_suffix
         self.label.description = spec['label']
 
         # Set the default value
