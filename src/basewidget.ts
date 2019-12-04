@@ -1,4 +1,5 @@
-import './basewidget.css'
+import './basewidget.css';
+import { ContextManager } from "./context";
 import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";
 
 export class BaseWidgetModel extends DOMWidgetModel {
@@ -102,18 +103,7 @@ export class BaseWidgetView extends DOMWidgetView {
 
     toggle_code(display?:boolean) {
         const element = this.element;
-
-        // TODO: Implement better event handling for this
-        // TODO: Call some sort of EnvironmentManager that determines whether this is lab or notebook and does the right kind of hide
-        setTimeout(() => {
-            let input_block = element.closest('.jp-Cell') as HTMLElement;
-            if (input_block) input_block = input_block.querySelector('.jp-Cell-inputWrapper') as HTMLElement;
-
-            // Set display to toggle if not specified
-            if (display === undefined) display = input_block.style.display === "none";
-
-            if (input_block) input_block.style.display = display ? "block" : "none";
-        }, 100);
+        ContextManager.context().toggle_code(element);
     }
 
     toggle_collapse() {
