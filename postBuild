@@ -1,3 +1,5 @@
+jupyter nbextension enable --py widgetsnbextension
+jupyter labextension install @jupyter-widgets/jupyterlab-manager@1.1.0
 pip install .
 jupyter labextension install .
 jupyter nbextension install --py nbtools --sys-prefix
