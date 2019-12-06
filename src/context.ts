@@ -17,7 +17,7 @@ export class ContextManager {
      */
     static is_lab(): boolean {
         // TODO: Find a better way to determine this
-        return window.location.pathname.startsWith('/lab')
+        return !!document.querySelector("#main.jp-LabShell")
     }
 
     /**
