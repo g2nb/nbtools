@@ -1,4 +1,4 @@
 pip install .
+jupyter labextension install .
 jupyter nbextension install --py nbtools --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
-jupyter labextension install ./nbtools/labextension/genepattern-nbtools-0.1.0.tgz
