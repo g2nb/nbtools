@@ -1,6 +1,7 @@
 
 # nbtools-lab-prototype
 
+[![Binder](https://beta.mybinder.org/badge.svg)](https://mybinder.org/v2/gh/genepattern/nbtools-lab-prototype/master?urlpath=lab)
 [![Build Status](https://travis-ci.org/genepattern/nbtools-lab-prototype.svg?branch=master)](https://travis-ci.org/genepattern/nbtools)
 [![codecov](https://codecov.io/gh/genepattern/nbtools-lab-prototype/branch/master/graph/badge.svg)](https://codecov.io/gh/genepattern/nbtools-lab-prototype)
 
