@@ -1,5 +1,6 @@
 import ast
 import inspect
+import random
 
 
 class RWrapper:
@@ -11,6 +12,10 @@ class RWrapper:
         self.spec = spec
         self.code = code
         self.ensure_imports()
+
+    @staticmethod
+    def generate_token():
+        return ''.join(random.choice('0123456789ABCDEF') for i in range(32))
 
     def signature(self):
         # Create a dummy callable, the job of this callable is simply to hold
@@ -82,11 +87,18 @@ def r_build_ui(spec, code):
     # Parse the UI Builder spec from the magics line
     spec = ast.literal_eval(spec)
 
+    # Generate a token to identify the RWrapper
+    token = RWrapper.generate_token()
+
+    # Lazily initialize the RWrapper map
+    if not hasattr(nbtools, '_r_wrappers'):
+        nbtools._r_wrappers = {}
+
     # Create a wrapper object for the R call, assign to a temporary top-level name
-    nbtools._tmp_r_wrapper = RWrapper(spec, code)
+    nbtools._r_wrappers[token] = RWrapper(spec, code)
 
     # Create and return the UIBuilder object
-    uib = nbtools.UIBuilder(nbtools._tmp_r_wrapper.signature(), function_import='nbtools._tmp_r_wrapper', **spec)
+    uib = nbtools.UIBuilder(nbtools._r_wrappers[token].signature(), function_import=f'nbtools._r_wrappers["{token}"]', **spec)
     return uib
 
 def load_ipython_extension(ipython):
