@@ -8,7 +8,8 @@ class RWrapper:
     code = None
     output = None
 
-    def __init__(self, spec, code):
+    def __init__(self, params, spec, code):
+        self.params = params
         self.spec = spec
         self.code = code
         self.ensure_imports()
@@ -16,6 +17,12 @@ class RWrapper:
     @staticmethod
     def generate_token():
         return ''.join(random.choice('0123456789ABCDEF') for i in range(32))
+
+    @staticmethod
+    def parse_line(line):
+        parts = line.split('{', 1)
+        if len(parts) == 2: return parts[0], '{' + parts[1]
+        else: return line, ''
 
     def signature(self):
         # Create a dummy callable, the job of this callable is simply to hold
@@ -72,17 +79,20 @@ class RWrapper:
         r_code += self.append_output(self.code)
 
         # Send variable init and code to R and return the result
-        get_ipython().run_cell_magic('R', '-o r_output', r_code)
+        get_ipython().run_cell_magic('R', '-o r_output ' + self.params, r_code)
         r_output  = get_ipython().run_cell('r_output').result
         #return r_output
 
 
-def r_build_ui(spec, code):
+def r_build_ui(line, code):
     """
     read line, use this to create UI Builder
     on Run, turn parameters into R variables, send cell to R, the return value of R becomes Python var
     """
     import nbtools
+
+    # Separate parameters from the spec
+    params, spec = RWrapper.parse_line(line)
 
     # Parse the UI Builder spec from the magics line
     spec = ast.literal_eval(spec)
@@ -95,7 +105,7 @@ def r_build_ui(spec, code):
         nbtools._r_wrappers = {}
 
     # Create a wrapper object for the R call, assign to a temporary top-level name
-    nbtools._r_wrappers[token] = RWrapper(spec, code)
+    nbtools._r_wrappers[token] = RWrapper(params, spec, code)
 
     # Create and return the UIBuilder object
     uib = nbtools.UIBuilder(nbtools._r_wrappers[token].signature(), function_import=f'nbtools._r_wrappers["{token}"]', **spec)
