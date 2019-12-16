@@ -73,8 +73,8 @@ class RWrapper:
 
         # Send variable init and code to R and return the result
         get_ipython().run_cell_magic('R', '-o r_output', r_code)
-        r_output = get_ipython().run_cell('r_output').result
-        return r_output
+        r_output  = get_ipython().run_cell('r_output').result
+        #return r_output
 
 
 def r_build_ui(spec, code):
