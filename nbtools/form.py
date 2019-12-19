@@ -1,6 +1,7 @@
+import os
 from numbers import Integral, Real
 from ipython_genutils.py3compat import string_types, unicode_type
-from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password
+from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, FileUpload, HBox
 
 
 class BaseFormInput(GridBox, ValueWidget):
@@ -108,6 +109,48 @@ class SelectFormInput(BaseFormInput):
         super(SelectFormInput, self).__init__(spec, **kwargs)
 
 
+class FileOrURL(HBox):
+    def __init__(self, **kwargs):
+        self._value = ''
+        self.upload = FileUpload(multiple=False)
+        self.url = Text()
+
+        HBox.__init__(self, **kwargs)
+        self.children = (self.upload, self.url)
+        self.init_events()
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
+        if self._value != self.url.value:
+            self.url.value = self._value
+
+    def change_file(self, change):
+        if isinstance(change['owner'].value, dict):
+            for k in change['owner'].value:
+                with open(k, 'wb') as f:
+                    f.write(change['owner'].value[k]['content'])
+                    self.value = os.path.realpath(f.name)
+
+    def change_url(self, change):
+        if self.value != change['owner'].value:
+            self.value = change['owner'].value
+
+    def init_events(self):
+        """Connect value change events of children to parent widget"""
+        self.url.observe(self.change_url)
+        self.upload.observe(self.change_file)
+
+
+class FileFormInput(BaseFormInput):
+    dom_class = 'nbtools-fileinput'
+    input_class = FileOrURL
+
+
 class InteractiveForm(interactive):
     def __init__(self, function_or_method, parameter_specs, **kwargs):
         # Create parameter widgets from spec and add to kwargs
@@ -147,6 +190,8 @@ class InteractiveForm(interactive):
             return IntegerFormInput(spec, value=default_value)
         elif type == 'number' and isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
+        elif type == 'file':
+            return FileFormInput(spec, value=unicode_type(default_value))
 
         # No known type specified, guess based on default value
         elif isinstance(default_value, string_types):
@@ -157,6 +202,8 @@ class InteractiveForm(interactive):
             return IntegerFormInput(spec, value=default_value)
         elif isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
+        elif hasattr(default_value, 'read'):
+            return FileFormInput(spec, value=default_value)
         else:
             return Text(value=unicode_type(default_value))
 

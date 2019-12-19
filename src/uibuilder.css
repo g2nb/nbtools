@@ -31,10 +31,14 @@
     bottom: 5px;
 }
 
-.nbtools-form .jupyter-button {
+.nbtools-form .jupyter-button:last-child {
     display: none;
 }
 
 .nbtools-input.missing {
     border: red solid 2px;
+}
+
+.nbtools-fileinput .widget-text {
+    width: 100%;
 }

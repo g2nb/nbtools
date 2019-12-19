@@ -94,7 +94,7 @@ export class UIBuilderView extends BaseWidgetView {
                 if(!this.validate()) return;
 
                 // Execute the interact instance
-                this.el.querySelector('.jupyter-button').click();
+                this.el.querySelector('.widget-interact > .jupyter-button').click();
 
                 // Collapse the widget, if collapse=True
                 if (this.model.get('collapse')) this.el.querySelector('.nbtools-collapse').click();
@@ -187,7 +187,7 @@ export class UIBuilderView extends BaseWidgetView {
         // Trigger the display for this widget
         view.trigger('displayed');
 
-        // Recursively trigger th display for all child widgets
+        // Recursively trigger the display for all child widgets
         if ('children_views' in view) {
             view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
                 children.forEach((child) => {
