@@ -109,44 +109,53 @@ class SelectFormInput(BaseFormInput):
         super(SelectFormInput, self).__init__(spec, **kwargs)
 
 
-class FileOrURL(HBox):
-    def __init__(self, **kwargs):
-        self._value = ''
-        self.upload = FileUpload(multiple=False)
-        self.url = Text()
-
-        HBox.__init__(self, **kwargs)
-        self.children = (self.upload, self.url)
-        self.init_events()
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        self._value = value
-        if self._value != self.url.value:
-            self.url.value = self._value
-
-    def change_file(self, change):
-        if isinstance(change['owner'].value, dict):
-            for k in change['owner'].value:
-                with open(k, 'wb') as f:
-                    f.write(change['owner'].value[k]['content'])
-                    self.value = os.path.realpath(f.name)
-
-    def change_url(self, change):
-        if self.value != change['owner'].value:
-            self.value = change['owner'].value
-
-    def init_events(self):
-        """Connect value change events of children to parent widget"""
-        self.url.observe(self.change_url)
-        self.upload.observe(self.change_file)
-
-
 class FileFormInput(BaseFormInput):
+    class FileOrURL(HBox):
+        def __init__(self, spec, **kwargs):
+            self._value = ''
+            self.upload = FileUpload(accept=self.accepted_kinds(spec), multiple=False)
+            self.url = Text()
+
+            HBox.__init__(self, **kwargs)
+            self.children = (self.upload, self.url)
+            self.init_events()
+
+        @property
+        def value(self):
+            return self._value
+
+        @value.setter
+        def value(self, value):
+            self._value = value
+            if self._value != self.url.value:
+                self.url.value = self._value
+
+        def accepted_kinds(self, spec):
+            if 'kinds' in spec:
+                return ', '.join([f'.{x}' for x in spec['kinds']])
+            else:  # If not specified, accept all kinds
+                return ''
+
+        def change_file(self, change):
+            if isinstance(change['owner'].value, dict):
+                for k in change['owner'].value:
+                    with open(k, 'wb') as f:
+                        f.write(change['owner'].value[k]['content'])
+                        self.value = os.path.realpath(f.name)
+
+        def change_url(self, change):
+            if self.value != change['owner'].value:
+                self.value = change['owner'].value
+
+        def init_events(self):
+            """Connect value change events of children to parent widget"""
+            self.url.observe(self.change_url)
+            self.upload.observe(self.change_file)
+
+    def __init__(self, spec, **kwargs):
+        self.input = self.FileOrURL(spec, layout=Layout(width='auto', grid_area='input'))
+        super(FileFormInput, self).__init__(spec, **kwargs)
+
     dom_class = 'nbtools-fileinput'
     input_class = FileOrURL
 
