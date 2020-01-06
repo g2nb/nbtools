@@ -176,6 +176,22 @@ class UIBuilder(BaseWidget):
                 "events": None
             })
 
+        # Special case for output_var
+        params.append({
+            "name": 'output_var',
+            "label": 'output variable',
+            "optional": True,
+            "default": '',
+            "value": '',
+            "description": '',
+            "hide": False,
+            "type": 'text',
+            "kinds": None,
+            "choices": {},
+            "id": None,
+            "events": None
+        })
+
         return params
 
     def _param_customs(self, defaults, customs):
@@ -187,7 +203,6 @@ class UIBuilder(BaseWidget):
                     else:
                         param[key] = value
 
-        # TODO: Special handling for output_var
         return defaults
 
     @staticmethod

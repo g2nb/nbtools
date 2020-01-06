@@ -1,5 +1,6 @@
 import os
 from numbers import Integral, Real
+from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, FileUpload, HBox
 
@@ -41,6 +42,9 @@ class BaseFormInput(GridBox, ValueWidget):
 
     def _apply_spec(self, spec):
         """Apply the parameter spec to the widget"""
+
+        # If the spec if empty, ignore this call
+        if not spec: return
 
         # Create required suffix
         required_suffix = '' if spec['optional'] else '*'
@@ -172,8 +176,18 @@ class InteractiveForm(interactive):
             'auto_display': False
         }, **kwargs)
 
-        # Don't display the output as a child widget
-        self.children = self.children[:len(self.children)-1]
+        # Hide the default Run button
+        self.children[-2]._dom_classes = ['hidden']
+
+        # Don't display the output as a child widget and add the output variable to the form
+        if parameter_specs:
+            self.children = self.children[:len(self.children)-1] + (self.output_var_widget(parameter_specs), )
+
+    def output_var_widget(self, parameter_specs):
+        """Create a widget from the output_var spec"""
+        for p in parameter_specs:
+            if p['name'] == 'output_var':
+                return self.widget_from_spec(p)
 
     def widgets_from_spec(self, parameter_specs, kwargs):
         """Iterate over each parameter spec and create a form widget"""
@@ -220,3 +234,6 @@ class InteractiveForm(interactive):
         """Call the superclass update() method after manipulating the call"""
         # TODO: Handle parameter references, etc.
         super(InteractiveForm, self).update(*args)
+
+        # Assign value to output_var
+        get_ipython().push({self.children[-1].value: self.result})

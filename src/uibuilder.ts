@@ -59,6 +59,7 @@ export class UIBuilderView extends BaseWidgetView {
         <button class="nbtools-run">Run</button>
         <div class="nbtools-description" data-traitlet="description"></div>
         <div class="nbtools-form"></div>
+        <div class="nbtools-footer"></div>
         <button class="nbtools-run">Run</button>`;
 
     render() {
@@ -71,17 +72,27 @@ export class UIBuilderView extends BaseWidgetView {
         this.activate_run_buttons();
 
         // Add the interactive form widget
-        const element = this.element.querySelector('.nbtools-form') as HTMLElement;
-        const model = this.model.get('form');
+        this.attach_child_widget('.nbtools-form', 'form');
+
+        // Attach ID and event callbacks once the view is rendered
+        element_rendered(this.el).then(() => this._attach_callbacks());
+    }
+
+    /**
+     * Add the specified child widget to the view and initialize
+     *
+     * @param {string} element_selector
+     * @param {string} model_name
+     */
+    attach_child_widget(element_selector:string, model_name:string) {
+        const element = this.element.querySelector(element_selector) as HTMLElement;
+        const model = this.model.get(model_name);
 
         this.create_child_view(model).then((view:any) => {
             element.appendChild(view.el);
             UIBuilderView._initialize_display(model, view);
             return view;
-        }).catch(reject('Could not add form to the UI Builder', true));
-
-        // Attach ID and event callbacks once the view is rendered
-        element_rendered(this.el).then(() => this._attach_callbacks());
+        }).catch(reject(`Could not add ${model_name} to ${element_selector}`, true));
     }
 
     /**
