@@ -31,6 +31,10 @@
     bottom: 5px;
 }
 
+.nbtools-uibuilder .widget-interact {
+    overflow: visible;
+}
+
 .nbtools .jupyter-button.hidden {
     display: none;
 }
@@ -41,6 +45,14 @@
 
 .nbtools-fileinput .widget-text {
     width: 100%;
+}
+
+.nbtools-input:last-child {
+    position: relative;
+    top: 13px;
+    z-index: 1;
+    height: 0;
+    overflow: visible;
 }
 
 .nbtools-footer {

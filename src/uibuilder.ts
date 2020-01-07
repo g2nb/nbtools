@@ -158,6 +158,11 @@ export class UIBuilderView extends BaseWidgetView {
             if (!!param_spec.events) {
                 UIBuilderView._attach_all_events(param_el, param_spec.events);
             }
+
+            // Resize footer, if necessary
+            if (param_spec.name === 'output_var' && param_spec.description) {
+                this.el.querySelector('.nbtools-footer').style.height = '50px';
+            }
         }
     }
 
