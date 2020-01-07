@@ -3,7 +3,7 @@
  *
  * @author Thorin Tabor
  *
- * Copyright 2019 Regents of the University of California and the Broad Institute
+ * Copyright 2020 Regents of the University of California and the Broad Institute
  */
 import './uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';

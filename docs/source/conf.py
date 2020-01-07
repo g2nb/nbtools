@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'nbtools'
-copyright = '2019, Thorin Tabor'
+copyright = '2020, Thorin Tabor'
 author = 'Thorin Tabor'
 
 # The version info for the project you're documenting, acts as replacement for

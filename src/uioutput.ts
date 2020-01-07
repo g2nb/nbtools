@@ -3,7 +3,7 @@
  *
  * @author Thorin Tabor
  *
- * Copyright 2019 Regents of the University of California and the Broad Institute
+ * Copyright 2020 Regents of the University of California and the Broad Institute
  */
 import './uioutput.css'
 import { ISerializers } from '@jupyter-widgets/base';
