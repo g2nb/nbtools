@@ -11,7 +11,6 @@ import { DOMWidgetModel, DOMWidgetView, ISerializers, ManagerBase, reject, unpac
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { element_rendered } from "./utils";
 
-
 export class UIBuilderModel extends BaseWidgetModel {
     static model_name = 'UIBuilderModel';
     static model_module = MODULE_NAME;
@@ -213,14 +212,53 @@ export class UIBuilderView extends BaseWidgetView {
         }
     }
 
+    all_input_models() {
+        const get_all_recursively = (model: any, value_list: Array<any>) => {
+            const value = model.get('value');
+            const children = model.get('children');
+
+            if (model.name === 'DropdownModel' || (value !== undefined && model.name !== "LabelModel")) value_list.push(model);
+            if (children !== undefined) children.forEach((child: any) => {
+                get_all_recursively(child, value_list)
+            });
+        };
+
+        const input_models:Array<any> = [];
+        const form = this.model.get('form');
+        get_all_recursively(form, input_models);
+        return input_models;
+    }
+
+    set_input_model(model: any, spec: any) {
+        // Special case for DropdownModel
+        if (model.name === 'DropdownModel') {
+            const labels = Object.keys(spec['choices']);
+            for (let i = 0; i < labels.length; i++) {
+                const label = labels[i];
+                const value = spec['choices'][label];
+                if (value === spec['default']) {
+                    model.set('index', i);
+                    break;
+                }
+            }
+        }
+        else {  // Otherwise just set the value traitlet
+            model.set('value', spec['default']);
+        }
+
+        // Save the model
+        model.save_changes();
+    }
+
     reset_parameters() {
-        const params = this.model.get('params');
-        params.forEach((spec:any) => {
-            // TODO: Get input element and set value to default
-            // const name = spec['name'];
-            // const value = spec['default'];
-            // this.element.querySelector('.xxx');
-            console.log('reset_parameters')
-        });
+        const params = this.model.get('_parameters');
+        const models = this.all_input_models();
+
+        for (let i = 0; i < params.length; i++) {
+            const spec = params[i];
+            const model = models[i];
+
+            this.set_input_model(model, spec);
+        }
     }
 }
