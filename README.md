@@ -1,3 +1,5 @@
+[![Binder](https://beta.mybinder.org/badge.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/master)
+
 # nbtools
 **nbtools** is a package for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. The package provides:
 
