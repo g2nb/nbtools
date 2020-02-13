@@ -570,7 +570,7 @@ define("nbtools/file", ["base/js/namespace",
                 const display = widget._singleDisplay(e);
                 if (display === value) {
                     widget._values.splice(i, 1);
-                    return false;
+                    return true;
                 }
             });
 
@@ -589,7 +589,7 @@ define("nbtools/file", ["base/js/namespace",
 
                 if (foundHost && display.endsWith(value)) {
                     widget._values.splice(i, 1);
-                    return false;
+                    return true;
                 }
             });
         },
