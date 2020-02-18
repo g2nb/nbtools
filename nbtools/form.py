@@ -215,7 +215,7 @@ class FileFormInput(BaseFormInput):
                 self.url.value = self._value
 
         def accepted_kinds(self, spec):
-            if 'kinds' in spec:
+            if 'kinds' in spec and spec['kinds'] is not None:
                 return ', '.join([f'.{x}' for x in spec['kinds']])
             else:  # If not specified, accept all kinds
                 return ''
