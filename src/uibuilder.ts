@@ -160,9 +160,90 @@ export class UIBuilderView extends BaseWidgetView {
 
             // Resize footer, if necessary
             if (param_spec.name === 'output_var' && param_spec.description) {
+                // noinspection JSConstantReassignment
                 this.el.querySelector('.nbtools-footer').style.height = '50px';
             }
         }
+
+        // Attach send to / come from menus
+        this._attach_menus();
+    }
+
+    /**
+     * Attach sent to / come from menu support to the UI Builder widget
+     *
+     * @private
+     */
+    _attach_menus() {
+        const models = this.all_input_models();
+        this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
+            this._combobox_fix(attach_point);
+
+            attach_point.addEventListener("click", function(event:Event) {
+                const target = event.target as HTMLElement;
+
+                models.forEach(model => {
+                    if (model.name === 'ComboboxModel') {
+                        // Get the list of compatible kinds
+                        const kinds = model.get('kinds');
+
+                        // Get all compatible outputs
+                        const compatible = UIBuilderView.get_compatible_outputs(target, kinds);
+
+                        // Update the options in the combobox
+                        model.set('options', compatible);
+                        model.save_changes();
+                    }
+                });
+            });
+        });
+    }
+
+    /**
+     * Given a list of kinds and a DOM node within a notebook, return the list of compatible outputs within that notebook
+     *
+     * @param target
+     * @param kinds_list
+     */
+    static get_compatible_outputs(target:HTMLElement, kinds_list:any) {
+        // Get the notebook's parent node
+        const notebook = target.closest('.jp-Notebook') as HTMLElement;
+
+        // Get all possible outputs
+        const markdown_outputs = [...notebook.querySelectorAll('.nbtools-markdown-file') as any];
+        const widget_outputs = [...notebook.querySelectorAll('.nbtools-file') as any];
+
+        // Build list of compatible outputs
+        const compatible_outputs = [] as Array<string>;
+        markdown_outputs.concat(widget_outputs).forEach((output:HTMLElement) => {
+            const href = output.getAttribute('href') as string;
+            const kind = UIBuilderView.get_kind(href) as string;
+            if (kinds_list.length === 0 || kinds_list.includes(kind)) compatible_outputs.push(href);
+        });
+
+        return compatible_outputs;
+    }
+
+    /**
+     * Get the kind based on a given URL
+     *
+     * @param url
+     */
+    static get_kind(url:any): any {
+        return url.split(/\#|\?/)[0].split('.').pop().trim();
+    }
+
+    /**
+     * Make this text element behave more like a combobox when clicked
+     *
+     * @param element
+     * @private
+     */
+    _combobox_fix(element:HTMLElement) {
+        const input = element.querySelector('input') as HTMLElement;
+        input.setAttribute('onmouseover', 'focus();old = value;');
+        input.setAttribute('onmousedown', 'value="";');
+        input.setAttribute('onmouseup', 'value = old;');
     }
 
     /**

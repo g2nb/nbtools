@@ -8,7 +8,7 @@ from ipywidgets import widget_serialization, Output
 from ._frontend import module_name, module_version
 from .form import InteractiveForm
 from .basewidget import BaseWidget
-from .manager import ToolManager
+from .tool_manager import ToolManager
 
 
 class build_ui:
