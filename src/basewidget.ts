@@ -44,6 +44,12 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Hide the code
         this.toggle_code(false);
+
+        // Allow menus to overflow the container
+        this.float_menus();
+
+        // Call any post render events
+        this.post_render();
     }
 
     build() {
@@ -79,13 +85,16 @@ export class BaseWidgetView extends DOMWidgetView {
         this.setElement(this.element);
     }
 
-    add_menu_item(label:string, callback:any) {
+    add_menu_item(label:string, callback:any, dom_class:string|null=null, menu:HTMLUListElement|null=null) {
         // Create the menu item
         const item = new DOMParser().parseFromString(`<li>${label}</li>`, "text/html")
             .querySelector('li') as HTMLElement;
 
+        // Apply the class if one is specified
+        if (dom_class) item.classList.add(dom_class);
+
         // Attach the menu item
-        const menu = this.element.querySelector('.nbtools-menu') as HTMLUListElement;
+        if (!menu) menu = this.element.querySelector('.nbtools-menu') as HTMLUListElement;
         menu.prepend(item);
 
         // Attach the click event
@@ -93,10 +102,11 @@ export class BaseWidgetView extends DOMWidgetView {
     }
 
     traitlet_changed(event:any) {
+        const widget = this;
         const name = typeof event === "string" ? event : Object.keys(event.changed)[0];
         const elements = this.element.querySelectorAll(`[data-traitlet=${name}]`);
         elements.forEach(element => {
-            if (name in this.renderers) element.innerHTML = this.renderers[name](this.model.get(name));
+            if (name in this.renderers) element.innerHTML = this.renderers[name](this.model.get(name), widget);
             else element.innerHTML = this.model.get(name)
         });
     }
@@ -142,6 +152,23 @@ export class BaseWidgetView extends DOMWidgetView {
             document.removeEventListener('click', hide_next_click);
         };
         document.addEventListener('click', hide_next_click)
-
     }
+
+    float_menus() {
+        const fix_cell = () => {
+            const elements = [
+                this.el.closest('.p-Widget.jp-OutputPrompt.jp-OutputArea-prompt'),
+                this.el.closest('.p-Widget.p-Panel.jp-OutputArea-child'),
+                this.el.closest('.p-Widget.jp-OutputArea.jp-Cell-outputArea')
+            ];
+
+            elements.forEach((e:HTMLElement) => {
+                if (e) e.style.overflow = 'visible';
+            });
+        };
+
+        this.el.addEventListener('click', fix_cell, { once: true });
+    }
+
+    post_render() {} // Empty function, can be overridden in subclasses
 }

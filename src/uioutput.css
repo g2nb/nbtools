@@ -21,12 +21,31 @@
     width: calc(66% - 30px);
     float: right;
     padding-left: 20px;
+    position: relative;
 }
 
 .nbtools-file {
     display: block;
     color: #296eaa;
     text-decoration: none;
+}
+
+.nbtools-file-menu {
+    left: 0;
+    right: auto;
+    top: 20px;
+}
+
+.nbtools-menu-header,
+.nbtools-menu-header:hover {
+    background-color: #FFFFFF !important;
+    cursor: text;
+    color: #868686;
+    font-weight: bold;
+}
+
+.nbtools-menu-subitem {
+    padding-left: 20px;
 }
 
 .nbtools-status::after,

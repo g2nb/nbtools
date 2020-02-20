@@ -56,13 +56,16 @@ export class UIOutputView extends BaseWidgetView {
         <div class="nbtools-visualization" data-traitlet="visualization"></div>
         `;
 
-    render_files(files:string[]) {
+    render_files(files:string[], widget:UIOutputView) {
         let to_return = '';
         files.forEach(path => {
             const name = extract_file_name(path);
-            const type = extract_file_type(path);
-            to_return += `<a class="nbtools-file" href="${path}" data-type="${type}">${name}</a>`
+            const type = extract_file_type(path) as string;
+            to_return += `<a class="nbtools-file" href="${path}" data-type="${type}" onclick="return false;">${name} <i class="fa fa-info-circle"></i></a>`;
+            to_return += `<ul class="nbtools-menu nbtools-file-menu" style="display: none;"></ul>`
         });
+
+        setTimeout(() => widget.initialize_file_menus(widget), 100);
         return to_return;
     }
 
@@ -72,5 +75,87 @@ export class UIOutputView extends BaseWidgetView {
 
         // Otherwise, embed visualization as HTML
         else return visualization;
+    }
+
+    initialize_file_menus(widget:UIOutputView) {
+        const files = widget.el.querySelectorAll('.nbtools-file');
+
+        files.forEach((link:HTMLElement) => {
+            link.addEventListener("click", function() {
+                widget.toggle_file_menu(link);
+            });
+        });
+    }
+
+    initialize_menu_items(link:HTMLElement) {
+        const menu = link.nextElementSibling as HTMLUListElement;
+        if (!menu) return;  // Protect against null
+        const type = link.getAttribute('data-type') as string;
+        const href = link.getAttribute('href') as string;
+
+        // Add the send to options
+        this.get_input_list(type).forEach(input => {
+            this.add_menu_item(input['name'], () => {
+                const form_input = input['element'].querySelector('input') as HTMLFormElement;
+                form_input.value = href;
+            }, 'nbtools-menu-subitem', menu);
+        });
+
+        // Add send to header
+        this.add_menu_item('Send to...', () => {},
+            'nbtools-menu-header', menu);
+
+        // Add download option
+        this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string),
+            '', menu);
+    }
+
+    toggle_file_menu(link:HTMLElement) {
+        const menu = link.nextElementSibling as HTMLElement;
+        const collapsed = menu.style.display === "none";
+
+        // Build the menu lazily
+        menu.innerHTML = ''; // Clear all existing children
+        this.initialize_menu_items(link);
+
+        // Hide or show the menu
+        if (collapsed) menu.style.display = "block";
+        else menu.style.display = "none";
+
+        // Hide the menu with the next click
+        const hide_next_click = function(event:Event) {
+            if (link.contains(event.target as Node)) return;
+            menu.style.display = "none";
+            document.removeEventListener('click', hide_next_click);
+        };
+        document.addEventListener('click', hide_next_click)
+    }
+
+    get_input_list(type:string) {
+        // Get the notebook's parent node
+        const notebook = this.el.closest('.jp-Notebook') as HTMLElement;
+
+        // Get all possible outputs
+        const parameters = [...notebook.querySelectorAll('.nbtools-menu-attached') as any];
+
+        // Build list of compatible inputs
+        const compatible_inputs = [] as Array<any>;
+        parameters.forEach((input:HTMLElement) => {
+            // Ignore incompatible inputs
+            const kinds = input.getAttribute('data-type') || '';
+            const kinds_list = kinds.split(', ') as any;
+            if (!kinds_list.includes(type) && kinds !== '') return;
+
+            // Add the input to the compatible list
+            const widget_element = input.closest('.nbtools') as HTMLElement;
+            let name = (widget_element.querySelector('.nbtools-title') as HTMLElement).textContent;
+            if (!name) name = "Untitled Widget";
+            compatible_inputs.push({
+                'name': name,
+                'element': input
+            });
+        });
+
+        return compatible_inputs;
     }
 }

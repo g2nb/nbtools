@@ -186,6 +186,7 @@ export class UIBuilderView extends BaseWidgetView {
                     if (model.name === 'ComboboxModel') {
                         // Get the list of compatible kinds
                         const kinds = model.get('kinds');
+                        attach_point.setAttribute('data-type', kinds.join(', '));
 
                         // Get all compatible outputs
                         const compatible = UIBuilderView.get_compatible_outputs(target, kinds);
@@ -196,6 +197,9 @@ export class UIBuilderView extends BaseWidgetView {
                     }
                 });
             });
+
+            // Initial menu attachment
+            attach_point.dispatchEvent(new Event('click'));
         });
     }
 
