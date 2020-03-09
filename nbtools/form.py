@@ -227,6 +227,8 @@ class InteractiveForm(interactive):
             return IntegerFormInput(spec, value=default_value)
         elif type == 'number' and isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
+        elif type == 'number' and (default_value is None or default_value == ''):
+            return FloatFormInput(spec, value=0)
         elif type == 'file':
             return FileFormInput(spec, value=unicode_type(default_value))
 
