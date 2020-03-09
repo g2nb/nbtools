@@ -1,13 +1,3 @@
-.nbtools-description {
-    position: relative;
-    left: -10px;
-    top: -10px;
-    width: 100%;
-    background-color: #eeeeee;
-    margin-bottom: 20px;
-    padding: 10px;
-}
-
 .nbtools-status {
     width: 33%;
     float: left;

@@ -184,7 +184,7 @@ class UIBuilder(BaseWidget):
             "default": '',
             "value": '',
             "description": '',
-            "hide": False,
+            "hide": True,
             "type": 'text',
             "kinds": None,
             "choices": {},
