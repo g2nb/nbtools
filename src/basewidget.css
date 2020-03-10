@@ -85,3 +85,17 @@
     background-color: #eeeeee;
     padding: 10px;
 }
+
+.nbtools-toggle {
+	display: block;
+	height: auto;
+	opacity: 1;
+	overflow: hidden;
+	transition: height 350ms ease-in-out, opacity 750ms ease-in-out;
+}
+
+.nbtools-toggle.nbtools-hidden {
+	display: none;
+	height: 0;
+	opacity: 0;
+}

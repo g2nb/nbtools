@@ -1,3 +1,5 @@
+import {hide, show, toggle} from "./utils";
+
 export class ContextManager {
     static _context:Context|null = null;
 
@@ -56,15 +58,14 @@ class LabContext extends Context {
      * @param {boolean} display
      */
     toggle_code(element:HTMLElement, display?:boolean) {
-        // TODO: Implement better event handling for this
         setTimeout(() => {
             let input_block = element.closest('.jp-Cell') as HTMLElement;
             if (input_block) input_block = input_block.querySelector('.jp-Cell-inputWrapper') as HTMLElement;
 
             // Set display to toggle if not specified
-            if (display === undefined) display = input_block.style.display === "none";
-
-            if (input_block) input_block.style.display = display ? "block" : "none";
+            if (!!display) show(input_block);
+            else if (display === false) hide(input_block);
+            else toggle(input_block);
         }, 100);
     }
 }
@@ -81,13 +82,11 @@ class NotebookContext extends Context {
      */
     toggle_code(element:HTMLElement, display?:boolean) {
         const code = (element.closest(".cell") as any).querySelector(".input");
-        const is_hidden = code.style.display === "none";
 
-        // Show the code block
-        if (is_hidden) code.style.display = "none";
-
-        // Hide the code block
-        else code.style.display = "block";
+        // Set display to toggle if not specified
+        if (!!display) show(code);
+        else if (display === false) hide(code);
+        else toggle(code);
     }
 }
 

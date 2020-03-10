@@ -1,5 +1,6 @@
 import './basewidget.css';
 import { ContextManager } from "./context";
+import { toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";
 
 export class BaseWidgetModel extends DOMWidgetModel {
@@ -121,8 +122,7 @@ export class BaseWidgetView extends DOMWidgetView {
         const collapsed = body.style.display === "none";
 
         // Hide or show widget body
-        if (collapsed) body.style.display = "block";
-        else body.style.display = "none";
+        toggle(body);
 
         // Toggle the collapse button
         const button = this.element.querySelector(".nbtools-collapse > span") as HTMLElement;

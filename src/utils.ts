@@ -43,3 +43,68 @@ export function element_rendered(el:HTMLElement) {
         })();
     });
 }
+
+/**
+ * Show an element
+ *
+ * @param {HTMLElement} elem
+ */
+export function show(elem:HTMLElement) {
+    elem.classList.add('nbtools-toggle');
+
+	// Get the natural height of the element
+	const getHeight = function () {
+		elem.style.display = 'block'; // Make it visible
+		const height = elem.scrollHeight + 'px'; // Get it's height
+		elem.style.display = ''; //  Hide it again
+		return height;
+	};
+
+	const height = getHeight(); // Get the natural height
+	elem.classList.remove('nbtools-hidden'); // Make the element visible
+	elem.style.height = height; // Update the height
+
+	// Once the transition is complete, remove the inline height so the content can scale responsively
+	setTimeout(function () {
+		elem.style.height = '';
+	}, 350);
+}
+
+/**
+ * Hide an element
+ *
+ * @param {HTMLElement} elem
+ */
+export function hide(elem:HTMLElement) {
+    elem.classList.add('nbtools-toggle');
+
+	// Give the element a height to change from
+	elem.style.height = elem.scrollHeight + 'px';
+
+	// Set the height back to 0
+	setTimeout(function () {
+		elem.style.height = '0';
+	}, 10);
+
+	// When the transition is complete, hide it
+	setTimeout(function () {
+		elem.classList.add('nbtools-hidden');
+	}, 350);
+
+}
+
+/**
+ * Toggle element visibility
+ *
+ * @param {HTMLElement} elem
+ */
+export function toggle(elem:HTMLElement) {
+	// If the element is visible, hide it
+	if (!elem.classList.contains('nbtools-hidden')) {
+		hide(elem);
+		return;
+	}
+
+	// Otherwise, show it
+	show(elem);
+}
