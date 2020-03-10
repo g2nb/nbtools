@@ -74,7 +74,6 @@
 .nbtools-body {
     padding: 10px;
     position: relative;
-    transition: height 1s ease-in-out;
 }
 
 .nbtools-description {
