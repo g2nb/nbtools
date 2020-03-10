@@ -191,6 +191,10 @@ export class UIBuilderView extends BaseWidgetView {
                         // Get all compatible outputs
                         const compatible = UIBuilderView.get_compatible_outputs(target, kinds);
 
+                        // Attach the chevron to the input... or not
+                        if (compatible.length > 0) attach_point.classList.add('nbtools-dropdown');
+                        else attach_point.classList.remove('nbtools-dropdown');
+
                         // Update the options in the combobox
                         model.set('options', compatible);
                         model.save_changes();

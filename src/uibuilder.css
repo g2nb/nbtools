@@ -1,5 +1,7 @@
 .nbtools-uibuilder .nbtools-description {
     min-height: 18px;
+    padding-right: 60px;
+    width: calc(100% - 50px);
 }
 
 .nbtools-run {
@@ -59,6 +61,20 @@
     border: red solid 2px;
 }
 
+.nbtools-passwordinput input[type=password] {
+    box-sizing: border-box;
+    border: var(--jp-widgets-input-border-width) solid var(--jp-widgets-input-border-color);
+    background-color: var(--jp-widgets-input-background-color);
+    color: var(--jp-widgets-input-color);
+    font-size: var(--jp-widgets-font-size);
+    flex-grow: 1;
+    min-width: 0;
+    flex-shrink: 1;
+    outline: currentcolor none medium !important;
+    height: var(--jp-widgets-inline-height);
+    line-height: var(--jp-widgets-inline-height);
+}
+
 .nbtools-fileinput .widget-text {
     width: 100%;
 }
@@ -79,4 +95,19 @@
     background-color: #eeeeee;
     padding: 10px;
     min-height: 18px;
+}
+
+.nbtools-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.nbtools-dropdown::before{
+    position: absolute;
+    content: " \f078";
+    top: 5px;
+    right: 0;
+    height: 20px;
+    width: 20px;
+    font-family: 'Font Awesome\ 5 Free';
 }
