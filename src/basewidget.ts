@@ -114,7 +114,7 @@ export class BaseWidgetView extends DOMWidgetView {
 
     toggle_code(display?:boolean) {
         const element = this.element;
-        ContextManager.context().toggle_code(element);
+        ContextManager.context().toggle_code(element, display);
     }
 
     toggle_collapse() {
