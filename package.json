@@ -34,7 +34,7 @@
     "build:lib": "tsc",
     "build:nbextension": "webpack -p",
     "build:all": "npm run build:labextension && npm run build:nbextension",
-    "copy:css":  "cp ./src/*.css ./lib/",
+    "copy:css":  "mkdir -p ./lib && cp ./src/*.css ./lib/",
     "clean": "npm run clean:lib && npm run clean:nbextension",
     "clean:lib": "rimraf lib",
     "clean:labextension": "rimraf nbtools/labextension",
