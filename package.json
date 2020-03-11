@@ -23,7 +23,6 @@
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
-  "style": "lib/index.css",
   "repository": {
     "type": "git",
     "url": "https://github.com/genepattern/nbtools-lab-prototype"

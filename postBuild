@@ -3,7 +3,7 @@ jupyter labextension install @jupyter-widgets/jupyterlab-manager
 pip install .
 npm install --save-dev webpack
 jupyter labextension install .
-npm run build
+# npm run build
 jupyter lab build
 jupyter nbextension install --py nbtools --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
