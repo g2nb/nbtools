@@ -10,6 +10,7 @@
   ],
   "files": [
     "lib/**/*.{js,css}",
+    "style/*.{js,css}",
     "dist/*.{js,css}"
   ],
   "homepage": "https://github.com/genepattern/nbtools-lab-prototype",
@@ -23,6 +24,7 @@
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
+  "style": "style/index.css",
   "repository": {
     "type": "git",
     "url": "https://github.com/genepattern/nbtools-lab-prototype"

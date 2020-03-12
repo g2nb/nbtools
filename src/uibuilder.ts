@@ -5,7 +5,7 @@
  *
  * Copyright 2020 Regents of the University of California and the Broad Institute
  */
-import './uibuilder.css'
+import '../style/uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { DOMWidgetModel, DOMWidgetView, ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";

@@ -1,4 +1,4 @@
-import './basewidget.css';
+import '../style/basewidget.css';
 import { ContextManager } from "./context";
 import { toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";

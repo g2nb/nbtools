@@ -5,7 +5,7 @@
  *
  * Copyright 2020 Regents of the University of California and the Broad Institute
  */
-import './uioutput.css'
+import '../style/uioutput.css'
 import { ISerializers } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
