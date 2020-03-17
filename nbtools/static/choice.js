@@ -120,7 +120,22 @@ define("nbtools/choice", ["base/js/namespace",
          */
         _setDisplayOptions: function() {
             this._applyChoices();
+            this._applyMultiselect();
             this._applyDefault();
+        },
+
+        /**
+         * Applies the multiple attribute if this is a multiselect parameter
+         *
+         * @private
+         */
+        _applyMultiselect: function() {
+            if (!this._param.maxValues) return; // If maxValues isn't defined, return
+
+            // If multiple values are allowed (maxValues == -1 indicates no max)
+            const select = this.element.find(".nbtools-choice-select");
+            if (this._param.maxValues() > 1 || this._param.maxValues() < 0) select.attr('multiple', 'multiple');
+            else select.removeAttr('multiple');
         },
 
         /**

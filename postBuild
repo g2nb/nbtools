@@ -1,4 +1,4 @@
-pip install nbtools
+pip install .
 jupyter serverextension enable nbtools --sys-prefix
 jupyter nbextension install --py nbtools --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
