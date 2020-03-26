@@ -170,6 +170,74 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     /**
+     * Add default choices defined in with UI Builder choice parameter to the label -> value map
+     *
+     * @param display_value_map
+     * @param model
+     * @private
+     */
+    _add_default_choices(display_value_map:any, model: any) {
+            const choices = model.get('choices');
+            if (choices && Object.keys(choices).length) display_value_map['Default Choices'] = model.get('choices');
+    }
+
+    /**
+     * Add all files matching a specific selector to the label -> value map under the specified name
+     *
+     * @param display_value_map
+     * @param target
+     * @param kinds
+     * @param selector
+     * @param group_name
+     * @private
+     */
+    _add_notebook_files(display_value_map:any, target:HTMLElement, kinds:any, selector:string, group_name:string) {
+        // Get the notebook's parent node
+        const notebook = target.closest('.jp-Notebook') as HTMLElement;
+
+        // Get all possible outputs
+        const markdown_outputs = [...notebook.querySelectorAll(selector) as any];
+
+        // Build list of compatible outputs
+        const compatible_outputs = {} as any;
+        markdown_outputs.forEach((output:HTMLElement) => {
+            const href = output.getAttribute('href') as string;
+            const label = (output.textContent || href).trim();
+            const kind = UIBuilderView.get_kind(href) as string;
+            if (kinds.length === 0 || kinds.includes(kind)) compatible_outputs[label] = href;
+        });
+
+        // Add to the label -> value map
+        if (Object.keys(compatible_outputs).length > 0) display_value_map[group_name] = compatible_outputs;
+    }
+
+    /**
+     * Add markdown input files to the label -> value map
+     *
+     * @param display_value_map
+     * @param target
+     * @param kinds
+     * @private
+     */
+    _add_markdown_files(display_value_map:any, target:HTMLElement, kinds:any) {
+        this._add_notebook_files(display_value_map, target, kinds,
+            '.nbtools-markdown-file', 'Notebook Instructions');
+    }
+
+    /**
+     * Add UIOutput files to the label -> value map
+     *
+     * @param display_value_map
+     * @param target
+     * @param kinds
+     * @private
+     */
+    _add_output_files(display_value_map:any, target:HTMLElement, kinds:any) {
+        this._add_notebook_files(display_value_map, target, kinds,
+            '.nbtools-file', 'Output Files');
+    }
+
+    /**
      * Attach sent to / come from menu support to the UI Builder widget
      *
      * @private
@@ -177,9 +245,7 @@ export class UIBuilderView extends BaseWidgetView {
     _attach_menus() {
         const models = this.all_input_models();
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
-            this._combobox_fix(attach_point);
-
-            attach_point.addEventListener("click", function(event:Event) {
+            attach_point.addEventListener("click", (event:Event) => {
                 const target = event.target as HTMLElement;
 
                 models.forEach(model => {
@@ -188,48 +254,79 @@ export class UIBuilderView extends BaseWidgetView {
                         const kinds = model.get('kinds');
                         attach_point.setAttribute('data-type', kinds.join(', '));
 
-                        // Get all compatible outputs
-                        const compatible = UIBuilderView.get_compatible_outputs(target, kinds);
+                        // Get all compatible outputs and build display -> value map
+                        const display_value_map = {};
+                        this._add_default_choices(display_value_map, model);
+                        this._add_output_files(display_value_map, target, kinds);
+                        this._add_markdown_files(display_value_map, target, kinds);
+
+                        // Update and attach the menu
+                        this.attach_combobox_menu(target, display_value_map);
 
                         // Attach the chevron to the input... or not
-                        if (compatible.length > 0) attach_point.classList.add('nbtools-dropdown');
+                        if (Object.keys(display_value_map).length > 0) attach_point.classList.add('nbtools-dropdown');
                         else attach_point.classList.remove('nbtools-dropdown');
-
-                        // Update the options in the combobox
-                        model.set('options', compatible);
-                        model.save_changes();
                     }
                 });
             });
 
             // Initial menu attachment
-            attach_point.dispatchEvent(new Event('click'));
+            // attach_point.dispatchEvent(new Event('click'));
         });
     }
 
+    toggle_file_menu(link:HTMLElement, display_value_map:any) {
+        const menu = link.nextElementSibling as HTMLElement;
+        const collapsed = menu.style.display === "none";
+
+        // Hide or show the menu
+        if (collapsed) menu.style.display = "block";
+        else menu.style.display = "none";
+
+        // Hide the menu with the next click
+        const hide_next_click = function(event:Event) {
+            if (link.contains(event.target as Node)) return;
+            menu.style.display = "none";
+            document.removeEventListener('click', hide_next_click);
+        };
+        document.addEventListener('click', hide_next_click)
+    }
+
     /**
-     * Given a list of kinds and a DOM node within a notebook, return the list of compatible outputs within that notebook
+     * Create or update the menu based on the label -> value map
      *
      * @param target
-     * @param kinds_list
+     * @param display_value_map
      */
-    static get_compatible_outputs(target:HTMLElement, kinds_list:any) {
-        // Get the notebook's parent node
-        const notebook = target.closest('.jp-Notebook') as HTMLElement;
+    attach_combobox_menu(target:HTMLElement, display_value_map:any) {
+        // Get the menu and empty it, if it exists.
+        let menu = target.nextSibling as HTMLUListElement;
+        const menu_exists = menu && menu.classList.contains('nbtools-menu');
+        if (menu_exists) menu.innerHTML = '';
 
-        // Get all possible outputs
-        const markdown_outputs = [...notebook.querySelectorAll('.nbtools-markdown-file') as any];
-        const widget_outputs = [...notebook.querySelectorAll('.nbtools-file') as any];
+        // Create and insert the menu, if necessary
+        else {
+            menu = document.createElement('ul') as HTMLUListElement;
+            menu.classList.add('nbtools-menu', 'nbtools-file-menu');
+            menu.style.display = 'none';
+            target.parentNode ? target.parentNode.insertBefore(menu, target.nextSibling) : null;
+        }
 
-        // Build list of compatible outputs
-        const compatible_outputs = [] as Array<string>;
-        markdown_outputs.concat(widget_outputs).forEach((output:HTMLElement) => {
-            const href = output.getAttribute('href') as string;
-            const kind = UIBuilderView.get_kind(href) as string;
-            if (kinds_list.length === 0 || kinds_list.includes(kind)) compatible_outputs.push(href);
+        // Iterate over display -> value map and insert menu items
+        Object.keys(display_value_map).forEach((group) => {
+            // Add the group label
+            this.add_menu_item(group, () => {}, 'nbtools-menu-header', menu, false);
+
+            // Loop over all files in the group
+            Object.keys(display_value_map[group]).forEach((display_name) => {
+                this.add_menu_item(display_name, () => {
+                    (target as HTMLInputElement).value = display_value_map[group][display_name];
+                    target.dispatchEvent(new Event('change', { 'bubbles': true }));
+                }, 'nbtools-menu-subitem', menu, false);
+            });
         });
 
-        return compatible_outputs;
+        this.toggle_file_menu(target, display_value_map);
     }
 
     /**
@@ -239,19 +336,6 @@ export class UIBuilderView extends BaseWidgetView {
      */
     static get_kind(url:any): any {
         return url.split(/\#|\?/)[0].split('.').pop().trim();
-    }
-
-    /**
-     * Make this text element behave more like a combobox when clicked
-     *
-     * @param element
-     * @private
-     */
-    _combobox_fix(element:HTMLElement) {
-        const input = element.querySelector('input') as HTMLElement;
-        input.setAttribute('onmouseover', 'focus();old = value;');
-        input.setAttribute('onmousedown', 'value="";');
-        input.setAttribute('onmouseup', 'value = old;');
     }
 
     /**

@@ -111,3 +111,11 @@
     width: 20px;
     font-family: 'Font Awesome\ 5 Free';
 }
+.nbtools-uibuilder .nbtools-file-menu {
+    left: 0;
+    right: 0;
+    top: 27px;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

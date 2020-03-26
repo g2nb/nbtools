@@ -98,3 +98,8 @@
 	height: 0;
 	opacity: 0;
 }
+
+.nbtools div.widget-box,
+.nbtools div.widget-gridbox {
+    overflow: visible !important;
+}

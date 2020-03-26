@@ -86,7 +86,7 @@ export class BaseWidgetView extends DOMWidgetView {
         this.setElement(this.element);
     }
 
-    add_menu_item(label:string, callback:any, dom_class:string|null=null, menu:HTMLUListElement|null=null) {
+    add_menu_item(label:string, callback:any, dom_class:string|null=null, menu:HTMLUListElement|null=null, prepend:boolean=true) {
         // Create the menu item
         const item = new DOMParser().parseFromString(`<li>${label}</li>`, "text/html")
             .querySelector('li') as HTMLElement;
@@ -96,7 +96,8 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Attach the menu item
         if (!menu) menu = this.element.querySelector('.nbtools-menu') as HTMLUListElement;
-        menu.prepend(item);
+        if (prepend) menu.prepend(item);
+        else menu.append(item);
 
         // Attach the click event
         item.addEventListener('click', () => callback());

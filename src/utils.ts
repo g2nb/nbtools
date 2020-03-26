@@ -50,8 +50,6 @@ export function element_rendered(el:HTMLElement) {
  * @param {HTMLElement} elem
  */
 export function show(elem:HTMLElement) {
-    elem.classList.add('nbtools-toggle');
-
 	// Get the natural height of the element
 	const getHeight = function () {
 		elem.style.display = 'block'; // Make it visible
@@ -67,6 +65,7 @@ export function show(elem:HTMLElement) {
 	// Once the transition is complete, remove the inline height so the content can scale responsively
 	setTimeout(function () {
 		elem.style.height = '';
+		elem.classList.remove('nbtools-toggle');
 	}, 350);
 }
 

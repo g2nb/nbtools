@@ -4,7 +4,7 @@ from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
     FileUpload, HBox, Combobox
-from traitlets import List
+from traitlets import List, Dict
 
 from .parsing_manager import ParsingManager
 
@@ -131,8 +131,10 @@ class FileFormInput(BaseFormInput):
 
             # Set up menu support for url widget
             kinds_trait = List(default_value=spec['kinds']).tag(sync=True)
+            choices_trait = Dict(default_value=self.choices_dict(spec)).tag(sync=True)
             self.url.add_class('nbtools-menu-attached')
             self.url.add_traits(kinds=kinds_trait)
+            self.url.add_traits(choices=choices_trait)
 
             HBox.__init__(self, **kwargs)
             self.children = (self.upload, self.url)
@@ -148,7 +150,13 @@ class FileFormInput(BaseFormInput):
             if self._value != self.url.value:
                 self.url.value = self._value
 
-        def accepted_kinds(self, spec):
+        @staticmethod
+        def choices_dict(spec):
+            if 'choices' in spec and spec['choices'] is not None: return spec['choices']
+            else: return {}
+
+        @staticmethod
+        def accepted_kinds(spec):
             if 'kinds' in spec and spec['kinds'] is not None:
                 return ', '.join([f'.{x}' for x in spec['kinds']])
             else:  # If not specified, accept all kinds
