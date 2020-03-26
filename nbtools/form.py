@@ -95,6 +95,10 @@ class TextFormInput(BaseFormInput):
     dom_class = 'nbtools-textinput'
     input_class = Text
 
+    def __init__(self, spec, **kwargs):
+        super(TextFormInput, self).__init__(spec, **kwargs)
+        self.input.add_class('nbtools-menu-attached')
+
 
 class PasswordFormInput(BaseFormInput):
     dom_class = 'nbtools-passwordinput'

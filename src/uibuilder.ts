@@ -201,10 +201,26 @@ export class UIBuilderView extends BaseWidgetView {
         // Build list of compatible outputs
         const compatible_outputs = {} as any;
         markdown_outputs.forEach((output:HTMLElement) => {
-            const href = output.getAttribute('href') as string;
-            const label = (output.textContent || href).trim();
-            const kind = UIBuilderView.get_kind(href) as string;
-            if (kinds.length === 0 || kinds.includes(kind)) compatible_outputs[label] = href;
+            let href, label, kind;
+
+            // Handle getting the kind and label from a link
+            if (output.tagName.toLowerCase() === 'a') {
+                href = output.getAttribute('href') as string;
+                label = (output.textContent || href).trim();
+                kind = UIBuilderView.get_kind(href) as string;
+            }
+
+            // Handle getting the kind and label from text
+            else {
+                label = (output.textContent || 'Blank Text Option').trim();
+                href = (output.textContent || '').trim();
+                kind = 'text';
+            }
+
+            // Include if matching kind
+            if (kinds.includes(kind)) compatible_outputs[label] = href;
+            // Include if kinds blank and not text
+            else if (kinds.length === 0 && kind !== 'text') compatible_outputs[label] = href;
         });
 
         // Add to the label -> value map
@@ -222,6 +238,19 @@ export class UIBuilderView extends BaseWidgetView {
     _add_markdown_files(display_value_map:any, target:HTMLElement, kinds:any) {
         this._add_notebook_files(display_value_map, target, kinds,
             '.nbtools-markdown-file', 'Notebook Instructions');
+    }
+
+    /**
+     * Add markdown text options to the label -> value map
+     *
+     * @param display_value_map
+     * @param target
+     * @param kinds
+     * @private
+     */
+    _add_markdown_text(display_value_map:any, target:HTMLElement, kinds:any) {
+        this._add_notebook_files(display_value_map, target, kinds,
+            '.nbtools-text-option', 'Text Options');
     }
 
     /**
@@ -243,31 +272,33 @@ export class UIBuilderView extends BaseWidgetView {
      * @private
      */
     _attach_menus() {
-        const models = this.all_input_models();
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
             attach_point.addEventListener("click", (event:Event) => {
-                const target = event.target as HTMLElement;
+                const target = event.target as HTMLElement;                                     // Get click target
+                const element = target.closest('.nbtools-menu-attached') || target;    // Get parent widget
+                const view = (element as any).widget;                                           // Get widget view
 
-                models.forEach(model => {
-                    if (model.name === 'ComboboxModel') {
-                        // Get the list of compatible kinds
-                        const kinds = model.get('kinds');
-                        attach_point.setAttribute('data-type', kinds.join(', '));
+                if (view) {
+                    const model = view.model;  // Get the model from the view
 
-                        // Get all compatible outputs and build display -> value map
-                        const display_value_map = {};
-                        this._add_default_choices(display_value_map, model);
-                        this._add_output_files(display_value_map, target, kinds);
-                        this._add_markdown_files(display_value_map, target, kinds);
+                    // Get the list of compatible kinds
+                    const kinds = model.get('kinds') || ['text'];
+                    attach_point.setAttribute('data-type', kinds.join(', '));
 
-                        // Update and attach the menu
-                        this.attach_combobox_menu(target, display_value_map);
+                    // Get all compatible outputs and build display -> value map
+                    const display_value_map = {};
+                    this._add_default_choices(display_value_map, model);
+                    this._add_output_files(display_value_map, target, kinds);
+                    this._add_markdown_files(display_value_map, target, kinds);
+                    this._add_markdown_text(display_value_map, target, kinds);
 
-                        // Attach the chevron to the input... or not
-                        if (Object.keys(display_value_map).length > 0) attach_point.classList.add('nbtools-dropdown');
-                        else attach_point.classList.remove('nbtools-dropdown');
-                    }
-                });
+                    // Update and attach the menu
+                    this.attach_combobox_menu(target, display_value_map);
+
+                    // Attach the chevron to the input... or not
+                    if (Object.keys(display_value_map).length > 0) attach_point.classList.add('nbtools-dropdown');
+                    else attach_point.classList.remove('nbtools-dropdown');
+                }
             });
 
             // Initial menu attachment
@@ -380,6 +411,7 @@ export class UIBuilderView extends BaseWidgetView {
             view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
                 children.forEach((child) => {
                     UIBuilderView._initialize_display(child.model, child);
+                    child.el.widget = child;
                 });
             });
         }
