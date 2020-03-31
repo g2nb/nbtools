@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Copyright (c) Thorin Tabor.
+# Copyright (c) Regents of the University of California & the Broad Institute.
 # Distributed under the terms of the Modified BSD License.
 
 import pytest
