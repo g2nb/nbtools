@@ -7,7 +7,8 @@ import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser } from "./toolbox";
-import { ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
+import { IToolRegistry, ToolRegistry } from "./registry";
+import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
 
 
 const documentation = 'nbtools:documentation';
@@ -19,10 +20,11 @@ const NAMESPACE = 'nbtools';
 /**
  * The nbtools plugin.
  */
-const nbtools_plugin: IPlugin<Application<Widget>, void> = {
+const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = {
     id: EXTENSION_ID,
+    // provides: IToolRegistry,
     requires: [IJupyterWidgetRegistry],
-    optional: [IMainMenu, ILayoutRestorer],
+    optional: [IMainMenu, ILayoutRestorer, ILabShell],
     activate: activate_widget_extension,
     autoStart: true
 };
@@ -32,15 +34,41 @@ export default nbtools_plugin;
 /**
  * Activate the widget extension.
  */
-function activate_widget_extension(app: Application<Widget>, registry: IJupyterWidgetRegistry, mainmenu:IMainMenu|null, restorer: ILayoutRestorer|null): void {
+function activate_widget_extension(app: Application<Widget>,
+                                   widget_registry: IJupyterWidgetRegistry,
+                                   mainmenu:IMainMenu|null,
+                                   restorer: ILayoutRestorer|null,
+                                   shell: ILabShell): IToolRegistry {
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
     add_tool_browser(app as JupyterFrontEnd, restorer);
 
-    registry.registerWidget({
+    widget_registry.registerWidget({
         name: MODULE_NAME,
         version: MODULE_VERSION,
         exports: all_exports,
     });
+
+    // Create the tool registry
+    const tool_registry = new ToolRegistry();
+
+    // Update the ToC when the active widget changes:
+    shell.currentChanged.connect(on_connect);
+
+    return tool_registry;
+
+    /**
+     * Callback invoked when the active widget changes.
+     */
+    function on_connect() {
+        let widget = shell.currentWidget;
+        if (!widget) return;
+
+        if (tool_registry.current && tool_registry.current.isDisposed) {
+            tool_registry.current = null;
+            return;
+        }
+        else tool_registry.current = widget;
+    }
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
