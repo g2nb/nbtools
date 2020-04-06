@@ -1,7 +1,7 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
 import { toggle } from "./utils";
-import { DOMWidgetModel, DOMWidgetView } from "@jupyter-widgets/base";
+import { DOMWidgetModel, DOMWidgetView, WidgetView } from "@jupyter-widgets/base";
 
 export class BaseWidgetModel extends DOMWidgetModel {
     // Placeholder in the inheritance tree, in case it is needed later
@@ -30,6 +30,15 @@ export class BaseWidgetView extends DOMWidgetView {
                          <ul class="nbtools-menu" style="display: none;"></ul>
                      </div>`;
     body:string = ``;
+    disconnected:string = `<div class="nbtools-disconnected">
+                               <div class="nbtools-panel">
+                                   <div class="nbtools-header">Widget Disconnected From Kernel</div>
+                                   <div class="nbtools-body">
+                                       <p>You need to run this cell before it can connect to the notebook kernel. Please click the Connect to Kernel button below.</p>
+                                       <div class="nbtools-connect"><button class="nbtools-connect">Connect to Kernel</button></div>
+                                   </div>
+                               </div>
+                           </div>`;
 
     render() {
         super.render();
@@ -48,6 +57,9 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Allow menus to overflow the container
         this.float_menus();
+
+        // Initialize the widget
+        this.initialize(<WidgetView.InitializeParameters>{ options: {} });
 
         // Call any post render events
         this.post_render();
@@ -82,8 +94,23 @@ export class BaseWidgetView extends DOMWidgetView {
         // Apply the body
         (this.element.querySelector('div.nbtools-body') as HTMLElement).innerHTML = this.body;
 
+        // Attach the disconnected cover
+        this.element.appendChild(new DOMParser().parseFromString(this.disconnected, "text/html")
+            .querySelector('body > :first-child') as HTMLElement);
+        this.attach_connect_event();
+
         // Set the element
         this.setElement(this.element);
+    }
+
+    attach_connect_event() {
+        const button = this.element.querySelector('button.nbtools-connect') as HTMLElement;
+        button.addEventListener("click", () => {
+            // TODO: Implement
+            // Run all cells with disconnected nbtools widgets
+            // CodeCell.execute(cellWidget, sessionContext);
+            ContextManager.context().run_cell();
+        });
     }
 
     add_menu_item(label:string, callback:any, dom_class:string|null=null, menu:HTMLUListElement|null=null, prepend:boolean=true) {

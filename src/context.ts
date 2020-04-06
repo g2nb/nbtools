@@ -1,7 +1,12 @@
-import {hide, show, toggle} from "./utils";
+import { hide, show, toggle } from "./utils";
+import { INotebookTracker } from "@jupyterlab/notebook";
+import { CodeCell } from "@jupyterlab/cells";
+import {JupyterFrontEnd} from "@jupyterlab/application";
 
 export class ContextManager {
     static _context:Context|null = null;
+    static jupyter_app: JupyterFrontEnd;
+    static notebook_tracker: INotebookTracker|null;
 
     static context() {
         if (!ContextManager._context) {
@@ -45,6 +50,13 @@ abstract class Context {
      * @param {boolean} display
      */
     abstract toggle_code(element:HTMLElement, display?:boolean): void;
+
+    /**
+     * Execute the indicated cell in the notebook
+     *
+     * @param cell
+     */
+    abstract run_cell(cell?:any): void;
 }
 
 /**
@@ -68,6 +80,30 @@ class LabContext extends Context {
             else toggle(input_block);
         }, 100);
     }
+
+    /**
+     * Execute the indicated cell in the notebook
+     *
+     * @param cell
+     */
+    run_cell(cell:any=null) {
+        if (!ContextManager.notebook_tracker) return; // If no notebook_tracker, do nothing
+
+        // If cell is falsy, default to the active cell
+        if (!cell) cell = ContextManager.notebook_tracker.activeCell;
+
+        // If this is a code cell
+        if (ContextManager.notebook_tracker.activeCell instanceof CodeCell) {
+            const current = ContextManager.notebook_tracker.currentWidget;
+            if (current) {
+                CodeCell.execute(cell, current.context.session);
+            }
+        }
+
+        // If this is a markdown cell
+        // if (ContextManager.notebook_tracker.activeCell instanceof MarkdownCell)
+        //     MarkdownCell.renderInput(ContextManager.notebook_tracker.activeCell)
+    }
 }
 
 /**
@@ -88,6 +124,15 @@ class NotebookContext extends Context {
         else if (display === false) hide(code);
         else toggle(code);
     }
+
+    /**
+     * Execute the indicated cell in the notebook
+     *
+     * @param cell
+     */
+    run_cell(cell:any) {
+        (window as any).Jupyter.notebook.execute(cell);
+    }
 }
 
 /**
@@ -101,4 +146,10 @@ class EmbedContext extends Context {
      * @param {boolean} display
      */
     toggle_code(element:HTMLElement, display?:boolean) { return; }
+
+    /**
+     * No cells in this context, so do nothing
+     * @param cell
+     */
+    run_cell(cell:any) { return; }
 }

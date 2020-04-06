@@ -103,3 +103,55 @@
 .nbtools div.widget-gridbox {
     overflow: visible !important;
 }
+
+.nbtools.jupyter-widgets-disconnected::before,
+.nbtools .jupyter-widgets-disconnected::before {
+    position: absolute;
+}
+
+.nbtools-disconnected {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 2;
+}
+
+.jupyter-widgets-disconnected > .nbtools-disconnected {
+    display: block;
+}
+
+.nbtools-disconnected > .nbtools-panel {
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.nbtools-panel {
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: visible !important;
+    border: 1px solid rgba(43, 43, 43, 0.8);
+    border-radius: 2px;
+    background-color: white;
+}
+
+div.nbtools-connect {
+    text-align: center;
+    margin-top: 10px;
+}
+
+button.nbtools-connect {
+    background-color: rgba(43, 43, 43, 0.8);
+    color: white;
+    border: 1px solid rgba(43, 43, 43, 0.8);
+    padding: 6px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+}

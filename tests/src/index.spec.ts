@@ -12,7 +12,7 @@ import {
 } from './utils.spec';
 
 import {
-  ExampleModel, ExampleView
+  BaseWidgetModel, BaseWidgetView
 } from '../../src/'
 
 
@@ -21,15 +21,15 @@ describe('Example', () => {
   describe('ExampleModel', () => {
 
     it('should be createable', () => {
-      let model = createTestModel(ExampleModel);
-      expect(model).to.be.an(ExampleModel);
+      let model = createTestModel(BaseWidgetModel);
+      expect(model).to.be.an(BaseWidgetModel);
       expect(model.get('value')).to.be('Hello World');
     });
 
     it('should be createable with a value', () => {
-      let state = { value: 'Foo Bar!' }
-      let model = createTestModel(ExampleModel, state);
-      expect(model).to.be.an(ExampleModel);
+      let state = { value: 'Foo Bar!' };
+      let model = createTestModel(BaseWidgetModel, state);
+      expect(model).to.be.an(BaseWidgetModel);
       expect(model.get('value')).to.be('Foo Bar!');
     });
 

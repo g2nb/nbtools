@@ -9,6 +9,8 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
+import { INotebookTracker } from '@jupyterlab/notebook';
+import { ContextManager } from "./context";
 
 
 const documentation = 'nbtools:documentation';
@@ -24,7 +26,7 @@ const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = {
     id: EXTENSION_ID,
     // provides: IToolRegistry,
     requires: [IJupyterWidgetRegistry],
-    optional: [IMainMenu, ILayoutRestorer, ILabShell],
+    optional: [IMainMenu, ILayoutRestorer, ILabShell, INotebookTracker],
     activate: activate_widget_extension,
     autoStart: true
 };
@@ -38,7 +40,9 @@ function activate_widget_extension(app: Application<Widget>,
                                    widget_registry: IJupyterWidgetRegistry,
                                    mainmenu:IMainMenu|null,
                                    restorer: ILayoutRestorer|null,
-                                   shell: ILabShell): IToolRegistry {
+                                   shell: ILabShell|null,
+                                   notebook_tracker: INotebookTracker|null): IToolRegistry {
+    init_context(app as JupyterFrontEnd, notebook_tracker);
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
     add_tool_browser(app as JupyterFrontEnd, restorer);
 
@@ -51,8 +55,8 @@ function activate_widget_extension(app: Application<Widget>,
     // Create the tool registry
     const tool_registry = new ToolRegistry();
 
-    // Update the ToC when the active widget changes:
-    shell.currentChanged.connect(on_connect);
+    // Update the tool registry when the active widget changes:
+    shell && shell.currentChanged.connect(on_connect);
 
     return tool_registry;
 
@@ -60,7 +64,7 @@ function activate_widget_extension(app: Application<Widget>,
      * Callback invoked when the active widget changes.
      */
     function on_connect() {
-        let widget = shell.currentWidget;
+        let widget = shell ? shell.currentWidget : null;
         if (!widget) return;
 
         if (tool_registry.current && tool_registry.current.isDisposed) {
@@ -69,6 +73,11 @@ function activate_widget_extension(app: Application<Widget>,
         }
         else tool_registry.current = widget;
     }
+}
+
+function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
+    ContextManager.jupyter_app = app;
+    ContextManager.notebook_tracker = notebook_tracker;
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
