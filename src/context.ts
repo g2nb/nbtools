@@ -1,14 +1,14 @@
 import { hide, show, toggle } from "./utils";
 import { INotebookTracker } from "@jupyterlab/notebook";
 import { CodeCell } from "@jupyterlab/cells";
-import {JupyterFrontEnd} from "@jupyterlab/application";
+import { JupyterFrontEnd } from "@jupyterlab/application";
 
 export class ContextManager {
-    static _context:Context|null = null;
+    static _context:Context;
     static jupyter_app: JupyterFrontEnd;
     static notebook_tracker: INotebookTracker|null;
 
-    static context() {
+    static context():Context {
         if (!ContextManager._context) {
             if (ContextManager.is_lab()) ContextManager._context = new LabContext();
             else if (ContextManager.is_notebook()) ContextManager._context = new NotebookContext();
@@ -23,8 +23,12 @@ export class ContextManager {
       * @returns {boolean}
      */
     static is_lab(): boolean {
-        // TODO: Find a better way to determine this
-        return !!document.querySelector("#main.jp-LabShell")
+        // The assumption is that only JupyterLab will provide an initialized NotebookTracker object
+        // If a better way to detect the environment becomes available, use that instead
+        return !!ContextManager.notebook_tracker;
+
+        // A previous implementation replied on checking the DOM
+        // return !!document.querySelector("#main.jp-LabShell")
     }
 
     /**
@@ -49,15 +53,33 @@ abstract class Context {
      * @param {HTMLElement} element
      * @param {boolean} display
      */
-    abstract toggle_code(element:HTMLElement, display?:boolean): void;
+    abstract toggle_code(element: HTMLElement, display?: boolean): void;
 
     /**
      * Execute the indicated cell in the notebook
      *
      * @param cell
      */
-    abstract run_cell(cell?:any): void;
+    abstract run_cell(cell?: any): void;
+
+    /**
+     * Execute all cells with nbtools widgets in the current notebook
+     */
+    abstract run_tool_cells(): void;
+
+    /**
+     * Determines if the given cell contains a notebook tool widget
+     *
+     * @param cell
+     * @returns boolean
+     */
+    is_tool_cell(cell:any):boolean {
+        const dom_node = cell.node || cell.element;
+        if (!!dom_node) return !!dom_node.querySelector('.nbtools');
+        else return false;
+    }
 }
+
 
 /**
  * Context handler for JupyterLab
@@ -93,7 +115,7 @@ class LabContext extends Context {
         if (!cell) cell = ContextManager.notebook_tracker.activeCell;
 
         // If this is a code cell
-        if (ContextManager.notebook_tracker.activeCell instanceof CodeCell) {
+        if (cell instanceof CodeCell) {
             const current = ContextManager.notebook_tracker.currentWidget;
             if (current) {
                 CodeCell.execute(cell, current.context.session);
@@ -103,6 +125,19 @@ class LabContext extends Context {
         // If this is a markdown cell
         // if (ContextManager.notebook_tracker.activeCell instanceof MarkdownCell)
         //     MarkdownCell.renderInput(ContextManager.notebook_tracker.activeCell)
+    }
+
+    /**
+     * Execute all cells with nbtools widgets in the current notebook
+     */
+    run_tool_cells() {
+        if (!ContextManager.notebook_tracker) return;               // If no notebook_tracker, do nothing
+        if (!ContextManager.notebook_tracker.currentWidget) return; // If no notebook selected, do nothing
+
+        const cell_widgets = ContextManager.notebook_tracker.currentWidget.content.widgets;
+        cell_widgets.forEach((widget) => {
+            if (this.is_tool_cell(widget)) this.run_cell(widget);
+        });
     }
 }
 
@@ -133,6 +168,15 @@ class NotebookContext extends Context {
     run_cell(cell:any) {
         (window as any).Jupyter.notebook.execute(cell);
     }
+
+    /**
+     * Execute all cells with nbtools widgets in the current notebook
+     */
+    run_tool_cells() {
+        (window as any).Jupyter.notebook.get_cells().forEach((cell:any) => {
+            if (this.is_tool_cell(cell)) this.run_cell(cell);
+        });
+    }
 }
 
 /**
@@ -145,11 +189,16 @@ class EmbedContext extends Context {
      * @param {HTMLElement} element
      * @param {boolean} display
      */
-    toggle_code(element:HTMLElement, display?:boolean) { return; }
+    toggle_code(element:HTMLElement, display?:boolean) {}
 
     /**
      * No cells in this context, so do nothing
      * @param cell
      */
-    run_cell(cell:any) { return; }
+    run_cell(cell:any) {}
+
+    /**
+     * No cells in this context, so do nothing
+     */
+    run_tool_cells() {}
 }

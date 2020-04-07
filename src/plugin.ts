@@ -78,6 +78,7 @@ function activate_widget_extension(app: Application<Widget>,
 function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
     ContextManager.jupyter_app = app;
     ContextManager.notebook_tracker = notebook_tracker;
+    (window as any).ContextManager = ContextManager;
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {

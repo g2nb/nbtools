@@ -106,10 +106,9 @@ export class BaseWidgetView extends DOMWidgetView {
     attach_connect_event() {
         const button = this.element.querySelector('button.nbtools-connect') as HTMLElement;
         button.addEventListener("click", () => {
-            // TODO: Implement
             // Run all cells with disconnected nbtools widgets
-            // CodeCell.execute(cellWidget, sessionContext);
-            ContextManager.context().run_cell();
+            // ContextManager.context().run_cell();
+            ContextManager.context().run_tool_cells();
         });
     }
 
