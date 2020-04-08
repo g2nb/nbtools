@@ -1,4 +1,3 @@
-// import { FileBrowser } from '@jupyterlab/filebrowser';
 // import { ISignal, Signal } from '@lumino/signaling';
 import { PanelLayout, Widget } from '@phosphor/widgets';
 import { toggle } from "./utils";

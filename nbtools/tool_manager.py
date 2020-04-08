@@ -1,8 +1,10 @@
-from nbtools.basewidget import BaseWidget
+from .basewidget import BaseWidget
+from ipykernel.comm import Comm
 
 
 class ToolManager(object):
-    _instance = None
+    COMM_NAME = 'nbtools_comm'  # The name of the kernel <-> client comm
+    _instance = None            # ToolManager singleton
 
     @staticmethod
     def instance():
@@ -11,7 +13,28 @@ class ToolManager(object):
         return ToolManager._instance
 
     def __init__(self):
-        self.tools = {}
+        self.tools = {}  # Initialize the tools map
+        # Establish the comm with the client
+        self.comm = Comm(target_name=ToolManager.COMM_NAME, data={})
+
+    def send(self, message_type, tool_or_payload):
+        """
+        Send a message to the comm on the client
+
+        :param func:
+        :param payload:
+        :return:
+        """
+        # Handle known message types
+        if message_type == 'register':     payload = tool_or_payload.json_safe()
+        elif message_type == 'unregister': payload = tool_or_payload.id
+        else:                              payload = tool_or_payload
+
+        # Send the message to the client
+        self.comm.send({
+            "func": message_type,
+            "payload": payload
+        })
 
     @classmethod
     def list(cls):
@@ -32,7 +55,11 @@ class ToolManager(object):
                 if tool_or_widget.origin not in tools:
                     tools[tool_or_widget.origin] = {}
 
+                # Register the tool
                 cls.instance().tools[tool_or_widget.origin][tool_or_widget.id] = tool_or_widget
+
+                # Notify the client of the registration
+                cls.instance().send('register', tool_or_widget)
             else:
                 raise ValueError("register() must be passed a tool with an instantiated origin and id")
         else:
@@ -83,3 +110,13 @@ class NBTool:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    def json_safe(self):
+        return {
+            'origin': self.origin,
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'tags': self.tags,
+            'version': self.version
+        }

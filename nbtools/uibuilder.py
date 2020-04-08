@@ -8,7 +8,7 @@ from ipywidgets import widget_serialization, Output
 from ._frontend import module_name, module_version
 from .form import InteractiveForm
 from .basewidget import BaseWidget
-from .tool_manager import ToolManager
+from .tool_manager import ToolManager, NBTool
 
 
 class build_ui:
@@ -79,7 +79,7 @@ class build_ui:
         display(self.__widget__)
 
 
-class UIBuilder(BaseWidget):
+class UIBuilder(BaseWidget, NBTool):
     """
     Widget used to render Python output in a UI
     """

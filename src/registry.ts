@@ -1,4 +1,6 @@
 import { Widget } from "@phosphor/widgets";
+import { ILabShell } from "@jupyterlab/application";
+import { NotebookPanel } from "@jupyterlab/notebook";
 
 export interface IToolRegistry extends ToolRegistry {}
 
@@ -13,6 +15,76 @@ export class ToolRegistry {
     private _modified:Date = new Date();
     // Reference to the currently selected notebook or other widget
     public current:Widget|null = null;
+
+    /**
+     * Initialize the ToolRegistry and connect event handlers
+     *
+     * @param shell
+     */
+    constructor(shell:ILabShell|null) {
+        // Update the tool registry when the active widget changes:
+        shell && shell.currentChanged.connect(() => {
+            let widget = shell ? shell.currentWidget : null;
+            if (!widget) return; // Ensure shell and currentWidget are defined
+
+            // If the current widget has been closed, set no current widget
+            if (this.current && this.current.isDisposed) this.current = null;
+
+            // Otherwise, set the current widget
+            else this.set_current(widget);
+        });
+    }
+
+    /**
+     * Set the current widget and connect the comm
+     * @param widget
+     */
+    set_current(widget:Widget) {
+        this.current = widget;
+        this.init_comm(widget);
+    }
+
+    /**
+     * Initialize the comm between the notebook widget kernel and the ToolManager
+     *
+     * @param current
+     */
+    init_comm(current:Widget|NotebookPanel) {
+        // If the current selected widget isn't a notebook, no comm is needed
+        if (!(current instanceof NotebookPanel)) return;
+
+        // Initialize the comm when the kernel starts up or changes
+        current.context.session.kernelChanged.connect(() => {
+            const kernel = current.context.session.kernel;
+
+            // If the kernel is null, don't establish a comm
+            if (!kernel) return;
+
+            console.log('nbtools comm registered with kernel');
+            kernel.registerCommTarget('nbtools_comm', (comm:any) => {
+                comm.onMsg = (msg:any) => {
+                    const session_id = msg.header.session;
+                    const data = msg.content.data;
+
+                    if (data.func === 'register') this.add_tool(session_id, data.payload);
+                    else if (data.func === 'unregister') this.remove_tool(session_id, data.payload);
+                    else console.log('ToolRegistry received unknown message: ' + data);
+                }
+              });
+        });
+    }
+
+    add_tool(session_id:string, tool:any) {
+        // TODO: Implement
+        console.log('ADDING TOOL');
+        console.log(tool);
+    }
+
+    remove_tool(session_id:string, tool_id:any) {
+        // TODO: Implement
+        console.log('REMOVING TOOL');
+        console.log(tool_id);
+    }
 
     /**
      * Register a notebook tool with the manager

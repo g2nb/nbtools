@@ -5,6 +5,7 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import * as base_exports from './basewidget';
 import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
+import * as toolbox_exports from './toolbox';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
@@ -14,7 +15,7 @@ import { ContextManager } from "./context";
 
 
 const documentation = 'nbtools:documentation';
-const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports, documentation } as any;
+const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports, ...toolbox_exports, documentation } as any;
 const EXTENSION_ID = '@genepattern/nbtools:plugin';
 const NAMESPACE = 'nbtools';
 
@@ -53,32 +54,13 @@ function activate_widget_extension(app: Application<Widget>,
     });
 
     // Create the tool registry
-    const tool_registry = new ToolRegistry();
-
-    // Update the tool registry when the active widget changes:
-    shell && shell.currentChanged.connect(on_connect);
-
-    return tool_registry;
-
-    /**
-     * Callback invoked when the active widget changes.
-     */
-    function on_connect() {
-        let widget = shell ? shell.currentWidget : null;
-        if (!widget) return;
-
-        if (tool_registry.current && tool_registry.current.isDisposed) {
-            tool_registry.current = null;
-            return;
-        }
-        else tool_registry.current = widget;
-    }
+    return new ToolRegistry(shell);
 }
 
 function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
     ContextManager.jupyter_app = app;
     ContextManager.notebook_tracker = notebook_tracker;
-    (window as any).ContextManager = ContextManager;
+    //(window as any).ContextManager = ContextManager;  // Left in for development purposes
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
