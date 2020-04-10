@@ -8,7 +8,7 @@ from ipywidgets import widget_serialization, Output
 from ._frontend import module_name, module_version
 from .form import InteractiveForm
 from .basewidget import BaseWidget
-from .tool_manager import ToolManager, NBTool
+from .tool_manager import ToolManager
 
 
 class build_ui:
@@ -79,7 +79,7 @@ class build_ui:
         display(self.__widget__)
 
 
-class UIBuilder(BaseWidget, NBTool):
+class UIBuilder(BaseWidget):
     """
     Widget used to render Python output in a UI
     """
@@ -131,6 +131,7 @@ class UIBuilder(BaseWidget, NBTool):
     def _apply_defaults(self, function_or_method):
         # Set the name based on the function name
         self.name = function_or_method.__qualname__
+        self.id = function_or_method.__qualname__
 
         # Set the description based on the docstring
         self.description = inspect.getdoc(function_or_method) or ''

@@ -2,11 +2,13 @@ import { hide, show, toggle } from "./utils";
 import { INotebookTracker } from "@jupyterlab/notebook";
 import { CodeCell } from "@jupyterlab/cells";
 import { JupyterFrontEnd } from "@jupyterlab/application";
+import { ToolRegistry } from "./registry";
 
 export class ContextManager {
     static _context:Context;
-    static jupyter_app: JupyterFrontEnd;
-    static notebook_tracker: INotebookTracker|null;
+    static jupyter_app:JupyterFrontEnd;
+    static notebook_tracker:INotebookTracker|null;
+    static tool_registry:ToolRegistry;
 
     static context():Context {
         if (!ContextManager._context) {

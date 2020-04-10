@@ -43,23 +43,34 @@ function activate_widget_extension(app: Application<Widget>,
                                    restorer: ILayoutRestorer|null,
                                    shell: ILabShell|null,
                                    notebook_tracker: INotebookTracker|null): IToolRegistry {
-    init_context(app as JupyterFrontEnd, notebook_tracker);
+
+    // Create the tool registry
+    const tool_registry = new ToolRegistry(shell);
+
+    // Initialize the ContextManager
+    init_context(app as JupyterFrontEnd, notebook_tracker, tool_registry);
+
+    // Add items to the help menu
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
+
+    // Add the toolbox
     add_tool_browser(app as JupyterFrontEnd, restorer);
 
+    // Register the nbtools widgets with the widget registry
     widget_registry.registerWidget({
         name: MODULE_NAME,
         version: MODULE_VERSION,
         exports: all_exports,
     });
 
-    // Create the tool registry
-    return new ToolRegistry(shell);
+    // Return the tool registry so that it is provided to other extensions
+    return tool_registry;
 }
 
-function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
+function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null, tool_registry:ToolRegistry) {
     ContextManager.jupyter_app = app;
     ContextManager.notebook_tracker = notebook_tracker;
+    ContextManager.tool_registry = tool_registry;
     //(window as any).ContextManager = ContextManager;  // Left in for development purposes
 }
 

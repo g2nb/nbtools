@@ -1,6 +1,6 @@
-// import { ISignal, Signal } from '@lumino/signaling';
 import { PanelLayout, Widget } from '@phosphor/widgets';
 import { toggle } from "./utils";
+import { ContextManager } from "./context";
 
 export class ToolBrowser extends Widget {
     constructor() {
@@ -19,19 +19,64 @@ export class Toolbox extends Widget {
         this.addClass('nbtools-toolbox');
         this.addClass('nbtools-wrapper');
 
-        // FIXME: This is test code
-        const origin = this.add_origin('GenePattern Cloud');
-        this.add_tool(origin, 'Example Tool A', 'An example tool');
-        this.add_tool(origin, 'Example Tool B', 'An example tool');
-        this.add_tool(origin, 'Example Tool C', 'An example tool');
-        const origin2 = this.add_origin('Notebook');
-        this.add_tool(origin2, 'Example Tool A', 'An example tool');
-        this.add_tool(origin2, 'Example Tool B', 'An example tool');
-        this.add_tool(origin2, 'Example Tool C', 'An example tool');
-        const origin3 = this.add_origin('+');
-        this.add_tool(origin3, 'Example Tool A', 'An example tool');
-        this.add_tool(origin3, 'Example Tool B', 'An example tool');
-        this.add_tool(origin3, 'Example Tool C', 'An example tool');
+        // Update the toolbox when the tool registry changes
+        ContextManager.tool_registry.on_update(() => {
+            this.fill_toolbox();
+        });
+
+        // Fill the toolbox with the registered tools
+        this.fill_toolbox();
+    }
+
+    fill_toolbox() {
+        // First empty the toolbox
+        this.empty_toolbox();
+
+        // Get the list of tools
+        const tools = ContextManager.tool_registry.list();
+
+        // Organize by origin and sort
+        const organized_tools = this.organize_tools(tools);
+        const origins = Object.keys(organized_tools);
+        origins.sort((a:any, b:any) => {
+            const a_name = a.toLowerCase();
+            const b_name = b.toLowerCase();
+            return (a_name < b_name) ? -1 : (a_name > b_name) ? 1 : 0;
+        });
+
+        // Add each origin
+        origins.forEach((origin) => {
+            const origin_box = this.add_origin(origin);
+            organized_tools[origin].forEach((tool:any) => {
+                this.add_tool(origin_box, tool.name, tool.description);
+            })
+        });
+    }
+
+    organize_tools(tool_list:Array<any>):any {
+        const organized:any = {};
+
+        // Group tools by origin
+        tool_list.forEach((tool) => {
+            if (tool.origin in organized) organized[tool.origin].push(tool);    // Add tool to origin
+            else organized[tool.origin] = [tool];                               // Lazily create origin
+        });
+
+        // Sort the tools in each origin
+        Object.keys(organized).forEach((origin) => {
+            organized[origin].sort((a:any, b:any) => {
+                const a_name = a.name.toLowerCase();
+                const b_name = b.name.toLowerCase();
+                return (a_name < b_name) ? -1 : (a_name > b_name) ? 1 : 0;
+            });
+        });
+
+        // Return the organized set of notebooks
+        return organized
+    }
+
+    empty_toolbox() {
+        this.node.innerHTML = '';
     }
 
     add_origin(name:string) {
@@ -53,27 +98,6 @@ export class Toolbox extends Widget {
         return origin_wrapper;
     }
 
-    toggle_collapse(origin_wrapper:HTMLElement) {
-        const list = origin_wrapper.querySelector("ul.nbtools-origin") as HTMLElement;
-        const collapsed = list.classList.contains('nbtools-hidden');
-
-        // Toggle the collapse button
-        const collapse = origin_wrapper.querySelector('span.nbtools-collapse') as HTMLElement;
-        if (collapsed) {
-            console.log('is collapsed');
-            collapse.classList.add('nbtools-expanded');
-            collapse.classList.remove('nbtools-collapsed');
-        }
-        else {
-            console.log('is expanded');
-            collapse.classList.remove('nbtools-expanded');
-            collapse.classList.add('nbtools-collapsed');
-        }
-
-        // Hide or show widget body
-        toggle(list);
-    }
-
     add_tool(origin:HTMLElement, name:string, description:string) {
         const list = origin.querySelector('ul');
         const tool_wrapper = document.createElement('li');
@@ -82,6 +106,25 @@ export class Toolbox extends Widget {
             <div class="nbtools-header">${name}</div>
             <div class="nbtools-description">${description}</div>`;
         if (list) list.append(tool_wrapper);
+    }
+
+    toggle_collapse(origin_wrapper:HTMLElement) {
+        const list = origin_wrapper.querySelector("ul.nbtools-origin") as HTMLElement;
+        const collapsed = list.classList.contains('nbtools-hidden');
+
+        // Toggle the collapse button
+        const collapse = origin_wrapper.querySelector('span.nbtools-collapse') as HTMLElement;
+        if (collapsed) {
+            collapse.classList.add('nbtools-expanded');
+            collapse.classList.remove('nbtools-collapsed');
+        }
+        else {
+            collapse.classList.remove('nbtools-expanded');
+            collapse.classList.add('nbtools-collapsed');
+        }
+
+        // Hide or show widget body
+        toggle(list);
     }
 }
 

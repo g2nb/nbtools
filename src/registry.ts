@@ -6,7 +6,7 @@ export interface IToolRegistry extends ToolRegistry {}
 
 export class ToolRegistry {
     // List of registered tools
-    private _tools:any = {};
+    private _tools:any = [];
     // The next ID value to return
     private _next_id:number = 1;
     // Whether the Jupyter kernel has been loaded yet
@@ -15,6 +15,10 @@ export class ToolRegistry {
     private _modified:Date = new Date();
     // Reference to the currently selected notebook or other widget
     public current:Widget|null = null;
+    // Functions to call when an update happens
+    private _update_callbacks:Array<Function> = [];
+    // Keep a map of kernels to registered comms
+    kernel_comm_map:any = {};
 
     /**
      * Initialize the ToolRegistry and connect event handlers
@@ -53,37 +57,54 @@ export class ToolRegistry {
         // If the current selected widget isn't a notebook, no comm is needed
         if (!(current instanceof NotebookPanel)) return;
 
-        // Initialize the comm when the kernel starts up or changes
+        // Register the comm when the kernel starts up or changes
         current.context.session.kernelChanged.connect(() => {
-            const kernel = current.context.session.kernel;
+            current.context.session.ready.then(() => {
+                // If the kernel is null, don't establish a comm
+                const kernel = current.context.session.kernel;
+                if (!kernel) return;
 
+                console.log('nbtools comm registered with kernel');
+                kernel.registerCommTarget('nbtools_comm', (comm:any) => {
+                    this.kernel_comm_map[kernel.clientId] = comm;
+
+                    comm.onMsg = (msg:any) => {
+                        // const session_id = msg.header.session;
+                        const data = msg.content.data;
+
+                        if (data.func === 'update') this.update_tools(data.payload);
+                        else console.error('ToolRegistry received unknown message: ' + data);
+                    };
+                  });
+            });
+        });
+
+        // Rebuild the toolbox when the active notebook switches
+        current.context.session.ready.then(() => {
             // If the kernel is null, don't establish a comm
+            const kernel = current.context.session.kernel as any;
             if (!kernel) return;
 
-            console.log('nbtools comm registered with kernel');
-            kernel.registerCommTarget('nbtools_comm', (comm:any) => {
-                comm.onMsg = (msg:any) => {
-                    const session_id = msg.header.session;
-                    const data = msg.content.data;
-
-                    if (data.func === 'register') this.add_tool(session_id, data.payload);
-                    else if (data.func === 'unregister') this.remove_tool(session_id, data.payload);
-                    else console.log('ToolRegistry received unknown message: ' + data);
-                }
-              });
+            const comm = this.kernel_comm_map[kernel.clientId];
+            // const comm = kernel.connectToComm('nbtools_comm', 'nbtools_comm');
+            if (!!comm) this.request_update(comm);
+            else this.update_tools([]);
         });
     }
 
-    add_tool(session_id:string, tool:any) {
-        // TODO: Implement
-        console.log('ADDING TOOL');
-        console.log(tool);
+    request_update(comm:any) {
+        comm.send({'func': 'request_update'});
     }
 
-    remove_tool(session_id:string, tool_id:any) {
-        // TODO: Implement
-        console.log('REMOVING TOOL');
-        console.log(tool_id);
+    on_update(callback:Function) {
+        this._update_callbacks.push(callback);
+    }
+
+    update_tools(tool_list:any) {
+        this._tools = tool_list;
+        this._update_callbacks.forEach((callback) => {
+            callback(tool_list);
+        });
     }
 
     /**

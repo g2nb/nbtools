@@ -1,5 +1,9 @@
-from .basewidget import BaseWidget
 from ipykernel.comm import Comm
+
+import sys
+import logging
+logging.basicConfig(stream=open('/dev/stdout', 'w'), level=logging.INFO)
+logger = logging.getLogger('LOGGER')
 
 
 class ToolManager(object):
@@ -16,8 +20,22 @@ class ToolManager(object):
         self.tools = {}  # Initialize the tools map
         # Establish the comm with the client
         self.comm = Comm(target_name=ToolManager.COMM_NAME, data={})
+        self.send_update()  # Push an update, even if empty, to initialize the client-side
 
-    def send(self, message_type, tool_or_payload):
+        @self.comm.on_msg
+        def receive(msg):
+            logger.info('MESSAGE RECEIVED!')
+            data = msg['content']['data']
+            if data['func'] == 'request_update':
+                self.send_update()
+            else:
+                print('ToolManager received unknown message')
+
+    def send_update(self):
+        logger.info('Sending update')
+        self.send('update', list(map(lambda t: t.json_safe(), self._list())))
+
+    def send(self, message_type, payload):
         """
         Send a message to the comm on the client
 
@@ -25,16 +43,24 @@ class ToolManager(object):
         :param payload:
         :return:
         """
-        # Handle known message types
-        if message_type == 'register':     payload = tool_or_payload.json_safe()
-        elif message_type == 'unregister': payload = tool_or_payload.id
-        else:                              payload = tool_or_payload
 
-        # Send the message to the client
         self.comm.send({
             "func": message_type,
             "payload": payload
         })
+
+    def _list(self):
+        """
+        Get the list of registered tools
+
+        :return: list of tools
+        """
+        tools = self.tools
+        to_return = []
+        for o in tools.values():
+            for t in o.values():
+                to_return.append(t)
+        return to_return
 
     @classmethod
     def list(cls):
@@ -43,12 +69,13 @@ class ToolManager(object):
 
         :return: list of tools
         """
-        return [t for t in [o for o in cls.instance().tools.values()]]
+        # return [t for t in o.values() for o in cls.instance().tools.values()]
+        return cls.instance()._list()
 
     @classmethod
     def register(cls, tool_or_widget):
         """Register a NBTool or UIBuilder object"""
-        if isinstance(tool_or_widget, NBTool) or isinstance(tool_or_widget, BaseWidget):
+        if isinstance(tool_or_widget, NBTool):
             tools = cls.instance().tools
             if tool_or_widget.origin and tool_or_widget.id:
                 # Lazily create the origin
@@ -59,7 +86,7 @@ class ToolManager(object):
                 cls.instance().tools[tool_or_widget.origin][tool_or_widget.id] = tool_or_widget
 
                 # Notify the client of the registration
-                cls.instance().send('register', tool_or_widget)
+                cls.instance().send_update()
             else:
                 raise ValueError("register() must be passed a tool with an instantiated origin and id")
         else:
@@ -70,6 +97,9 @@ class ToolManager(object):
         """Unregister the tool with the associated id"""
         if cls.exists(id, origin):
             del cls.instance().tools['origin']['id']
+
+            # Notify the client of the un-registration
+            cls.instance().send_update()
         else:
             print(f'Cannot find tool to unregister: {origin} | {id}')
 
