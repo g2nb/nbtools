@@ -1,10 +1,5 @@
 from ipykernel.comm import Comm
 
-import sys
-import logging
-logging.basicConfig(stream=open('/dev/stdout', 'w'), level=logging.INFO)
-logger = logging.getLogger('LOGGER')
-
 
 class ToolManager(object):
     COMM_NAME = 'nbtools_comm'  # The name of the kernel <-> client comm
@@ -24,7 +19,6 @@ class ToolManager(object):
 
         @self.comm.on_msg
         def receive(msg):
-            logger.info('MESSAGE RECEIVED!')
             data = msg['content']['data']
             if data['func'] == 'request_update':
                 self.send_update()
@@ -32,7 +26,6 @@ class ToolManager(object):
                 print('ToolManager received unknown message')
 
     def send_update(self):
-        logger.info('Sending update')
         self.send('update', list(map(lambda t: t.json_safe(), self._list())))
 
     def send(self, message_type, payload):
@@ -109,7 +102,7 @@ class ToolManager(object):
         Return reference to tool widget given the id and origin
         """
         if cls.exists(id, origin):
-            return cls.instance().tools['origin']['id']
+            return cls.instance().tools[origin][id]
         else:
             print(f'Cannot find tool: {origin} | {id}')
             return None
@@ -118,8 +111,8 @@ class ToolManager(object):
     def exists(cls, id, origin):
         """Check if a tool for the provided id and origin exists"""
         tools = cls.instance().tools
-        if 'origin' in tools:
-            if id in tools['origin']:
+        if origin in tools:
+            if id in tools[origin]:
                 return True
             else: return False
         else: return False
@@ -150,3 +143,7 @@ class NBTool:
             'tags': self.tags,
             'version': self.version
         }
+
+
+def tool(id, origin):
+    return ToolManager.tool(id=id, origin=origin)

@@ -1,6 +1,7 @@
 import { PanelLayout, Widget } from '@phosphor/widgets';
 import { toggle } from "./utils";
 import { ContextManager } from "./context";
+import {NotebookActions, NotebookPanel} from "@jupyterlab/notebook";
 
 export class ToolBrowser extends Widget {
     constructor() {
@@ -28,6 +29,27 @@ export class Toolbox extends Widget {
         this.fill_toolbox();
     }
 
+    add_tool_cell(tool:any) {
+        if (!ContextManager.notebook_tracker) return; // If no NotebookTracker, do nothing
+
+        const current = ContextManager.tool_registry.current;
+        if (!current || !(current instanceof NotebookPanel)) return; // If no notebook is currently selected, return
+
+        let cell = ContextManager.notebook_tracker.activeCell;
+        if (!cell) return; // If no cell is selected, do nothing
+
+        // If the currently selected cell isn't empty, insert a new one below and select it
+        const code = cell.model.value.text.trim();
+        if (!!code) NotebookActions.insertBelow(current.content);
+
+        // Fill the cell with the tool's code
+        cell = ContextManager.notebook_tracker.activeCell; // The active cell may just have been updated
+        cell.model.value.text = `nbtools.tool(id='${tool.id}', origin='${tool.origin}')`;
+
+        // Run the cell
+        NotebookActions.run(current.content, current.context.session);
+    }
+
     fill_toolbox() {
         // First empty the toolbox
         this.empty_toolbox();
@@ -48,7 +70,7 @@ export class Toolbox extends Widget {
         origins.forEach((origin) => {
             const origin_box = this.add_origin(origin);
             organized_tools[origin].forEach((tool:any) => {
-                this.add_tool(origin_box, tool.name, tool.description);
+                this.add_tool(origin_box, tool);
             })
         });
     }
@@ -98,14 +120,20 @@ export class Toolbox extends Widget {
         return origin_wrapper;
     }
 
-    add_tool(origin:HTMLElement, name:string, description:string) {
+    add_tool(origin:HTMLElement, tool:any) {
         const list = origin.querySelector('ul');
         const tool_wrapper = document.createElement('li');
         tool_wrapper.classList.add('nbtools-tool');
         tool_wrapper.innerHTML = `
-            <div class="nbtools-header">${name}</div>
-            <div class="nbtools-description">${description}</div>`;
+            <div class="nbtools-header">${tool.name}</div>
+            <div class="nbtools-description">${tool.description}</div>`;
         if (list) list.append(tool_wrapper);
+
+        // Add the click event
+        tool_wrapper.addEventListener("click", () => {
+            console.log('CLICKED!');
+            this.add_tool_cell(tool);
+        })
     }
 
     toggle_collapse(origin_wrapper:HTMLElement) {
