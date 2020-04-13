@@ -115,6 +115,11 @@ ul.nbtools-origin {
     padding: 8px;
     border-bottom: solid var(--jp-border-width) var(--jp-border-color2);
     list-style-type: none;
+    cursor: pointer;
+}
+
+.nbtools-tool:hover {
+    background-color: var(--jp-editor-selected-background);
 }
 
 .nbtools-tool > .nbtools-header {
