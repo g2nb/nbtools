@@ -119,7 +119,7 @@ ul.nbtools-origin {
 }
 
 .nbtools-tool:hover {
-    background-color: var(--jp-editor-selected-background);
+    background-color: var(--jp-layout-color2);
 }
 
 .nbtools-tool > .nbtools-header {

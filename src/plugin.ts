@@ -10,7 +10,7 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
-import { INotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker, NotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
 
 
@@ -45,7 +45,7 @@ function activate_widget_extension(app: Application<Widget>,
                                    notebook_tracker: INotebookTracker|null): IToolRegistry {
 
     // Create the tool registry
-    const tool_registry = new ToolRegistry(shell);
+    const tool_registry = new ToolRegistry(notebook_tracker as NotebookTracker);
 
     // Initialize the ContextManager
     init_context(app as JupyterFrontEnd, notebook_tracker, tool_registry);

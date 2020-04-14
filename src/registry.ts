@@ -1,150 +1,136 @@
 import { Widget } from "@phosphor/widgets";
-import { ILabShell } from "@jupyterlab/application";
-import { NotebookPanel } from "@jupyterlab/notebook";
+import { NotebookPanel, NotebookTracker } from "@jupyterlab/notebook";
+import { Kernel } from "@jupyterlab/services";
 
 export interface IToolRegistry extends ToolRegistry {}
 
 export class ToolRegistry {
-    // List of registered tools
-    private _tools:any = [];
-    // The next ID value to return
-    private _next_id:number = 1;
-    // Whether the Jupyter kernel has been loaded yet
-    private _kernel_loaded:boolean = false;
-    // Timestamp of when the tool list was last modified
-    private _modified:Date = new Date();
     // Reference to the currently selected notebook or other widget
     public current:Widget|null = null;
     // Functions to call when an update happens
     private _update_callbacks:Array<Function> = [];
-    // Keep a map of kernels to registered comms
-    kernel_comm_map:any = {};
+    // Keep a cache of kernels to registered tools
+    kernel_tool_cache:any = {};
 
     /**
      * Initialize the ToolRegistry and connect event handlers
      *
-     * @param shell
+     * @param notebook_tracker
      */
-    constructor(shell:ILabShell|null) {
-        // Update the tool registry when the active widget changes:
-        shell && shell.currentChanged.connect(() => {
-            let widget = shell ? shell.currentWidget : null;
-            if (!widget) return; // Ensure shell and currentWidget are defined
+    constructor(notebook_tracker:NotebookTracker|null) {
 
-            // If the current widget has been closed, set no current widget
-            if (this.current && this.current.isDisposed) this.current = null;
+        // Register an event for when the active cell changes
+        notebook_tracker && notebook_tracker.activeCellChanged.connect(() => {
 
-            // Otherwise, set the current widget
-            else this.set_current(widget);
+            // Current notebook hasn't changed, no need to do anything, return
+            if (this.current === notebook_tracker.currentWidget) return;
+
+            // Otherwise, update the current notebook reference
+            this.current = notebook_tracker.currentWidget;
+
+            // If the current selected widget isn't a notebook, no comm is needed
+            if (!(this.current instanceof NotebookPanel)) return;
+
+            // Initialize the comm
+            this.init_comm();
         });
-    }
-
-    /**
-     * Set the current widget and connect the comm
-     * @param widget
-     */
-    set_current(widget:Widget) {
-        this.current = widget;
-        this.init_comm(widget);
     }
 
     /**
      * Initialize the comm between the notebook widget kernel and the ToolManager
-     *
-     * @param current
      */
-    init_comm(current:Widget|NotebookPanel) {
-        // If the current selected widget isn't a notebook, no comm is needed
-        if (!(current instanceof NotebookPanel)) return;
+    init_comm() {
+        // If the current widget isn't a notebook, there is no kernel
+        if (!(this.current instanceof NotebookPanel)) return;
 
-        // Register the comm when the kernel starts up or changes
-        current.context.session.kernelChanged.connect(() => {
-            current.context.session.ready.then(() => {
-                // If the kernel is null, don't establish a comm
-                const kernel = current.context.session.kernel;
-                if (!kernel) return;
+        // Make sure the session is ready before initializing the comm
+        this.current.context.session.ready.then(() => {
+            const current:any = this.current;
 
-                console.log('nbtools comm registered with kernel');
-                kernel.registerCommTarget('nbtools_comm', (comm:any) => {
-                    this.kernel_comm_map[kernel.clientId] = comm;
+            // Register the comm target with the kernel
+            const kernel = current.context.session.kernel;
+            kernel.registerCommTarget('nbtools_comm', (comm:Kernel.IComm) => {
+                comm.onMsg = (msg:any) => {
+                    const data = msg.content.data;
 
-                    comm.onMsg = (msg:any) => {
-                        // const session_id = msg.header.session;
-                        const data = msg.content.data;
+                    if (data.func === 'update') this.update_tools(data.payload);
+                    else console.error('ToolRegistry received unknown message: ' + data);
+                };
+              });
 
-                        if (data.func === 'update') this.update_tools(data.payload);
-                        else console.error('ToolRegistry received unknown message: ' + data);
-                    };
-                  });
-            });
-        });
-
-        // Rebuild the toolbox when the active notebook switches
-        current.context.session.ready.then(() => {
-            // If the kernel is null, don't establish a comm
-            const kernel = current.context.session.kernel as any;
-            if (!kernel) return;
-
-            const comm = this.kernel_comm_map[kernel.clientId];
-            // const comm = kernel.connectToComm('nbtools_comm', 'nbtools_comm');
-            if (!!comm) this.request_update(comm);
-            else this.update_tools([]);
+            // Update tools from the cache
+            this.update_from_cache();
         });
     }
 
-    request_update(comm:any) {
-        comm.send({'func': 'request_update'});
-    }
+    /**
+     * Get tools from the cache and make registered callbacks
+     */
+    update_from_cache() {
+        // Get the kernel ID
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return; // Do nothing if null
 
-    on_update(callback:Function) {
-        this._update_callbacks.push(callback);
-    }
+        // Get tools from the cache
+        const tool_list = this.kernel_tool_cache[kernel_id];
 
-    update_tools(tool_list:any) {
-        this._tools = tool_list;
+        // Make registered callbacks for when tools are updated
         this._update_callbacks.forEach((callback) => {
             callback(tool_list);
         });
     }
 
     /**
-     * Register a notebook tool with the manager
-     * Return null if the provided tool is not valid
+     * Message the kernel, requesting an update to the tools cache
      *
-     * @param tool - Object implementing the Notebook Tool interface
-     * @returns {number|null} - Returns the tool ID or null if invalid
+     * @param comm
      */
-    register(tool:any) {
-        const id = this._generate_id();
-        this._tools[id] = tool;
-        this._modified = new Date();
-
-        // If the kernel has already been loaded, immediately call load() for the tool
-        if (this._kernel_loaded) {
-            const success = tool.load();
-
-            // Log error to console if tool had trouble loading
-            if (!success) console.log("Problem loading tool: " + tool.name);
-        }
-
-        return id;
+    request_update(comm:any) {
+        comm.send({'func': 'request_update'});
     }
 
     /**
-     * Unregister a notebook tool from the manager
+     * Register an update callback with the ToolRegistry
      *
-     * @param id - Unique tool ID returned when registering the tool
-     * @returns {boolean} - Returns whether the tool was successfully registered
+     * @param callback
      */
-    unregister(id:string|number) {
-        if (id in this._tools) {
-            delete this._tools[id];
-            this._modified = new Date();
-            return true;
-        }
-        else {
-            return false;
-        }
+    on_update(callback:Function) {
+        this._update_callbacks.push(callback);
+    }
+
+    /**
+     * Retrieve the kernel ID from the currently selected notebook
+     * Return null if no kernel or no notebook selected
+     */
+    current_kernel_id() {
+        // If the current widget isn't a notebook, there is no kernel
+        if (!(this.current instanceof NotebookPanel)) return null;
+
+        // Protect against null
+        if (!this.current ||
+            !this.current.context ||
+            !this.current.context.session ||
+            !this.current.context.session.kernel) return null;
+
+        return this.current.context.session.kernel.id;
+    }
+
+    /**
+     * Update the tools cache for the current kernel
+     *
+     * @param tool_list
+     */
+    update_tools(tool_list:any) {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return; // Do nothing if no kernel
+
+        // Update the cache
+        this.kernel_tool_cache[kernel_id] = tool_list;
+
+        // Make registered callbacks when tools are updated
+        this._update_callbacks.forEach((callback) => {
+            callback(tool_list);
+        });
     }
 
     /**
@@ -153,8 +139,14 @@ export class ToolRegistry {
      * @returns {Array} - A list of registered tools
      */
     list():Array<any> {
-        const tools = this._tools;
-        return Object.keys(this._tools).map(function(key) {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return []; // Empty list if no kernel
+
+        // Get tools from the cache and protect against undefined
+        const tools = this.kernel_tool_cache[kernel_id];
+        if (!tools) return [];
+
+        return Object.keys(tools).map(function(key) {
             return tools[key];
         });
     }
@@ -174,25 +166,5 @@ export class ToolRegistry {
         });
 
         return found_tool;
-    }
-
-    /**
-     * Returns a Date() object representing when the tool
-     * list was last modified. Useful when caching.
-     *
-     * @returns {*}
-     */
-    modified() {
-        return this._modified;
-    }
-
-    /**
-     * Increment and return the next tool id number
-     *
-     * @returns {number} - The generated ID
-     * @private
-     */
-    _generate_id() {
-        return this._next_id++;
     }
 }
