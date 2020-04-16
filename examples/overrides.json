@@ -1,0 +1,5 @@
+{
+  "@jupyter-widgets/jupyterlab-manager:plugin": {
+    "saveState": true
+  }
+}

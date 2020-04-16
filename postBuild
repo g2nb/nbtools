@@ -4,3 +4,4 @@ pip install .
 jupyter labextension install .
 jupyter nbextension install --py nbtools --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
+cp ./examples/overrides.json /srv/conda/envs/notebook/share/jupyter/lab/settings/overrides.json
