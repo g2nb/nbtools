@@ -1,8 +1,8 @@
 
-# nbtools-lab-prototype
+# nbtools JupyterLab Prototype
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools-lab-prototype/master?urlpath=lab)
-[![Build Status](https://travis-ci.org/genepattern/nbtools-lab-prototype.svg?branch=master)](https://travis-ci.org/genepattern/nbtools)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/lab?urlpath=lab)
+[![Build Status](https://travis-ci.org/genepattern/nbtools.svg?branch=lab)](https://travis-ci.org/genepattern/nbtools)
 
 nbtools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike.
 
