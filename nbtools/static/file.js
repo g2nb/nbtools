@@ -15,7 +15,7 @@
  *      GenomeSpace Files
  *      Browsing Uploaded Files
  *
- * Copyright 2015-2019 Regents of the University of California & The Broad Institute
+ * Copyright 2015-2020 Regents of the University of California & The Broad Institute
  */
 
 define("nbtools/file", ["base/js/namespace",
