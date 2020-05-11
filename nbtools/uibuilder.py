@@ -111,7 +111,6 @@ class UIBuilder(BaseWidget):
 
         # Set the function and call superclass constructor
         self.function_or_method = function_or_method
-        kwargs['function_or_method'] = function_or_method
         BaseWidget.__init__(self, **kwargs)
 
         # Give deprecation warnings
