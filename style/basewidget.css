@@ -3,13 +3,14 @@
     width: 100%;
     max-width: 100%;
     overflow: visible !important;
-    border: 1px solid rgba(43, 43, 43, 0.8);
+    border: 1px solid var(--jp-border-color1);
     border-radius: 2px;
+    background: var(--jp-layout-color0);
 }
 
 .nbtools .nbtools-header {
-    background-color: rgba(43, 43, 43, 0.8);
-    color: white;
+    background-color: var(--jp-layout-color4);
+    color: var(--jp-ui-inverse-font-color0);
     padding: 7px;
 }
 
@@ -38,9 +39,9 @@
     padding-left: 0;
     height: 25px;
     border-radius: 2px;
-    color: #333;
-    background-color: #fff;
-    border-color: #ccc;
+    color: var(--jp-ui-font-color1);
+    background-color: var(--jp-layout-color0);
+    border-color: var(--jp-border-color2);
 }
 
 .nbtools-controls > button.nbtools-gear {
@@ -53,9 +54,9 @@
     top: 28px;
     right: 0;
     margin: 0;
-    background: white;
-    color: black;
-    border: solid 1px darkgray;
+    background: var(--jp-layout-color0);
+    color: var(--jp-ui-font-color0);
+    border: solid 1px var(--jp-border-color1);
     padding: 5px 0 5px 0;
     list-style-type: none;
     cursor: pointer;
@@ -68,7 +69,7 @@
 }
 
 .nbtools-menu > li:hover {
-    background-color: #eeeeee;
+    background-color: var(--jp-layout-color2);
 }
 
 .nbtools-body {
@@ -81,7 +82,7 @@
     left: -10px;
     top: -10px;
     width: 100%;
-    background-color: #eeeeee;
+    background-color: var(--jp-layout-color2);
     padding: 10px;
 }
 
@@ -116,7 +117,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: var(--jp-ui-inverse-font-color3);
     z-index: 2;
 }
 
@@ -137,9 +138,9 @@
     width: 100%;
     max-width: 100%;
     overflow: visible !important;
-    border: 1px solid rgba(43, 43, 43, 0.8);
+    border: 1px solid var(--jp-border-color0);
     border-radius: 2px;
-    background-color: white;
+    background-color: var(--jp-layout-color1);
 }
 
 div.nbtools-connect {
@@ -148,9 +149,9 @@ div.nbtools-connect {
 }
 
 button.nbtools-connect {
-    background-color: rgba(43, 43, 43, 0.8);
-    color: white;
-    border: 1px solid rgba(43, 43, 43, 0.8);
+    background-color: var(--jp-layout-color4);
+    color: var(--jp-ui-inverse-font-color0);
+    border: 1px solid var(--jp-border-color1);
     padding: 6px 12px;
     font-size: 0.9em;
     cursor: pointer;
