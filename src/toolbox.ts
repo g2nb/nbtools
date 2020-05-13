@@ -124,7 +124,9 @@ export class Toolbox extends Widget {
         const list = origin.querySelector('ul');
         const tool_wrapper = document.createElement('li');
         tool_wrapper.classList.add('nbtools-tool');
+        tool_wrapper.setAttribute('title', 'Click to add to notebook');
         tool_wrapper.innerHTML = `
+            <div class="nbtools-add">+</div>
             <div class="nbtools-header">${tool.name}</div>
             <div class="nbtools-description">${tool.description}</div>`;
         if (list) list.append(tool_wrapper);

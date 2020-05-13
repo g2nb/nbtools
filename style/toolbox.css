@@ -133,9 +133,23 @@ ul.nbtools-origin {
     padding: 0 12px 4px 0;
 }
 
+.nbtools-tool > .nbtools-add {
+    float: right;
+    font-size: 28px;
+    line-height: 15px;
+    visibility: hidden;
+    color: var(--jp-ui-font-color2)
+}
+
+.nbtools-tool:hover > .nbtools-add {
+    visibility: visible;
+}
+
 .nbtools-tool > .nbtools-description {
     padding: 0 12px 4px 0;
     font-size: var(--jp-ui-font-size1);
     color: var(--jp-ui-font-color2);
     font-weight: 400;
+    max-height: 3.5em;
+    overflow: hidden;
 }

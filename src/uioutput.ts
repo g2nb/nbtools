@@ -98,6 +98,8 @@ export class UIOutputView extends BaseWidgetView {
             this.add_menu_item(input['name'], () => {
                 const form_input = input['element'].querySelector('input') as HTMLFormElement;
                 form_input.value = href;
+                const widget = form_input.closest('.nbtools') as HTMLElement;
+                widget.scrollIntoView();
             }, 'nbtools-menu-subitem', menu);
         });
 
@@ -141,6 +143,9 @@ export class UIOutputView extends BaseWidgetView {
         // Build list of compatible inputs
         const compatible_inputs = [] as Array<any>;
         parameters.forEach((input:HTMLElement) => {
+            // Ignore hidden parameters
+            if (input.offsetWidth === 0 && input.offsetHeight === 0) return;
+
             // Ignore incompatible inputs
             const kinds = input.getAttribute('data-type') || '';
             const kinds_list = kinds.split(', ') as any;
