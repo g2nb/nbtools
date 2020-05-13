@@ -15,6 +15,6 @@ class BaseWidget(DOMWidget, NBTool):
         self.id = self.__hash__() if self.id is None else self.id
 
         for key, value in kwargs.items():
-            if key not in self.keys:
+            if key not in self.keys and f'_{key}' not in self.keys:
                 warnings.warn(RuntimeWarning(f'Keyword parameter {key} not recognized'))
             setattr(self, key, value)
