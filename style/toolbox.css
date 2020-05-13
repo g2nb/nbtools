@@ -90,6 +90,7 @@ header.nbtools-origin {
     margin: 0;
     font-weight: 600;
     text-transform: uppercase;
+    color: var(--jp-ui-font-color1);
     border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
     letter-spacing: 1px;
     font-size: var(--jp-ui-font-size0);

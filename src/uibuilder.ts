@@ -310,6 +310,9 @@ export class UIBuilderView extends BaseWidgetView {
         const menu = link.nextElementSibling as HTMLElement;
         const collapsed = menu.style.display === "none";
 
+        // If the menu is empty, don't show it
+        if (menu.childElementCount === 0) return;
+
         // Hide or show the menu
         if (collapsed) menu.style.display = "block";
         else menu.style.display = "none";
@@ -389,6 +392,9 @@ export class UIBuilderView extends BaseWidgetView {
                 const run_button = element.querySelector('.jupyter-button');
                 if (!!run_button) run_button.addEventListener('click', func);
             }
+
+            // Special case to handle focus events, which are swallowed by the Jupyter UI
+            else if (key === 'focus') element.addEventListener('focusin', func);
 
             // Otherwise, attach the event
             else element.addEventListener(key, func);

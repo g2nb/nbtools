@@ -24,6 +24,7 @@
     left: 0;
     right: auto;
     top: 20px;
+    z-index: 7;
 }
 
 .nbtools-menu-header,
