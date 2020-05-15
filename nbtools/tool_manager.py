@@ -128,7 +128,7 @@ class NBTool:
     description = None
     tags = None
     version = None
-    load = None
+    load = lambda self: self
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -146,4 +146,4 @@ class NBTool:
 
 
 def tool(id, origin):
-    return ToolManager.tool(id=id, origin=origin)
+    return ToolManager.tool(id=id, origin=origin).load()
