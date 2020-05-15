@@ -59,7 +59,7 @@ define("nbtools/choice", ["base/js/namespace",
                         }
 
                         // The general case
-                        widget._value = $(this).val();
+                        widget._values = $(this).val();
                         widget._updateCode();
                     })
             );
@@ -186,7 +186,7 @@ define("nbtools/choice", ["base/js/namespace",
             }
 
             this.element.find(".nbtools-choice-select").val(this.options.default.toString());
-            this._value = this.element.find(".nbtools-choice-select").val();
+            this._values = this.element.find(".nbtools-choice-select").val();
         },
 
         /**
@@ -195,7 +195,7 @@ define("nbtools/choice", ["base/js/namespace",
          * @private
          */
         _updateCode: function() {
-            this._runTask.updateCode(this._param.name(), this._value);
+            this._runTask.updateCode(this._param.name(), this._values);
         },
 
         /**
@@ -259,21 +259,33 @@ define("nbtools/choice", ["base/js/namespace",
         },
 
         /**
+         * This is just a clone of values() for compatibility with other widgets
+         *
+         * @param val
+         * @param force_setter - optional parameter to force setting an empty value
+         * @returns {object|string|null}
+         */
+        value: function(val, force_setter=false) {
+            return this.values(val, force_setter);
+        },
+
+        /**
          * Gets or sets the value of the input
          *
          * @param val - the value for the setter
          * @param force_setter - optional parameter to force setting an empty value
          * @returns {_value|string}
          */
-        value: function(val, force_setter=false) {
+        values: function(val, force_setter=false) {
             // Do setter
             if (val || force_setter) {
-                this._value = val;
+                if (!Array.isArray(val)) val = [val];
+                this._values = val;
                 this.element.find(".nbtools-choice-select").val(val);
             }
             // Do getter
             else {
-                return this._value;
+                    return this._values;
             }
         }
     });

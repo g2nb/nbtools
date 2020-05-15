@@ -1377,6 +1377,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
          */
         is_string_literal: function(test_string) {
             if (test_string === null) return false;
+            if (typeof test_string !== "string") return false;
             const quote_test = new RegExp("^\'.*\'$|^\".*\"$");
             return quote_test.test(test_string.trim())
         },
