@@ -1,6 +1,6 @@
 from .authwidget import GENEPATTERN_SERVERS, GPAuthWidget
 from .sessions import session
-from .utils import display
+from .display import display
 from nbtools import UIBuilder as GPUIBuilder, UIOutput as GPUIOutput, build_ui, open
 
 __author__ = 'Thorin Tabor'
