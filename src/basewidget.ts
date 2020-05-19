@@ -2,9 +2,21 @@ import '../style/basewidget.css';
 import { ContextManager } from "./context";
 import { toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView, WidgetView } from "@jupyter-widgets/base";
+import { MODULE_NAME, MODULE_VERSION } from "./version";
 
 export class BaseWidgetModel extends DOMWidgetModel {
-    // Placeholder in the inheritance tree, in case it is needed later
+    static model_name = 'BaseWidgetModel';
+    static model_module = MODULE_NAME;
+    static model_module_version = MODULE_VERSION;
+    static view_name = 'BaseWidgetView';
+    static view_module = MODULE_NAME;
+    static view_module_version = MODULE_VERSION;
+
+    defaults() {
+        return {
+            collapsed: false
+        };
+    }
 }
 
 
@@ -51,6 +63,8 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Hook in the traitlet change events
         this.traitlets.forEach(traitlet => this.model.on(`change:${traitlet}`, this.traitlet_changed, this));
+        this.model.on('change:collapsed', this.toggle_collapse, this);
+        if (this.model.get('collapsed')) this.toggle_collapse();
 
         // Hide the code
         this.toggle_code(false);
@@ -82,7 +96,10 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Attach collapse event
         const collapse = this.element.querySelector("button.nbtools-collapse") as HTMLButtonElement;
-        collapse.addEventListener("click", () => this.toggle_collapse());
+        collapse.addEventListener("click", () => {
+            this.model.set('collapsed', !this.model.get('collapsed'));
+            this.model.save_changes();
+        });
 
         // Attach the gear event
         const gear = this.element.querySelector("button.nbtools-gear") as HTMLButtonElement;

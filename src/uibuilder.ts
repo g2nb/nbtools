@@ -44,6 +44,11 @@ export class UIBuilderModel extends BaseWidgetModel {
             register_tool: true,
             collapse: true,
             events: {},
+            display_header: true,
+            display_footer: true,
+            info: '',
+            error: '',
+            run_label: 'Run',
             form: undefined,
             output: undefined
         };
@@ -52,17 +57,29 @@ export class UIBuilderModel extends BaseWidgetModel {
 
 export class UIBuilderView extends BaseWidgetView {
     dom_class = 'nbtools-uibuilder';
-    traitlets = ['name', 'description', 'origin', '_parameters', 'function_import', 'register_tool', 'collapse', 'events', 'form', 'output'];
-    renderers:any = {};
+    traitlets = ['name', 'description', 'origin', '_parameters', 'function_import', 'register_tool', 'collapse',
+        'events', 'info', 'error', 'run_label', 'form', 'output'];
+    renderers:any = {
+        "error": this.render_error,
+        "info": this.render_info
+    };
     body:string = `
-        <button class="nbtools-run">Run</button>
+        <button class="nbtools-run" data-traitlet="run_label"></button>
         <div class="nbtools-description" data-traitlet="description"></div>
+        <div class="nbtools-error" data-traitlet="error"></div>
+        <div class="nbtools-info" data-traitlet="info"></div>
         <div class="nbtools-form"></div>
         <div class="nbtools-footer"></div>
-        <button class="nbtools-run">Run</button>`;
+        <button class="nbtools-run" data-traitlet="run_label">Run</button>`;
 
     render() {
         super.render();
+
+        // Hide the header or footer, if necessary
+        this.display_header_changed();
+        this.display_footer_changed();
+        this.model.on(`change:display_header`, this.display_header_changed, this);
+        this.model.on(`change:display_footer`, this.display_footer_changed, this);
 
         // Attach the Reset Parameters gear option
         this.add_menu_item('Reset Parameters', () => this.reset_parameters());
@@ -75,6 +92,40 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Attach ID and event callbacks once the view is rendered
         element_rendered(this.el).then(() => this._attach_callbacks());
+    }
+
+    render_error(message:string, widget:UIBuilderView) {
+        return widget._render_or_hide('.nbtools-error', message, widget);
+    }
+
+    render_info(message:string, widget:UIBuilderView) {
+        return widget._render_or_hide('.nbtools-info', message, widget);
+    }
+
+    _render_or_hide(selector:string, message:string, widget:UIBuilderView) {
+        (widget.element.querySelector(selector) as HTMLElement).style.display = message.trim() ? 'block': 'none';
+        return message;
+    }
+
+    display_header_changed() {
+        const display = this.model.get('display_header') ? 'block': 'none';
+        (this.element.querySelector('.nbtools-run:first-of-type') as HTMLElement).style.display = display;
+        (this.element.querySelector('.nbtools-description') as HTMLElement).style.display = display;
+    }
+
+    display_footer_changed() {
+        const display = this.model.get('display_footer') ? 'block': 'none';
+        (this.element.querySelector('.nbtools-run:last-of-type') as HTMLElement).style.display = display;
+        (this.element.querySelector('.nbtools-footer') as HTMLElement).style.display = display;
+
+        // If there is an output_var element, hide or show it as necessary
+        if (!this.output_var_displayed()) return;
+        (this.element.querySelector('.nbtools-input:last-of-type') as HTMLElement).style.display = display;
+    }
+
+    output_var_displayed() {
+        const output_var = this.model.get('_parameters')['output_var'];
+        return !!(output_var && output_var['hide'] == false);
     }
 
     /**

@@ -20,6 +20,7 @@ class GPAuthWidget(UIBuilder):
     login_spec = {  # The display values for building the login UI
         'name': 'Login',
         'collapse': False,
+        'run_label': 'Log into GenePattern',
         'parameters': {
             'server': {
                 'name': 'GenePattern Server',
@@ -44,8 +45,8 @@ class GPAuthWidget(UIBuilder):
         if session is None: self.session = gp.GPServer('', '', '')
         else: self.session = session
 
-        # Set blank token and error objects
-        self.token, self.error = None, None
+        # Set blank token
+        self.token = None
 
         # Check to see if the provided session has valid credentials
         if self.has_credentials() and self.validate_credentials():
@@ -55,7 +56,8 @@ class GPAuthWidget(UIBuilder):
             self.collapse_widget(True)  # Collapse the widget by default
 
             # Display the widget with the system message and no form
-            UIBuilder.__init__(self, lambda: None, name=self.session.url, **kwargs)
+            UIBuilder.__init__(self, lambda: None, name=self.session.url, display_header=False, display_footer=False,
+                               collapsed=True, **kwargs)
 
         # If not, prompt the user to login
         else:
@@ -76,10 +78,6 @@ class GPAuthWidget(UIBuilder):
         if self.validate_credentials():
             self.replace_widget()
 
-        # If not valid, continue to prompt user
-        else:
-            self.display_error(self.error)
-
     def has_credentials(self):
         """Test whether the session object is instantiated and whether a username and password have been provided"""
         if type(self.session) is not gp.GPServer: return False  # Test type
@@ -96,7 +94,7 @@ class GPAuthWidget(UIBuilder):
             else: self.token = login(self.session)
             return True
         except BaseException as e:
-            self.error = e
+            self.error = str(e)
             return False
 
     def replace_widget(self):
@@ -118,26 +116,13 @@ class GPAuthWidget(UIBuilder):
     def system_message(self):
         if hasattr(self.session, 'system_message'): message = self.session.system_message()
         else: message = system_message(self.session)
-        self.display_message(message)
-
-
-    def display_error(self, message):
-        # TODO: Implement
-        #   - should really be part of BaseWidget or UI Builder
-        #   - display an error box with the provided message
-        print(message)
+        self.info = message
 
     def collapse_widget(self, collapse=None):
         # TODO: Implement
         #   - should really be part of BaseWidget or UI Builder
         #   - toggle collapse state of widget, or force open or closed if collapse param provided
         pass
-
-    def display_message(self, message):
-        # TODO: Implement
-        #   - should really be part of BaseWidget or UI Builder
-        #   - display an info box with the provided message
-        print(message)
 
 
 def server_name(search_url):
@@ -161,12 +146,8 @@ ToolManager.instance().register(AuthenticationTool())
 
 
 # TODO: - Handle custom servers
-#       - GenePattern color scheme
-#       - Display URL of server in status bar
-#       - Rename "run" to Login to GenePattern
-#       - Add Registration button
-#       - Hide description & first Run button
 #       - Automatically load the auth tool when a notebook is opened
 #       - Detect whether nbtools & genepattern have been imported in the notebook
-#       - Display error and info messages
-#       - Collapse or expand widget from Python
+#       -
+#       - GenePattern color scheme
+#       - Add Registration button

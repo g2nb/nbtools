@@ -98,9 +98,14 @@ class UIBuilder(BaseWidget):
     origin = Unicode(sync=True)
     _parameters = List(sync=True)
     function_import = Unicode(sync=True)  # Deprecated
-    register_tool = Bool(sync=True)
+    register_tool = Bool(True, sync=True)
     collapse = Bool(sync=True)
     events = Dict(sync=True)
+    display_header = Bool(True, sync=True)
+    display_footer = Bool(True, sync=True)
+    info = Unicode('', sync=True)
+    error = Unicode('', sync=True)
+    run_label = Unicode('Run', sync=True)
     form = Instance(InteractiveForm, (None, [])).tag(sync=True, **widget_serialization)
     output = Instance(Output, ()).tag(sync=True, **widget_serialization)
     function_or_method = None
