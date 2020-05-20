@@ -14,7 +14,10 @@ class BaseWidget(DOMWidget, NBTool):
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
 
+    name = Unicode('').tag(sync=True)
+    description = Unicode('').tag(sync=True)
     collapsed = Bool(False).tag(sync=True)
+    color = Unicode('var(--jp-layout-color4)').tag(sync=True)
 
     id = None
     origin = None

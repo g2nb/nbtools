@@ -1,5 +1,6 @@
 import gp
 from IPython.display import clear_output, display
+from traitlets import Unicode
 
 from nbtools import UIBuilder, ToolManager, NBTool
 from.sessions import session
@@ -17,9 +18,12 @@ GENEPATTERN_SERVERS = {
 
 class GPAuthWidget(UIBuilder):
     """A widget for authenticating with a GenePattern server"""
+    default_color = 'rgba(10, 45, 105, 0.80)'
     login_spec = {  # The display values for building the login UI
         'name': 'Login',
         'collapse': False,
+        'display_header': False,
+        'color': default_color,
         'run_label': 'Log into GenePattern',
         'parameters': {
             'server': {
@@ -53,11 +57,10 @@ class GPAuthWidget(UIBuilder):
             self.register_session()     # Register the session with the SessionList
             self.register_modules()     # Register the modules with the ToolManager
             self.system_message()       # Display the system message
-            self.collapse_widget(True)  # Collapse the widget by default
 
             # Display the widget with the system message and no form
             UIBuilder.__init__(self, lambda: None, name=self.session.url, display_header=False, display_footer=False,
-                               collapsed=True, **kwargs)
+                               color=self.default_color, collapsed=True, **kwargs)
 
         # If not, prompt the user to login
         else:
@@ -118,12 +121,6 @@ class GPAuthWidget(UIBuilder):
         else: message = system_message(self.session)
         self.info = message
 
-    def collapse_widget(self, collapse=None):
-        # TODO: Implement
-        #   - should really be part of BaseWidget or UI Builder
-        #   - toggle collapse state of widget, or force open or closed if collapse param provided
-        pass
-
 
 def server_name(search_url):
     """Search the GENEPATTERN_SERVERS dict for the server with the matching URL"""
@@ -137,7 +134,7 @@ class AuthenticationTool(NBTool):
     origin = '+'
     id = 'authentication'
     name = 'GenePattern Login'
-    description = 'Login to the GenePattern server'
+    description = 'Log into a GenePattern server'
     load = lambda x: GPAuthWidget()
 
 
@@ -148,6 +145,5 @@ ToolManager.instance().register(AuthenticationTool())
 # TODO: - Handle custom servers
 #       - Automatically load the auth tool when a notebook is opened
 #       - Detect whether nbtools & genepattern have been imported in the notebook
-#       -
 #       - GenePattern color scheme
 #       - Add Registration button

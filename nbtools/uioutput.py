@@ -16,7 +16,6 @@ class UIOutput(BaseWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     name = Unicode('Python Results').tag(sync=True)
-    description = Unicode('').tag(sync=True)
     status = Unicode('').tag(sync=True)
     files = List(Unicode, []).tag(sync=True)
     text = Unicode('').tag(sync=True)

@@ -92,8 +92,6 @@ class UIBuilder(BaseWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     # Declare the Traitlet values for the widget
-    name = Unicode(sync=True)
-    description = Unicode(sync=True)
     output_var = Unicode(sync=True)
     origin = Unicode(sync=True)
     _parameters = List(sync=True)
