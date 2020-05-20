@@ -14,7 +14,10 @@ export class BaseWidgetModel extends DOMWidgetModel {
 
     defaults() {
         return {
-            collapsed: false
+            name: '',
+            description: '',
+            collapsed: false,
+            color: 'var(--jp-layout-color4)'
         };
     }
 }
@@ -23,7 +26,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
 export class BaseWidgetView extends DOMWidgetView {
     dom_class = '';
     element:HTMLElement = document.createElement('div');
-    traitlets:string[] = [];
+    traitlets:string[] = ['name', 'description'];
     renderers:any = {};
     template:string = `<div class="nbtools">
                            <div class="nbtools-header"></div>
@@ -58,11 +61,17 @@ export class BaseWidgetView extends DOMWidgetView {
         // Build the widget
         this.build();
 
+        // Apply the color
+        this.set_color();
+        this.model.on('change:color', this.set_color, this);
+
         // Set the traitlet values
         this.traitlets.forEach(traitlet => this.traitlet_changed(traitlet));
 
         // Hook in the traitlet change events
         this.traitlets.forEach(traitlet => this.model.on(`change:${traitlet}`, this.traitlet_changed, this));
+
+        // Hook in the expand / collapse events
         this.model.on('change:collapsed', this.toggle_collapse, this);
         if (this.model.get('collapsed')) this.toggle_collapse();
 
@@ -118,6 +127,14 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Set the element
         this.setElement(this.element);
+    }
+
+    set_color() {
+        const color = this.model.get('color').trim();
+        this.element.style.borderColor = color;
+        this.element.querySelectorAll('.nbtools-body button, .nbtools-header').forEach((e) => {
+            (e as HTMLElement).style.backgroundColor = color;
+        });
     }
 
     attach_connect_event() {
@@ -213,6 +230,8 @@ export class BaseWidgetView extends DOMWidgetView {
 
         this.el.addEventListener('click', fix_cell, { once: true });
     }
+
+    basics() { return this.traitlets; } // Return the list of basic traitlets
 
     post_render() {} // Empty function, can be overridden in subclasses
 }

@@ -43,7 +43,7 @@ export class UIOutputModel extends BaseWidgetModel {
 
 export class UIOutputView extends BaseWidgetView {
     dom_class = 'nbtools-uioutput';
-    traitlets = ['name', 'description', 'status', 'files', 'text', 'visualization'];
+    traitlets = [...super.basics(), 'status', 'files', 'text', 'visualization'];
     renderers:any = {
         "files": this.render_files,
         "visualization": this.render_visualization

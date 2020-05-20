@@ -57,7 +57,7 @@ export class UIBuilderModel extends BaseWidgetModel {
 
 export class UIBuilderView extends BaseWidgetView {
     dom_class = 'nbtools-uibuilder';
-    traitlets = ['name', 'description', 'origin', '_parameters', 'function_import', 'register_tool', 'collapse',
+    traitlets = [...super.basics(), 'origin', '_parameters', 'function_import', 'register_tool', 'collapse',
         'events', 'info', 'error', 'run_label', 'form', 'output'];
     renderers:any = {
         "error": this.render_error,
