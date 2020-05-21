@@ -143,6 +143,4 @@ ToolManager.instance().register(AuthenticationTool())
 
 
 # TODO: - Handle custom servers
-#       - Automatically load the auth tool when a notebook is opened
-#       - Detect whether nbtools & genepattern have been imported in the notebook
 #       - Add Registration button

@@ -150,4 +150,5 @@ class NBTool:
 
 
 def tool(id, origin):
-    return ToolManager.tool(id=id, origin=origin).load()
+    nbtool = ToolManager.tool(id=id, origin=origin)
+    if nbtool: return nbtool.load()

@@ -31,7 +31,22 @@ export class ToolRegistry {
 
             // Initialize the comm
             this.init_comm();
+
+            // Load the default tools
+            this.import_default_tools();
         });
+    }
+
+    import_default_tools() {
+        const current = this.current as NotebookPanel;
+        if (current && current.context && current.context.session)
+            current.context.session.kernelChanged.connect(() => {
+                if (!current.context.session.kernel) return;  // Protect against null kernels
+
+                // Import the default tools
+                // TODO: Implement a more generalizable way of handling this
+                current.context.session.kernel.requestExecute({code: 'import genepattern'});
+            });
     }
 
     /**

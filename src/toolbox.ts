@@ -1,7 +1,7 @@
 import { PanelLayout, Widget } from '@phosphor/widgets';
 import { toggle } from "./utils";
 import { ContextManager } from "./context";
-import {NotebookActions, NotebookPanel} from "@jupyterlab/notebook";
+import { NotebookActions, NotebookPanel } from "@jupyterlab/notebook";
 
 export class ToolBrowser extends Widget {
     constructor() {
