@@ -42,9 +42,12 @@ export class Toolbox extends Widget {
         const code = cell.model.value.text.trim();
         if (!!code) NotebookActions.insertBelow(current.content);
 
+        // Check to see if nbtools needs to be imported
+        const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
+
         // Fill the cell with the tool's code
         cell = ContextManager.notebook_tracker.activeCell; // The active cell may just have been updated
-        cell.model.value.text = `nbtools.tool(id='${tool.id}', origin='${tool.origin}')`;
+        cell.model.value.text = import_line + `nbtools.tool(id='${tool.id}', origin='${tool.origin}')`;
 
         // Run the cell
         NotebookActions.run(current.content, current.context.session);
@@ -133,7 +136,6 @@ export class Toolbox extends Widget {
 
         // Add the click event
         tool_wrapper.addEventListener("click", () => {
-            console.log('CLICKED!');
             this.add_tool_cell(tool);
         })
     }

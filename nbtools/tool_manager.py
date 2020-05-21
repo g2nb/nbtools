@@ -1,3 +1,4 @@
+from IPython import get_ipython
 from ipykernel.comm import Comm
 
 
@@ -26,7 +27,10 @@ class ToolManager(object):
                 print('ToolManager received unknown message')
 
     def send_update(self):
-        self.send('update', list(map(lambda t: t.json_safe(), self._list())))
+        self.send('update', {
+            'import': 'nbtools' in get_ipython().user_global_ns,
+            'tools': list(map(lambda t: t.json_safe(), self._list()))
+        })
 
     def send(self, message_type, payload):
         """

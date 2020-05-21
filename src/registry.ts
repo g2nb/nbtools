@@ -5,12 +5,10 @@ import { Kernel } from "@jupyterlab/services";
 export interface IToolRegistry extends ToolRegistry {}
 
 export class ToolRegistry {
-    // Reference to the currently selected notebook or other widget
-    public current:Widget|null = null;
-    // Functions to call when an update happens
-    private _update_callbacks:Array<Function> = [];
-    // Keep a cache of kernels to registered tools
-    kernel_tool_cache:any = {};
+    public current:Widget|null = null;              // Reference to the currently selected notebook or other widget
+    private _update_callbacks:Array<Function> = []; // Functions to call when an update happens
+    kernel_tool_cache:any = {};                     // Keep a cache of kernels to registered tools
+    kernel_import_cache:any = {};                   // Keep a cache of whether nbtools has been imported
 
     /**
      * Initialize the ToolRegistry and connect event handlers
@@ -118,19 +116,35 @@ export class ToolRegistry {
     /**
      * Update the tools cache for the current kernel
      *
-     * @param tool_list
+     * @param message
      */
-    update_tools(tool_list:any) {
+    update_tools(message:any) {
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return; // Do nothing if no kernel
 
+        // Parse the message
+        const tool_list = message['tools'];
+        const needs_import = !!message['import'];
+
         // Update the cache
         this.kernel_tool_cache[kernel_id] = tool_list;
+        this.kernel_import_cache[kernel_id] = needs_import;
 
         // Make registered callbacks when tools are updated
         this._update_callbacks.forEach((callback) => {
             callback(tool_list);
         });
+    }
+
+    /**
+     * Query whether nbtools has been imported in this kernel
+     */
+    needs_import():Boolean {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return true; // Assume true if no kernel
+
+        // Get import status from the cache and protect against undefined
+        return !this.kernel_import_cache[kernel_id];
     }
 
     /**
