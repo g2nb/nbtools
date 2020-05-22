@@ -44,8 +44,7 @@ export class ToolRegistry {
                 if (!current.context.session.kernel) return;  // Protect against null kernels
 
                 // Import the default tools
-                // TODO: Implement a more generalizable way of handling this
-                current.context.session.kernel.requestExecute({code: 'import genepattern'});
+                current.context.session.kernel.requestExecute({code: 'from nbtools import import_defaults\nimport_defaults()'});
             });
     }
 
