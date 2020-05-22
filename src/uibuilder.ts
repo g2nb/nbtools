@@ -44,6 +44,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             register_tool: true,
             collapse: true,
             events: {},
+            buttons: {},
             display_header: true,
             display_footer: true,
             info: '',
@@ -64,13 +65,17 @@ export class UIBuilderView extends BaseWidgetView {
         "info": this.render_info
     };
     body:string = `
-        <button class="nbtools-run" data-traitlet="run_label"></button>
+        <div class="nbtools-buttons">
+            <button class="nbtools-run" data-traitlet="run_label"></button>
+        </div>
         <div class="nbtools-description" data-traitlet="description"></div>
         <div class="nbtools-error" data-traitlet="error"></div>
         <div class="nbtools-info" data-traitlet="info"></div>
         <div class="nbtools-form"></div>
         <div class="nbtools-footer"></div>
-        <button class="nbtools-run" data-traitlet="run_label">Run</button>`;
+        <div class="nbtools-buttons">
+            <button class="nbtools-run" data-traitlet="run_label"></button>
+        </div>`;
 
     render() {
         super.render();
@@ -86,6 +91,9 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Attach the Run button callbacks
         this.activate_run_buttons();
+
+        // Attach custom buttons
+        this.activate_custom_buttons();
 
         // Add the interactive form widget
         this.attach_child_widget('.nbtools-form', 'form');
@@ -109,13 +117,13 @@ export class UIBuilderView extends BaseWidgetView {
 
     display_header_changed() {
         const display = this.model.get('display_header') ? 'block': 'none';
-        (this.element.querySelector('.nbtools-run:first-of-type') as HTMLElement).style.display = display;
+        (this.element.querySelector('.nbtools-buttons:first-of-type') as HTMLElement).style.display = display;
         (this.element.querySelector('.nbtools-description') as HTMLElement).style.display = display;
     }
 
     display_footer_changed() {
         const display = this.model.get('display_footer') ? 'block': 'none';
-        (this.element.querySelector('.nbtools-run:last-of-type') as HTMLElement).style.display = display;
+        (this.element.querySelector('.nbtools-buttons:last-of-type') as HTMLElement).style.display = display;
         (this.element.querySelector('.nbtools-footer') as HTMLElement).style.display = display;
 
         // If there is an output_var element, hide or show it as necessary
@@ -143,6 +151,20 @@ export class UIBuilderView extends BaseWidgetView {
             UIBuilderView._initialize_display(model, view);
             return view;
         }).catch(reject(`Could not add ${model_name} to ${element_selector}`, true));
+    }
+
+    activate_custom_buttons() {
+        this.el.querySelectorAll('.nbtools-buttons').forEach((box:HTMLElement) => {
+            const buttons = this.model.get('buttons');
+            Object.keys(buttons).forEach((label) => {
+                const button = new DOMParser().parseFromString(`<button>${label}</button>`, "text/html")
+                    .querySelector('button') as HTMLElement;
+                const button_event = new Function(buttons[label]) as EventListener;
+
+                button.addEventListener('click', button_event);
+                box.prepend(button);
+            });
+        });
     }
 
     /**

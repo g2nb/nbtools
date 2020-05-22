@@ -99,6 +99,7 @@ class UIBuilder(BaseWidget):
     register_tool = Bool(True, sync=True)
     collapse = Bool(sync=True)
     events = Dict(sync=True)
+    buttons = Dict(sync=True)
     display_header = Bool(True, sync=True)
     display_footer = Bool(True, sync=True)
     info = Unicode('', sync=True)

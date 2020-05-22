@@ -14,6 +14,14 @@ GENEPATTERN_SERVERS = {
 }
 
 
+REGISTER_EVENT = """
+    const target = event.target;
+    const widget = target.closest('.nbtools') || target;
+    const server_input = widget.querySelector('input[type=text]');
+    if (server_input) window.open(server_input.value + '/pages/registerUser.jsf');
+    else console.warn('Cannot obtain GenePattern Server URL');"""
+
+
 class GPAuthWidget(UIBuilder):
     """A widget for authenticating with a GenePattern server"""
     default_color = 'rgba(10, 45, 105, 0.80)'
@@ -23,6 +31,9 @@ class GPAuthWidget(UIBuilder):
         'display_header': False,
         'color': default_color,
         'run_label': 'Log into GenePattern',
+        'buttons': {
+            'Register an Account': REGISTER_EVENT
+        },
         'parameters': {
             'server': {
                 'name': 'GenePattern Server',
@@ -142,5 +153,4 @@ class AuthenticationTool(NBTool):
 ToolManager.instance().register(AuthenticationTool())
 
 
-# TODO: - Handle custom servers
-#       - Add Registration button
+# TODO:  - Add Registration button
