@@ -152,5 +152,3 @@ class AuthenticationTool(NBTool):
 # Register the authentication widget
 ToolManager.instance().register(AuthenticationTool())
 
-
-# TODO:  - Add Registration button
