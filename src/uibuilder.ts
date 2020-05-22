@@ -336,6 +336,7 @@ export class UIBuilderView extends BaseWidgetView {
                 const target = event.target as HTMLElement;                                     // Get click target
                 const element = target.closest('.nbtools-menu-attached') || target;    // Get parent widget
                 const view = (element as any).widget;                                           // Get widget view
+                const sendto = !element.classList.contains('nbtools-nosendto');                 // Send if sendto enabled
 
                 if (view) {
                     const model = view.model;  // Get the model from the view
@@ -347,9 +348,9 @@ export class UIBuilderView extends BaseWidgetView {
                     // Get all compatible outputs and build display -> value map
                     const display_value_map = {};
                     this._add_default_choices(display_value_map, model);
-                    this._add_output_files(display_value_map, target, kinds);
-                    this._add_markdown_files(display_value_map, target, kinds);
-                    this._add_markdown_text(display_value_map, target, kinds);
+                    if (sendto) this._add_output_files(display_value_map, target, kinds);
+                    if (sendto) this._add_markdown_files(display_value_map, target, kinds);
+                    if (sendto) this._add_markdown_text(display_value_map, target, kinds);
 
                     // Update and attach the menu
                     this.attach_combobox_menu(target, display_value_map);
@@ -408,7 +409,8 @@ export class UIBuilderView extends BaseWidgetView {
         // Iterate over display -> value map and insert menu items
         Object.keys(display_value_map).forEach((group) => {
             // Add the group label
-            this.add_menu_item(group, () => {}, 'nbtools-menu-header', menu, false);
+            if (group !== 'Default Choices')
+                this.add_menu_item(group, () => {}, 'nbtools-menu-header', menu, false);
 
             // Loop over all files in the group
             Object.keys(display_value_map[group]).forEach((display_name) => {

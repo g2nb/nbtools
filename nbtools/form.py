@@ -3,10 +3,15 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    FileUpload, HBox, Combobox
+    FileUpload, HBox, Combobox as BaseCombobox
 from traitlets import List, Dict
-
 from .parsing_manager import ParsingManager
+
+
+class Combobox(BaseCombobox):
+    """More dropdown-like implementation of the Combobox widget; use instead of ipywidgets.Combobox"""
+    kinds = List(default_value=[]).tag(sync=True)
+    choices = Dict(default_value={}).tag(sync=True)
 
 
 class BaseFormInput(GridBox, ValueWidget):
@@ -125,6 +130,19 @@ class SelectFormInput(BaseFormInput):
         super(SelectFormInput, self).__init__(spec, **kwargs)
 
 
+class ComboFormInput(BaseFormInput):
+    dom_class = 'nbtools-comboinput'
+    input_class = Combobox
+
+    def __init__(self, spec, **kwargs):
+        choices = spec['choices']  # Special handling of choices for dropdown
+        no_send_to = 'sendto' in spec and not spec['sendto']
+        self.input = Combobox(choices=choices, layout=Layout(width='auto', grid_area='input'))
+        self.input.add_class('nbtools-menu-attached')
+        if no_send_to: self.input.add_class('nbtools-nosendto')
+        super(ComboFormInput, self).__init__(spec, **kwargs)
+
+
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
         def __init__(self, spec, **kwargs):
@@ -134,11 +152,8 @@ class FileFormInput(BaseFormInput):
             self.url = Combobox()
 
             # Set up menu support for url widget
-            kinds_trait = List(default_value=spec['kinds']).tag(sync=True)
-            choices_trait = Dict(default_value=self.choices_dict(spec)).tag(sync=True)
-            self.url.add_class('nbtools-menu-attached')
-            self.url.add_traits(kinds=kinds_trait)
-            self.url.add_traits(choices=choices_trait)
+            if 'kinds' in spec and spec['kinds']: self.url.kinds = spec['kinds']
+            self.url.choices = self.choices_dict(spec)
 
             HBox.__init__(self, **kwargs)
             self.children = (self.upload, self.url)
@@ -222,6 +237,10 @@ class InteractiveForm(interactive):
             kwargs[param_name] = self.widget_from_spec(spec)
 
     @staticmethod
+    def is_combo(spec):
+        return 'combo' in spec and spec['combo']
+
+    @staticmethod
     def widget_from_spec(spec):
         """Instantiate a widget based on the default value in the spec"""
         default_value = spec['default']
@@ -233,6 +252,8 @@ class InteractiveForm(interactive):
             return TextFormInput(spec, value=unicode_type(default_value))
         elif type == 'password':
             return PasswordFormInput(spec, value=default_value)
+        elif type == 'choice' and InteractiveForm.is_combo(spec):
+            return ComboFormInput(spec, value=default_value)
         elif type == 'choice':
             return SelectFormInput(spec, value=default_value)
         elif type == 'number' and isinstance(default_value, Integral):

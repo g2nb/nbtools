@@ -1,6 +1,5 @@
 import gp
-from IPython.display import clear_output, display
-from traitlets import Unicode
+from IPython.display import display
 
 from nbtools import UIBuilder, ToolManager, NBTool
 from.sessions import session
@@ -9,10 +8,9 @@ from .taskwidget import TaskTool
 
 
 GENEPATTERN_SERVERS = {
-    'GenePattern Cloud': 'https://cloud.genepattern.org/gp/',
-    'Indiana University': 'https://cloud.genepattern.org/gp/',
-    'Broad Internal': 'https://cloud.genepattern.org/gp/',
-    'Custom Server': 'https://cloud.genepattern.org/gp/'
+    'GenePattern Cloud': 'https://cloud.genepattern.org/gp',
+    'Indiana University': 'https://gp.indiana.edu/gp',
+    'Broad Internal': 'https://gpbroad.broadinstitute.org/gp',
 }
 
 
@@ -29,6 +27,8 @@ class GPAuthWidget(UIBuilder):
             'server': {
                 'name': 'GenePattern Server',
                 'type': 'choice',
+                'combo': True,
+                'sendto': False,
                 'default': GENEPATTERN_SERVERS['GenePattern Cloud'],
                 'choices': GENEPATTERN_SERVERS
             },
