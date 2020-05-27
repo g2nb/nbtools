@@ -17,7 +17,9 @@ export class BaseWidgetModel extends DOMWidgetModel {
             name: '',
             description: '',
             collapsed: false,
-            color: 'var(--jp-layout-color4)'
+            color: 'var(--jp-layout-color4)',
+            info: '',
+            error: ''
         };
     }
 }
@@ -26,8 +28,12 @@ export class BaseWidgetModel extends DOMWidgetModel {
 export class BaseWidgetView extends DOMWidgetView {
     dom_class = '';
     element:HTMLElement = document.createElement('div');
-    traitlets:string[] = ['name', 'description'];
-    renderers:any = {};
+    traitlets:string[] = ['name', 'description', 'info', 'error'];
+    renderers:any = {
+        "description": this.render_description,
+        "error": this.render_error,
+        "info": this.render_info
+    };
     template:string = `<div class="nbtools">
                            <div class="nbtools-header"></div>
                            <div class="nbtools-body"></div>
@@ -44,7 +50,9 @@ export class BaseWidgetView extends DOMWidgetView {
                          </button>
                          <ul class="nbtools-menu" style="display: none;"></ul>
                      </div>`;
-    body:string = ``;
+    body:string = `<div class="nbtools-description" data-traitlet="description"></div>
+                   <div class="nbtools-error" data-traitlet="error"></div>
+                   <div class="nbtools-info" data-traitlet="info"></div>`;
     disconnected:string = `<div class="nbtools-disconnected">
                                <div class="nbtools-panel">
                                    <div class="nbtools-header">Widget Disconnected From Kernel</div>
@@ -135,6 +143,23 @@ export class BaseWidgetView extends DOMWidgetView {
         this.element.querySelectorAll('.nbtools-body button, .nbtools-header').forEach((e) => {
             (e as HTMLElement).style.backgroundColor = color;
         });
+    }
+
+    render_description(description:string, widget:BaseWidgetView) {
+        return widget._render_or_hide('.nbtools-description', description, widget);
+    }
+
+    render_error(message:string, widget:BaseWidgetView) {
+        return widget._render_or_hide('.nbtools-error', message, widget);
+    }
+
+    render_info(message:string, widget:BaseWidgetView) {
+        return widget._render_or_hide('.nbtools-info', message, widget);
+    }
+
+    _render_or_hide(selector:string, message:string, widget:BaseWidgetView) {
+        (widget.element.querySelector(selector) as HTMLElement).style.display = message.trim() ? 'block': 'none';
+        return message;
     }
 
     attach_connect_event() {

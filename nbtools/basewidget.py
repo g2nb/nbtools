@@ -18,6 +18,8 @@ class BaseWidget(DOMWidget, NBTool):
     description = Unicode('').tag(sync=True)
     collapsed = Bool(False).tag(sync=True)
     color = Unicode('var(--jp-layout-color4)').tag(sync=True)
+    info = Unicode('', sync=True)
+    error = Unicode('', sync=True)
 
     id = None
     origin = None

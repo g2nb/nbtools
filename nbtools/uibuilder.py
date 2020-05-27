@@ -102,8 +102,6 @@ class UIBuilder(BaseWidget):
     buttons = Dict(sync=True)
     display_header = Bool(True, sync=True)
     display_footer = Bool(True, sync=True)
-    info = Unicode('', sync=True)
-    error = Unicode('', sync=True)
     run_label = Unicode('Run', sync=True)
     form = Instance(InteractiveForm, (None, [])).tag(sync=True, **widget_serialization)
     output = Instance(Output, ()).tag(sync=True, **widget_serialization)

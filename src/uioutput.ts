@@ -45,16 +45,20 @@ export class UIOutputView extends BaseWidgetView {
     dom_class = 'nbtools-uioutput';
     traitlets = [...super.basics(), 'status', 'files', 'text', 'visualization'];
     renderers:any = {
+        "description": this.render_description,
+        "error": this.render_error,
+        "info": this.render_info,
         "files": this.render_files,
         "visualization": this.render_visualization
     };
     body:string = `
         <div class="nbtools-description" data-traitlet="description"></div>
+        <div class="nbtools-error" data-traitlet="error"></div>
+        <div class="nbtools-info" data-traitlet="info"></div>
         <div class="nbtools-status" data-traitlet="status"></div>
         <div class="nbtools-files" data-traitlet="files"></div>
         <pre class="nbtools-text" data-traitlet="text"></pre>
-        <div class="nbtools-visualization" data-traitlet="visualization"></div>
-        `;
+        <div class="nbtools-visualization" data-traitlet="visualization"></div>`;
 
     render_files(files:string[], widget:UIOutputView) {
         let to_return = '';

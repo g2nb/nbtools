@@ -47,8 +47,6 @@ export class UIBuilderModel extends BaseWidgetModel {
             buttons: {},
             display_header: true,
             display_footer: true,
-            info: '',
-            error: '',
             run_label: 'Run',
             form: undefined,
             output: undefined
@@ -59,7 +57,7 @@ export class UIBuilderModel extends BaseWidgetModel {
 export class UIBuilderView extends BaseWidgetView {
     dom_class = 'nbtools-uibuilder';
     traitlets = [...super.basics(), 'origin', '_parameters', 'function_import', 'register_tool', 'collapse',
-        'events', 'info', 'error', 'run_label', 'form', 'output'];
+        'events', 'run_label', 'form', 'output'];
     renderers:any = {
         "error": this.render_error,
         "info": this.render_info
@@ -100,19 +98,6 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Attach ID and event callbacks once the view is rendered
         element_rendered(this.el).then(() => this._attach_callbacks());
-    }
-
-    render_error(message:string, widget:UIBuilderView) {
-        return widget._render_or_hide('.nbtools-error', message, widget);
-    }
-
-    render_info(message:string, widget:UIBuilderView) {
-        return widget._render_or_hide('.nbtools-info', message, widget);
-    }
-
-    _render_or_hide(selector:string, message:string, widget:UIBuilderView) {
-        (widget.element.querySelector(selector) as HTMLElement).style.display = message.trim() ? 'block': 'none';
-        return message;
     }
 
     display_header_changed() {
