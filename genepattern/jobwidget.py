@@ -27,7 +27,7 @@ class GPJobWidget(UIOutput):
             # Add the job information to the widget
             self.name = f'Job #{self.job.job_number}'
             self.status = self.status_text()
-            self.text = self.submitted_text()
+            self.description = self.submitted_text()
             self.files = self.files_list()
             self.visualization = self.visualizer()
 
