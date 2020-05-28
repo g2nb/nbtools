@@ -186,6 +186,8 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Attach the click event
         item.addEventListener('click', () => callback());
+
+        return item;
     }
 
     traitlet_changed(event:any) {

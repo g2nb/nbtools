@@ -60,6 +60,14 @@ export class UIOutputView extends BaseWidgetView {
         <pre class="nbtools-text" data-traitlet="text"></pre>
         <div class="nbtools-visualization" data-traitlet="visualization"></div>`;
 
+    render() {
+        super.render();
+
+        // Attach the Open Visualizer gear option
+        const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
+        visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+    }
+
     render_files(files:string[], widget:UIOutputView) {
         let to_return = '';
         files.forEach(path => {
@@ -73,12 +81,34 @@ export class UIOutputView extends BaseWidgetView {
         return to_return;
     }
 
-    render_visualization(visualization:string) {
+    render_visualization(visualization:string, widget:UIOutputView) {
+        // Function for toggling pop out menu item on or off
+        function toggle_open_visualizer(hide:boolean) {
+            const controls = widget.element.querySelector('.nbtools-controls');
+            if (!controls) return; // Get the gear menu buttons at the top and protect against null
+
+            // Toggle or set the Pop Out Visualizer menu option's visibility
+            controls.querySelectorAll('.nbtools-menu > li').forEach((item:any) => {
+                if (item.textContent.includes('Pop Out Visualizer')) {
+                    if (hide) item.style.display = 'none';
+                    else item.style.display = 'block';
+                }
+            })
+        }
+
+        // Hide or show the open visualizer menu option, depending on whether there is a visualization
+        if (!visualization.trim()) toggle_open_visualizer(true);
+        else toggle_open_visualizer(false);
+
         // If URL, display an iframe
         if (is_url(visualization)) return `<iframe class="nbtools-visualization-iframe" src="${visualization}"></iframe>`;
 
         // Otherwise, embed visualization as HTML
         else return visualization;
+    }
+
+    open_visualizer() {
+        window.open(this.model.get('visualization'));
     }
 
     initialize_file_menus(widget:UIOutputView) {
