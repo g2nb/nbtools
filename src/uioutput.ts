@@ -9,7 +9,8 @@ import '../style/uioutput.css'
 import { ISerializers } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
-import { extract_file_name, extract_file_type, is_url } from './utils';
+import { extract_file_name, extract_file_type, is_url, process_template } from './utils';
+import { Toolbox } from "./toolbox";
 
 
 export class UIOutputModel extends BaseWidgetModel {
@@ -36,7 +37,8 @@ export class UIOutputModel extends BaseWidgetModel {
             status: '',
             files: [],
             text: '',
-            visualization: ''
+            visualization: '',
+            extra_menu_items: {}
         };
     }
 }
@@ -126,6 +128,8 @@ export class UIOutputView extends BaseWidgetView {
         if (!menu) return;  // Protect against null
         const type = link.getAttribute('data-type') as string;
         const href = link.getAttribute('href') as string;
+        const file_name = link.textContent ? link.textContent.trim() as string : href;
+        const widget_name = this.model.get('name');
 
         // Add the send to options
         this.get_input_list(type).forEach(input => {
@@ -140,6 +144,40 @@ export class UIOutputView extends BaseWidgetView {
         // Add send to header
         this.add_menu_item('Send to...', () => {},
             'nbtools-menu-header', menu);
+
+        // Add the extra menu items
+        const menu_items = this.model.get('extra_menu_items');
+        const template_vars = {
+            'widget_name': widget_name,
+            'file_name': file_name,
+            'type': type
+        };
+        Object.keys(menu_items).forEach((name) => {
+            const item = menu_items[name] as any;
+
+            // Create callback for string literal
+            if (typeof item === 'string') {
+                const callback = new Function(process_template(item, template_vars));
+                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
+                return;
+            }
+
+            // Skip if this file doesn't match any type restrictions
+            if (Array.isArray(item['kinds']) && !item['kinds'].includes(type)) return;
+
+            // Create callback for cell event type
+            if (item['action'] === 'cell') {
+                const callback = () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
+                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
+                return;
+            }
+
+            // Create callback for custom event type
+            else {
+                const callback = new Function(process_template(item['code'], template_vars));
+                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
+            }
+        });
 
         // Add download option
         this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string),

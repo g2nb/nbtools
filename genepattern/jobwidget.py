@@ -25,11 +25,23 @@ class GPJobWidget(UIOutput):
                 return
 
             # Add the job information to the widget
-            self.name = f'Job #{self.job.job_number}'
+            self.name = f'{self.job.job_number}'
             self.status = self.status_text()
             self.description = self.submitted_text()
             self.files = self.files_list()
             self.visualization = self.visualizer()
+
+            self.extra_menu_items = {
+                'Send to Code': {
+                    'action': 'cell',
+                    'code': 'job{{widget_name}}.get_file("{{file_name}}")'
+                },
+                'Send to Dataframe': {
+                    'action': 'cell',
+                    'kinds': ['gct', 'odf'],
+                    'code': 'from gp.data import GCT as gct, ODF as odf\n{{type}}(job{{widget_name}}.get_file("{{file_name}}"))'
+                }
+            }
 
             # Begin polling if pending or running
             self.poll_if_needed()
@@ -90,7 +102,4 @@ class GPJobWidget(UIOutput):
             return 'Running'
 
 # TODO: - Job sharing
-#       - Send to code
-#       - Send to Dataframe
-#       - Pop out visualizer
 #       - Child jobs

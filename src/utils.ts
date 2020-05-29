@@ -107,3 +107,11 @@ export function toggle(elem:HTMLElement) {
 	// Otherwise, show it
 	show(elem);
 }
+
+export function process_template(template:string, template_vars:any) {
+	Object.keys(template_vars).forEach((key_var) => {
+		template = template.replace(new RegExp(`{{${key_var}}}`, 'g'), template_vars[key_var]);
+	});
+
+	return template;
+}

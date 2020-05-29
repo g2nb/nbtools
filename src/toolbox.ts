@@ -30,6 +30,14 @@ export class Toolbox extends Widget {
     }
 
     add_tool_cell(tool:any) {
+        // Check to see if nbtools needs to be imported
+        const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
+
+        // Add and run a code cell with the generated tool code
+        Toolbox.add_code_cell(import_line + `nbtools.tool(id='${tool.id}', origin='${tool.origin}')`);
+    }
+
+    static add_code_cell(code:string) {
         if (!ContextManager.notebook_tracker) return; // If no NotebookTracker, do nothing
 
         const current = ContextManager.tool_registry.current;
@@ -39,18 +47,15 @@ export class Toolbox extends Widget {
         if (!cell) return; // If no cell is selected, do nothing
 
         // If the currently selected cell isn't empty, insert a new one below and select it
-        const code = cell.model.value.text.trim();
-        if (!!code) NotebookActions.insertBelow(current.content);
-
-        // Check to see if nbtools needs to be imported
-        const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
+        const current_cell_code = cell.model.value.text.trim();
+        if (!!current_cell_code) NotebookActions.insertBelow(current.content);
 
         // Fill the cell with the tool's code
         cell = ContextManager.notebook_tracker.activeCell; // The active cell may just have been updated
-        cell.model.value.text = import_line + `nbtools.tool(id='${tool.id}', origin='${tool.origin}')`;
+        cell.model.value.text = code;
 
         // Run the cell
-        NotebookActions.run(current.content, current.context.session);
+        return NotebookActions.run(current.content, current.context.session);
     }
 
     fill_toolbox() {

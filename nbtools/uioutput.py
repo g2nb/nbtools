@@ -1,4 +1,4 @@
-from traitlets import Unicode, List
+from traitlets import Unicode, List, Dict
 from ._frontend import module_name, module_version
 from .basewidget import BaseWidget
 
@@ -20,3 +20,4 @@ class UIOutput(BaseWidget):
     files = List(Unicode, []).tag(sync=True)
     text = Unicode('').tag(sync=True)
     visualization = Unicode('').tag(sync=True)
+    extra_menu_items = Dict().tag(sync=True)
