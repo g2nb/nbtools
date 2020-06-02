@@ -1,8 +1,7 @@
 import gp
 from IPython.display import display
-
 from nbtools import UIBuilder, ToolManager, NBTool
-from.sessions import session
+from .sessions import session
 from .shim import login, system_message
 from .taskwidget import TaskTool
 

@@ -1,4 +1,5 @@
 from .authwidget import GENEPATTERN_SERVERS, GPAuthWidget
+from .taskwidget import GPTaskWidget
 from .jobwidget import GPJobWidget
 from .sessions import session
 from .display import display

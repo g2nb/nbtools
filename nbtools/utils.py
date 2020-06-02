@@ -22,3 +22,8 @@ def open(path_or_url):
         return urllib.request.urlopen(path_or_url)
     else:
         return builtins.open(path_or_url)
+
+
+def python_safe(raw_name):
+    """Make a string safe to use in a Python namespace"""
+    return re.sub('[^0-9a-zA-Z]', '_', raw_name)
