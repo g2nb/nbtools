@@ -8,8 +8,11 @@ class GPTaskWidget(UIBuilder):
     """A widget for representing the status of a GenePattern job"""
     default_color = 'rgba(10, 45, 105, 0.80)'
     task = None
+    function_wrapper = None
+    parameter_spec = None
 
     def create_function_wrapper(self, task):
+        """Create a function that accepts the expected input and submits a GenePattern job"""
         if task is None: return lambda: None  # Dummy function for null task
         name_map = {}  # Map of Python-safe parameter names to GP parameter names
 
@@ -19,7 +22,7 @@ class GPTaskWidget(UIBuilder):
             for name, value in kwargs.items():
                 spec.set_parameter(name_map[name], value)
             job = task.server_data.run_job(spec, wait_until_done=False)
-            display((GPJobWidget(job),))
+            display(GPJobWidget(job))
 
         # Generate function signature programmatically
         submit_job.__qualname__ = task.name
@@ -28,13 +31,38 @@ class GPTaskWidget(UIBuilder):
         for p in task.params:
             safe_name = python_safe(p.name)
             name_map[safe_name] = p.name
-            default = GPTaskWidget.form_value(p.get_default_value())
-            description = GPTaskWidget.form_value(p.description)
-            param = inspect.Parameter(safe_name, inspect.Parameter.KEYWORD_ONLY, default=default, annotation=description)
+            param = inspect.Parameter(safe_name, inspect.Parameter.POSITIONAL_OR_KEYWORD)
             params.append(param)
         submit_job.__signature__ = inspect.Signature(params)
 
         return submit_job
+
+    def add_type_spec(self, task_param, param_spec):
+        if task_param.attributes['type'] == 'java.io.File':
+            param_spec['type'] = 'file'
+            if task_param.is_choice_param():
+                param_spec['choices'] = {c['label']: c['value'] for c in task_param.get_choices()}
+        elif task_param.is_choice_param():
+            param_spec['type'] = 'choice'
+            param_spec['choices'] = {c['label']: c['value'] for c in task_param.get_choices()}
+        elif task_param.attributes['type'] == 'java.lang.Integer': param_spec['type'] = 'number'
+        elif task_param.attributes['type'] == 'java.lang.Float': param_spec['type'] = 'number'
+        elif task_param.attributes['type'].lower() == 'password': param_spec['type'] = 'password'
+        else: param_spec['type'] = 'text'
+
+    def create_param_spec(self, task):
+        """Create the display spec for each parameter"""
+        if task is None: return {}  # Dummy function for null task
+        spec = {}
+        for p in task.params:
+            safe_name = python_safe(p.name)
+            spec[safe_name] = {}
+            spec[safe_name]['default'] = p.name
+            spec[safe_name]['default'] = GPTaskWidget.form_value(p.get_default_value())
+            spec[safe_name]['description'] = GPTaskWidget.form_value(p.description)
+            spec[safe_name]['optional'] = p.is_optional()
+            self.add_type_spec(p, spec[safe_name])
+        return spec
 
     def handle_null_task(self):
         """Display an error message if the task is None"""
@@ -49,7 +77,8 @@ class GPTaskWidget(UIBuilder):
         if task is not None and task.params is None: task.param_load()  # Load params from GP server
         self.task = task
         self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
-        UIBuilder.__init__(self, self.function_wrapper, color=self.default_color, **kwargs)
+        self.parameter_spec = self.create_param_spec(task)
+        UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color, **kwargs)
         self.handle_null_task()  # Set the right look and error message if task is None
 
     @staticmethod
@@ -72,3 +101,4 @@ class TaskTool(NBTool):
 
 # TODO  - Respect parameter types
 #       - Required & optional
+#       - Placeholder when not yet logged in
