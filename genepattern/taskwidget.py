@@ -99,6 +99,3 @@ class TaskTool(NBTool):
         self.description = task.description
         self.load = lambda: GPTaskWidget(task)
 
-# TODO  - Respect parameter types
-#       - Required & optional
-#       - Placeholder when not yet logged in

@@ -1,5 +1,7 @@
 from IPython import get_ipython
+from IPython.display import display
 from ipykernel.comm import Comm
+from .uioutput import UIOutput
 
 
 class ToolManager(object):
@@ -108,8 +110,7 @@ class ToolManager(object):
         if cls.exists(id, origin):
             return cls.instance().tools[origin][id]
         else:
-            print(f'Cannot find tool: {origin} | {id}')
-            return None
+            display(UIOutput(name='Cannot find tool', error=f'Cannot find tool: {origin} | {id}'))
 
     @classmethod
     def exists(cls, id, origin):
