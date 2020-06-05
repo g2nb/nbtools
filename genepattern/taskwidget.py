@@ -45,6 +45,8 @@ class GPTaskWidget(UIBuilder):
         elif task_param.is_choice_param():
             param_spec['type'] = 'choice'
             param_spec['choices'] = {c['label']: c['value'] for c in task_param.get_choices()}
+            if task_param.allow_choice_custom_value(): param_spec['combo'] = True
+            if task_param.allow_multiple(): param_spec['multiple'] = True
         elif task_param.attributes['type'] == 'java.lang.Integer': param_spec['type'] = 'number'
         elif task_param.attributes['type'] == 'java.lang.Float': param_spec['type'] = 'number'
         elif task_param.attributes['type'].lower() == 'password': param_spec['type'] = 'password'

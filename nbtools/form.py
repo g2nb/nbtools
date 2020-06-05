@@ -3,7 +3,7 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    FileUpload, HBox, Combobox as BaseCombobox
+    FileUpload, HBox, Combobox as BaseCombobox, SelectMultiple
 from traitlets import List, Dict
 from .parsing_manager import ParsingManager
 
@@ -64,7 +64,7 @@ class BaseFormInput(GridBox, ValueWidget):
         self.label.description = spec['label']
 
         # Set the default value
-        self.input.value = BaseFormInput.type_safe(spec['default'], spec['type'])
+        self.input.value = self.__class__.type_safe(spec['default'], spec['type'])
 
         # Set the description
         self.description.value = spec['description']
@@ -141,6 +141,27 @@ class ComboFormInput(BaseFormInput):
         self.input.add_class('nbtools-menu-attached')
         if no_send_to: self.input.add_class('nbtools-nosendto')
         super(ComboFormInput, self).__init__(spec, **kwargs)
+
+
+class MultiselectFormInput(BaseFormInput):
+    dom_class = 'nbtools-multiselectinput'
+    input_class = Dropdown
+
+    def __init__(self, spec, **kwargs):
+        choices = spec['choices']  # Special handling of choices for dropdown
+        self.input = SelectMultiple(options=choices, layout=Layout(width='auto', grid_area='input'))
+        super(MultiselectFormInput, self).__init__(spec, **kwargs)
+
+    @staticmethod
+    def type_safe(val, to_type):
+        """Override parent class' method to handle non-lists and blanks"""
+        base_val = BaseFormInput.type_safe(val, to_type)  # Call base class
+
+        if not base_val and isinstance(base_val, str): return []       # Handle empty values
+        if not isinstance(base_val, (list, tuple)): return [base_val]  # Ensure val is a list
+        if isinstance(base_val, list) and len(base_val) == 1 and isinstance(base_val[0], str) and not base_val[0]:
+            return []                                                  # Special case for ['']
+        return base_val
 
 
 class FileFormInput(BaseFormInput):
@@ -241,6 +262,10 @@ class InteractiveForm(interactive):
         return 'combo' in spec and spec['combo']
 
     @staticmethod
+    def is_multiple(spec):
+        return 'multiple' in spec and spec['multiple']
+
+    @staticmethod
     def widget_from_spec(spec):
         """Instantiate a widget based on the default value in the spec"""
         default_value = spec['default']
@@ -254,6 +279,8 @@ class InteractiveForm(interactive):
             return PasswordFormInput(spec, value=default_value)
         elif type == 'choice' and InteractiveForm.is_combo(spec):
             return ComboFormInput(spec, value=default_value)
+        elif type == 'choice' and InteractiveForm.is_multiple(spec):
+            return MultiselectFormInput(spec, value=default_value)
         elif type == 'choice':
             return SelectFormInput(spec, value=default_value)
         elif type == 'number' and isinstance(default_value, Integral):
