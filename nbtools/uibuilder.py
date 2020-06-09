@@ -107,7 +107,7 @@ class UIBuilder(BaseWidget, NBTool):
     output = Instance(Output, ()).tag(sync=True, **widget_serialization)
     function_or_method = None
 
-    def __init__(self, function_or_method, **kwargs):
+    def __init__(self, function_or_method, upload_callback=None, **kwargs):
         # Apply defaults based on function docstring/annotations
         self._apply_defaults(function_or_method)
 
@@ -123,7 +123,7 @@ class UIBuilder(BaseWidget, NBTool):
         if not self.parameters: self.parameters = self.parameters
 
         # Create the form and output child widgets
-        self.form = InteractiveForm(function_or_method, self.parameters)
+        self.form = InteractiveForm(function_or_method, self.parameters, upload_callback=upload_callback)
         self.output = self.form.out
 
         # Display the output underneath the UI Builder widget

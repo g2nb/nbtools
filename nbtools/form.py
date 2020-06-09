@@ -166,7 +166,7 @@ class MultiselectFormInput(BaseFormInput):
 
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
-        def __init__(self, spec, **kwargs):
+        def __init__(self, spec, upload_callback=None, **kwargs):
             # Set child widgets
             self._value = ''
             self.upload = FileUpload(accept=self.accepted_kinds(spec), multiple=False)
@@ -176,9 +176,20 @@ class FileFormInput(BaseFormInput):
             if 'kinds' in spec and spec['kinds']: self.url.kinds = spec['kinds']
             self.url.choices = self.choices_dict(spec)
 
+            # Set up the upload function
+            self.upload_callback = self.default_upload_callback if upload_callback is None else upload_callback
+
             HBox.__init__(self, **kwargs)
             self.children = (self.upload, self.url)
             self.init_events()
+
+        @staticmethod
+        def default_upload_callback(values):
+            """By default, upload files to the current directory"""
+            for k in values:
+                with open(k, 'wb') as f:
+                    f.write(values[k]['content'])
+                    return os.path.realpath(f.name)
 
         @property
         def value(self):
@@ -203,11 +214,8 @@ class FileFormInput(BaseFormInput):
                 return ''
 
         def change_file(self, change):
-            if isinstance(change['owner'].value, dict):
-                for k in change['owner'].value:
-                    with open(k, 'wb') as f:
-                        f.write(change['owner'].value[k]['content'])
-                        self.value = os.path.realpath(f.name)
+            if isinstance(change['owner'].value, dict) and change['name'] == 'data':
+                self.value = self.upload_callback(change['owner'].value)
 
         def change_url(self, change):
             if self.value != change['owner'].value:
@@ -218,8 +226,8 @@ class FileFormInput(BaseFormInput):
             self.url.observe(self.change_url)
             self.upload.observe(self.change_file)
 
-    def __init__(self, spec, **kwargs):
-        self.input = self.FileOrURL(spec, layout=Layout(width='auto', grid_area='input'))
+    def __init__(self, spec, upload_callback=None, **kwargs):
+        self.input = self.FileOrURL(spec, upload_callback=upload_callback, layout=Layout(width='auto', grid_area='input'))
         super(FileFormInput, self).__init__(spec, **kwargs)
 
     dom_class = 'nbtools-fileinput'
@@ -227,7 +235,9 @@ class FileFormInput(BaseFormInput):
 
 
 class InteractiveForm(interactive):
-    def __init__(self, function_or_method, parameter_specs, **kwargs):
+    def __init__(self, function_or_method, parameter_specs, upload_callback=None, **kwargs):
+        self.upload_callback = upload_callback  # Set the upload callback
+
         # Create parameter widgets from spec and add to kwargs
         self.widgets_from_spec(parameter_specs, kwargs)
 
@@ -265,8 +275,7 @@ class InteractiveForm(interactive):
     def is_multiple(spec):
         return 'multiple' in spec and spec['multiple']
 
-    @staticmethod
-    def widget_from_spec(spec):
+    def widget_from_spec(self, spec):
         """Instantiate a widget based on the default value in the spec"""
         default_value = spec['default']
 
@@ -290,7 +299,7 @@ class InteractiveForm(interactive):
         elif type == 'number' and (default_value is None or default_value == ''):
             return FloatFormInput(spec, value=0)
         elif type == 'file':
-            return FileFormInput(spec, value=unicode_type(default_value))
+            return FileFormInput(spec, value=unicode_type(default_value), upload_callback=self.upload_callback)
 
         # No known type specified, guess based on default value
         elif isinstance(default_value, string_types):
@@ -302,7 +311,7 @@ class InteractiveForm(interactive):
         elif isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
         elif hasattr(default_value, 'read'):
-            return FileFormInput(spec, value=default_value)
+            return FileFormInput(spec, value=default_value, upload_callback=self.upload_callback)
         else:
             return Text(value=unicode_type(default_value))
 

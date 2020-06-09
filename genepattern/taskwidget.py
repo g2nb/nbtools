@@ -1,4 +1,6 @@
 import inspect
+import os
+import tempfile
 from IPython.display import display
 from .jobwidget import GPJobWidget
 from nbtools import NBTool, UIBuilder, python_safe
@@ -10,6 +12,7 @@ class GPTaskWidget(UIBuilder):
     task = None
     function_wrapper = None
     parameter_spec = None
+    upload_callback = None
 
     def create_function_wrapper(self, task):
         """Create a function that accepts the expected input and submits a GenePattern job"""
@@ -66,6 +69,17 @@ class GPTaskWidget(UIBuilder):
             self.add_type_spec(p, spec[safe_name])
         return spec
 
+    @staticmethod
+    def generate_upload_callback(task):
+        """Create an upload callback to pass to file input widgets"""
+        def genepattern_upload_callback(values):
+            for k in values:
+                with tempfile.NamedTemporaryFile() as f:
+                    f.write(values[k]['content'])
+                    gpfile = task.server_data.upload_file(k, os.path.realpath(f.name))
+                    return gpfile.get_url()
+        return genepattern_upload_callback
+
     def handle_null_task(self):
         """Display an error message if the task is None"""
         if self.task is None:
@@ -80,7 +94,8 @@ class GPTaskWidget(UIBuilder):
         self.task = task
         self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
         self.parameter_spec = self.create_param_spec(task)
-        UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color, **kwargs)
+        UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
+                           upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
         self.handle_null_task()  # Set the right look and error message if task is None
 
     @staticmethod
