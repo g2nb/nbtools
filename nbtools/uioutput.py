@@ -1,4 +1,5 @@
-from traitlets import Unicode, List, Dict
+from ipywidgets import VBox, widget_serialization
+from traitlets import Unicode, List, Dict, Instance
 from ._frontend import module_name, module_version
 from .basewidget import BaseWidget
 
@@ -20,4 +21,11 @@ class UIOutput(BaseWidget):
     files = List(Unicode, []).tag(sync=True)
     text = Unicode('').tag(sync=True)
     visualization = Unicode('').tag(sync=True)
+    appendix = Instance(VBox).tag(sync=True, **widget_serialization)
     extra_menu_items = Dict().tag(sync=True)
+
+    def __init__(self, **kwargs):
+        # Initialize the child widget container
+        self.appendix = VBox()
+
+        BaseWidget.__init__(self, **kwargs)

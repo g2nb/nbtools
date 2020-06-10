@@ -1,7 +1,7 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
 import { toggle } from "./utils";
-import { DOMWidgetModel, DOMWidgetView, WidgetView } from "@jupyter-widgets/base";
+import { DOMWidgetModel, DOMWidgetView, reject, WidgetView } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 
 export class BaseWidgetModel extends DOMWidgetModel {
@@ -256,6 +256,45 @@ export class BaseWidgetView extends DOMWidgetView {
         };
 
         this.el.addEventListener('click', fix_cell, { once: true });
+    }
+
+    /**
+     * Recursively trigger the 'displayed' event for all child widgets
+     *
+     * @param {DOMWidgetModel} model
+     * @param {DOMWidgetView | any} view
+     * @private
+     */
+    static _initialize_display(model:DOMWidgetModel, view:DOMWidgetView|any) {
+        // Trigger the display for this widget
+        view.trigger('displayed');
+
+        // Recursively trigger the display for all child widgets
+        if ('children_views' in view) {
+            view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
+                children.forEach((child) => {
+                    BaseWidgetView._initialize_display(child.model, child);
+                    child.el.widget = child;
+                });
+            });
+        }
+    }
+
+    /**
+     * Add the specified child widget to the view and initialize
+     *
+     * @param {string} element_selector
+     * @param {string} model_name
+     */
+    attach_child_widget(element_selector:string, model_name:string) {
+        const element = this.element.querySelector(element_selector) as HTMLElement;
+        const model = this.model.get(model_name);
+
+        this.create_child_view(model).then((view:any) => {
+            element.appendChild(view.el);
+            BaseWidgetView._initialize_display(model, view);
+            return view;
+        }).catch(reject(`Could not add ${model_name} to ${element_selector}`, true));
     }
 
     basics() { return this.traitlets; } // Return the list of basic traitlets

@@ -6,7 +6,7 @@
  * Copyright 2020 Regents of the University of California and the Broad Institute
  */
 import '../style/uioutput.css'
-import { ISerializers } from '@jupyter-widgets/base';
+import {ISerializers, ManagerBase, unpack_models} from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, is_url, process_template } from './utils';
@@ -21,7 +21,13 @@ export class UIOutputModel extends BaseWidgetModel {
     static view_module = MODULE_NAME;
     static view_module_version = MODULE_VERSION;
 
-    static serializers: ISerializers = { ...BaseWidgetModel.serializers, };
+    static serializers: ISerializers = {
+        ...BaseWidgetModel.serializers,
+        appendix: {
+            deserialize: (value: any, manager: ManagerBase<any>|undefined) =>
+                unpack_models(value, manager as ManagerBase<any>)
+        }
+    };
 
     defaults() {
         return {
@@ -38,6 +44,7 @@ export class UIOutputModel extends BaseWidgetModel {
             files: [],
             text: '',
             visualization: '',
+            appendix: undefined,
             extra_menu_items: {}
         };
     }
@@ -60,7 +67,8 @@ export class UIOutputView extends BaseWidgetView {
         <div class="nbtools-status" data-traitlet="status"></div>
         <div class="nbtools-files" data-traitlet="files"></div>
         <pre class="nbtools-text" data-traitlet="text"></pre>
-        <div class="nbtools-visualization" data-traitlet="visualization"></div>`;
+        <div class="nbtools-visualization" data-traitlet="visualization"></div>
+        <div class="nbtools-appendix"></div>`;
 
     render() {
         super.render();
@@ -68,6 +76,9 @@ export class UIOutputView extends BaseWidgetView {
         // Attach the Open Visualizer gear option
         const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
         visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+
+        // Add the child widgets
+        this.attach_child_widget('.nbtools-appendix', 'appendix');
     }
 
     render_files(files:string[], widget:UIOutputView) {

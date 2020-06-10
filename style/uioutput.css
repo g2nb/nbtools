@@ -63,3 +63,18 @@
     border: 1px solid var(--jp-border-color2);
     margin-top: 10px;
 }
+
+.nbtools-appendix .nbtools-logo,
+.nbtools-appendix .nbtools-gear,
+.nbtools-appendix .nbtools-description {
+    display: none !important;
+}
+
+.nbtools-appendix .nbtools-header {
+    background-color: var(--jp-layout-color4) !important;
+    min-height: 23px;
+}
+
+.nbtools-appendix .nbtools {
+    margin-bottom: 5px;
+}

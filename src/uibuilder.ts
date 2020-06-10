@@ -7,7 +7,7 @@
  */
 import '../style/uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { DOMWidgetModel, DOMWidgetView, ISerializers, ManagerBase, reject, unpack_models } from "@jupyter-widgets/base";
+import { ISerializers, ManagerBase, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { element_rendered } from "./utils";
 
@@ -119,23 +119,6 @@ export class UIBuilderView extends BaseWidgetView {
     output_var_displayed() {
         const output_var = this.model.get('_parameters')['output_var'];
         return !!(output_var && output_var['hide'] == false);
-    }
-
-    /**
-     * Add the specified child widget to the view and initialize
-     *
-     * @param {string} element_selector
-     * @param {string} model_name
-     */
-    attach_child_widget(element_selector:string, model_name:string) {
-        const element = this.element.querySelector(element_selector) as HTMLElement;
-        const model = this.model.get(model_name);
-
-        this.create_child_view(model).then((view:any) => {
-            element.appendChild(view.el);
-            UIBuilderView._initialize_display(model, view);
-            return view;
-        }).catch(reject(`Could not add ${model_name} to ${element_selector}`, true));
     }
 
     activate_custom_buttons() {
@@ -467,28 +450,6 @@ export class UIBuilderView extends BaseWidgetView {
             // Otherwise, attach the event
             else element.addEventListener(key, func);
         });
-    }
-
-    /**
-     * Recursively trigger the 'displayed' event for all child widgets
-     *
-     * @param {DOMWidgetModel} model
-     * @param {DOMWidgetView | any} view
-     * @private
-     */
-    static _initialize_display(model:DOMWidgetModel, view:DOMWidgetView|any) {
-        // Trigger the display for this widget
-        view.trigger('displayed');
-
-        // Recursively trigger the display for all child widgets
-        if ('children_views' in view) {
-            view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
-                children.forEach((child) => {
-                    UIBuilderView._initialize_display(child.model, child);
-                    child.el.widget = child;
-                });
-            });
-        }
     }
 
     all_input_models() {

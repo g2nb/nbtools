@@ -43,6 +43,10 @@ class GPJobWidget(UIOutput):
                 }
             }
 
+            # Handle child jobs
+            if len(self.appendix.children) == 0:
+                self.appendix.children = [GPJobWidget(child) for child in self.job.get_child_jobs()]
+
             # Begin polling if pending or running
             self.poll_if_needed()
         else:
@@ -102,4 +106,3 @@ class GPJobWidget(UIOutput):
             return 'Running'
 
 # TODO: - Job sharing
-#       - Child jobs
