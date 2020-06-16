@@ -22,7 +22,7 @@ class UIOutput(BaseWidget):
     text = Unicode('').tag(sync=True)
     visualization = Unicode('').tag(sync=True)
     appendix = Instance(VBox).tag(sync=True, **widget_serialization)
-    extra_menu_items = Dict().tag(sync=True)
+    extra_file_menu_items = Dict().tag(sync=True)
 
     def __init__(self, **kwargs):
         # Initialize the child widget container

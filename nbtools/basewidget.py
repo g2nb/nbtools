@@ -1,5 +1,5 @@
 from ipywidgets import DOMWidget
-from traitlets import Bool, Unicode
+from traitlets import Bool, Unicode, Dict
 from ._frontend import module_name, module_version
 import warnings
 
@@ -19,18 +19,23 @@ class BaseWidget(DOMWidget):
     color = Unicode('var(--jp-layout-color4)').tag(sync=True)
     info = Unicode('', sync=True)
     error = Unicode('', sync=True)
+    extra_menu_items = Dict(sync=True)
 
-    id = None
-    origin = None
+    def handle_messages(self, _, content, buffers):
+        """Handle messages sent from the client-side"""
+        if content.get('event', '') == 'method':  # Handle method call events
+            method_name = content.get('method', '')
+            if method_name and hasattr(self, method_name):
+                getattr(self, method_name)()
 
     def __init__(self, **kwargs):
         super(BaseWidget, self).__init__(**kwargs)
 
-        # Set origin and id defaults
-        self.origin = 'Notebook'
-        self.id = self.__hash__() if self.id is None else self.id
-
+        # Assign keyword parameters to this object
         for key, value in kwargs.items():
             if key not in self.keys and f'_{key}' not in self.keys:
                 warnings.warn(RuntimeWarning(f'Keyword parameter {key} not recognized'))
             setattr(self, key, value)
+
+        # Attach the callback event handler
+        self.on_msg(self.handle_messages)

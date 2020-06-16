@@ -1,11 +1,16 @@
 from threading import Timer
 from urllib.error import HTTPError
+
+from ipywidgets import Dropdown, Button, VBox, HBox
+
+from genepattern.shim import get_permissions, set_permissions
 from nbtools import UIOutput
 
 
 class GPJobWidget(UIOutput):
     """A widget for representing the status of a GenePattern job"""
     default_color = 'rgba(10, 45, 105, 0.80)'
+    sharing_displayed = False
     job = None
 
     def __init__(self, job=None, **kwargs):
@@ -13,6 +18,7 @@ class GPJobWidget(UIOutput):
         UIOutput.__init__(self, color=self.default_color, **kwargs)
         self.job = job
         self.poll()  # Query the GP server and begin polling, if needed
+        self.attach_sharing()
 
     def poll(self):
         """Poll the GenePattern server for the job info and display it in the widget"""
@@ -31,7 +37,7 @@ class GPJobWidget(UIOutput):
             self.files = self.files_list()
             self.visualization = self.visualizer()
 
-            self.extra_menu_items = {
+            self.extra_file_menu_items = {
                 'Send to Code': {
                     'action': 'cell',
                     'code': 'job{{widget_name}}.get_file("{{file_name}}")'
@@ -105,4 +111,73 @@ class GPJobWidget(UIOutput):
         else:
             return 'Running'
 
-# TODO: - Job sharing
+    def attach_sharing(self):
+        if self.sharing_displayed: self.toggle_job_sharing()  # Display sharing if toggled on
+        self.extra_menu_items = {
+            'Share Job': {
+                'action': 'method',
+                'code': 'toggle_job_sharing'
+            }
+        }
+
+    def build_sharing_controls(self):
+        """Create and return a VBox with the job sharing controls"""
+        # Query job permissions, using the shim if necessary
+        if hasattr(self.job, 'get_permissions'):
+            perms = self.job.get_permissions()
+        else:
+            perms = get_permissions(self.job)
+        group_widgets = []
+
+        # Build the job sharing form by iterating over groups
+        for g in perms['groups']:
+            d = Dropdown(description=g['id'], options=['Private', 'Read', 'Read & Write'])
+            if g['read'] and g['write']:
+                d.value = 'Read & Write'
+            elif g['read']:
+                d.value = 'Read'
+            group_widgets.append(d)
+
+        # Cancel / Close the sharing form functionality
+        cancel_button = Button(description='Cancel')
+        cancel_button.on_click(lambda b: self.toggle_job_sharing())
+
+        # Save sharing permissions functionality
+        def save_permissions(button):
+            save_perms = []
+            for g in group_widgets:
+                if g.value == 'Read & Write':
+                    save_perms.append({'id': g.description, 'read': True, 'write': True})
+                elif g.value == 'Read':
+                    save_perms.append({'id': g.description, 'read': True, 'write': False})
+                else:
+                    save_perms.append({'id': g.description, 'read': False, 'write': False})
+            # Save the permissions, using the shim if necessary
+            if hasattr(self.job, 'set_permissions'):
+                self.job.set_permissions(save_perms)
+            else:
+                set_permissions(self.job, save_perms)
+            self.toggle_job_sharing()
+
+        save_button = Button(description='Save', button_style='info')
+        save_button.on_click(save_permissions)
+
+        # Create the button HBox
+        button_box = HBox(children=[cancel_button, save_button])
+
+        # Create the job sharing box and attach to the job widget
+        return VBox(children=group_widgets + [button_box])
+
+    def toggle_job_sharing(self):
+        """Toggle displaying the job sharing controls off and on"""
+        if self.sharing_displayed:
+            # Add the old appendix children back to the widget if any exist, else simply remove the sharing box
+            self.appendix.children = self.sharing_displayed if self.sharing_displayed is not True else []
+            self.sharing_displayed = False
+        else:
+            # Create the job sharing box
+            permissions_box = self.build_sharing_controls()
+            # Save any child widgets in the appendix so that they're available when toggled back on
+            self.sharing_displayed = self.appendix.children if self.appendix.children else True
+            # Attach to the job widget
+            self.appendix.children = [permissions_box]

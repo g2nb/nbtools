@@ -45,7 +45,7 @@ export class UIOutputModel extends BaseWidgetModel {
             text: '',
             visualization: '',
             appendix: undefined,
-            extra_menu_items: {}
+            extra_file_menu_items: {}
         };
     }
 }
@@ -72,10 +72,7 @@ export class UIOutputView extends BaseWidgetView {
 
     render() {
         super.render();
-
-        // Attach the Open Visualizer gear option
-        const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
-        visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+        this.attach_menu_options();
 
         // Add the child widgets
         this.attach_child_widget('.nbtools-appendix', 'appendix');
@@ -120,6 +117,20 @@ export class UIOutputView extends BaseWidgetView {
         else return visualization;
     }
 
+    attach_menu_options() {
+        // Attach the Open Visualizer gear option
+        const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
+        visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+
+        const menu_items = this.model.get('extra_menu_items');
+
+        Object.keys(menu_items).forEach((name) => {
+            const item = menu_items[name] as any;
+            const callback = this.create_menu_callback(item);
+            this.add_menu_item(name,  callback);
+        });
+    }
+
     open_visualizer() {
         window.open(this.model.get('visualization'));
     }
@@ -132,6 +143,22 @@ export class UIOutputView extends BaseWidgetView {
                 widget.toggle_file_menu(link);
             });
         });
+    }
+
+    create_menu_callback(item:any, template_vars:any={}) {
+        // Create callback for string literal
+        if (typeof item === 'string') return new Function(process_template(item, template_vars));
+
+        // Create callback for cell event type
+        else if (item['action'] === 'cell') return () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
+
+        // Create callback for method event type
+        else if (item['action'] === 'method') return () => {
+            this.send({ event: 'method', method: process_template(item['code'], template_vars) });
+        };
+
+        // Create callback for custom event type
+        else return new Function(process_template(item['code'], template_vars));
     }
 
     initialize_menu_items(link:HTMLElement) {
@@ -157,7 +184,7 @@ export class UIOutputView extends BaseWidgetView {
             'nbtools-menu-header', menu);
 
         // Add the extra menu items
-        const menu_items = this.model.get('extra_menu_items');
+        const menu_items = this.model.get('extra_file_menu_items');
         const template_vars = {
             'widget_name': widget_name,
             'file_name': file_name,
@@ -166,28 +193,12 @@ export class UIOutputView extends BaseWidgetView {
         Object.keys(menu_items).forEach((name) => {
             const item = menu_items[name] as any;
 
-            // Create callback for string literal
-            if (typeof item === 'string') {
-                const callback = new Function(process_template(item, template_vars));
-                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
-                return;
-            }
-
             // Skip if this file doesn't match any type restrictions
-            if (Array.isArray(item['kinds']) && !item['kinds'].includes(type)) return;
+            if (item['kinds'] && Array.isArray(item['kinds']) && !item['kinds'].includes(type)) return;
 
-            // Create callback for cell event type
-            if (item['action'] === 'cell') {
-                const callback = () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
-                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
-                return;
-            }
-
-            // Create callback for custom event type
-            else {
-                const callback = new Function(process_template(item['code'], template_vars));
-                this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
-            }
+            // Create the callback and attach the menu item
+            const callback = this.create_menu_callback(item, template_vars);
+            this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
         });
 
         // Add download option

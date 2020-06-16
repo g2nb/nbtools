@@ -19,7 +19,8 @@ export class BaseWidgetModel extends DOMWidgetModel {
             collapsed: false,
             color: 'var(--jp-layout-color4)',
             info: '',
-            error: ''
+            error: '',
+            extra_menu_items: {}
         };
     }
 }
