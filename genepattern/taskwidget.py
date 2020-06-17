@@ -45,6 +45,7 @@ class GPTaskWidget(UIBuilder):
             param_spec['type'] = 'file'
             if task_param.is_choice_param():
                 param_spec['choices'] = {c['label']: c['value'] for c in task_param.get_choices()}
+            if task_param.allow_multiple(): param_spec['maximum'] = 100
         elif task_param.is_choice_param():
             param_spec['type'] = 'choice'
             param_spec['choices'] = {c['label']: c['value'] for c in task_param.get_choices()}

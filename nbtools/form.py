@@ -3,7 +3,7 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    FileUpload, HBox, Combobox as BaseCombobox, SelectMultiple
+    FileUpload, HBox, Combobox as BaseCombobox, SelectMultiple, VBox
 from traitlets import List, Dict
 from .parsing_manager import ParsingManager
 
@@ -168,20 +168,34 @@ class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
         def __init__(self, spec, upload_callback=None, **kwargs):
             # Set child widgets
+            self.spec = spec
             self._value = ''
             self.upload = FileUpload(accept=self.accepted_kinds(spec), multiple=False)
-            self.url = Combobox()
 
-            # Set up menu support for url widget
-            if 'kinds' in spec and spec['kinds']: self.url.kinds = spec['kinds']
-            self.url.choices = self.choices_dict(spec)
+            # Set up the file list
+            self.file_list = VBox()
+            self.urls = []
+            self.file_list.children = self.urls
+
+            # Set up menu support for url widgets
+            if 'kinds' in spec and spec['kinds']:
+                for i in self.file_list.children:
+                    i.kinds = spec['kinds']
+                    i.choices = self.choices_dict(spec)
 
             # Set up the upload function
             self.upload_callback = self.default_upload_callback if upload_callback is None else upload_callback
 
+            # Add the child widgets and initialize events
             HBox.__init__(self, **kwargs)
-            self.children = (self.upload, self.url)
+            self.children = (self.upload, self.file_list)
             self.init_events()
+
+        def maximum(self):
+            return int(self.spec['maximum']) if 'maximum' in self.spec else 1
+
+        def minimum(self):
+            return int(self.spec['minimum']) if 'minimum' in self.spec else 1
 
         @staticmethod
         def default_upload_callback(values):
@@ -193,13 +207,20 @@ class FileFormInput(BaseFormInput):
 
         @property
         def value(self):
-            return self._value
+            if len(self._value) == 1: return self._value[0]
+            elif len(self._value) == 0: return ''
+            else: return self._value
 
         @value.setter
         def value(self, value):
+            if not isinstance(value, list): value = [value]  # Handle non-lists
+            if len(value) > self.maximum():  # Make sure the list isn't too long
+                raise RuntimeError('List exceeds maximum number of values')
+
+            # Set the value in the correct widgets
             self._value = value
-            if self._value != self.url.value:
-                self.url.value = self._value
+            if self._value != self._file_list_values():
+                self._set_file_list_values(self._value)
 
         @staticmethod
         def choices_dict(spec):
@@ -213,17 +234,55 @@ class FileFormInput(BaseFormInput):
             else:  # If not specified, accept all kinds
                 return ''
 
+        def _file_list_values(self, append=None):
+            """Return a values from the file list widgets, stripping blank values and with an optional value appended"""
+            value_list = [i.value for i in self.file_list.children if i.value != '']
+            if append: return value_list + [append]
+            else: return value_list
+
+        def _set_file_list_values(self, values):
+            """Set the values in each of the file list widgets"""
+            if len(values) > self.maximum():  # Make sure the list isn't too long
+                raise RuntimeError('List exceeds maximum number of values')
+
+            # If the number of values doesn't match the current number of widgets, rebuild them
+            if len(values) != len(self.file_list.children):
+                widget_number = min(max(len(values) + 1, self.minimum()), self.maximum())
+                self.file_list.children = [Combobox() for i in range(widget_number)]
+                for i in self.file_list.children:
+                    i.observe(self.change_url)
+
+            # Set the values
+            for i in range(len(values)): self.file_list.children[i].value = values[i]
+            for i in range(len(values), len(self.file_list.children)): self.file_list.children[i].value = ''
+
         def change_file(self, change):
             if isinstance(change['owner'].value, dict) and change['name'] == 'data':
-                self.value = self.upload_callback(change['owner'].value)
+                path = self.upload_callback(change['owner'].value)
+                if path not in self.value:
+                    values_length = len(self._file_list_values())
+                    if values_length == self.maximum():  # Handle uploads when the max values has been reached
+                        self.file_list.children[values_length-1].value = path
+                        self._set_file_list_values(self._file_list_values())
+                    else:  # Otherwise append the uploaded value to the current list
+                        self._set_file_list_values(self._file_list_values(append=path))
 
         def change_url(self, change):
-            if self.value != change['owner'].value:
-                self.value = change['owner'].value
+            if change['name'] == 'value':
+                widget_values = self._file_list_values()
+                if self.value != widget_values:
+                    self.value = widget_values
+
+                # Add a blank widget if all widgets and full and not at max
+                if len(widget_values) == len(self.file_list.children) and len(widget_values) != self.maximum():
+                    new_widget = Combobox()
+                    new_widget.observe(self.change_url)
+                    self.file_list.children = list(self.file_list.children) + [new_widget]
+                if len(widget_values) < len(self.file_list.children)-1 and len(self.file_list.children) > self.minimum():
+                    self.file_list.children = list(self.file_list.children)[:-1]
 
         def init_events(self):
             """Connect value change events of children to parent widget"""
-            self.url.observe(self.change_url)
             self.upload.observe(self.change_file)
 
     def __init__(self, spec, upload_callback=None, **kwargs):

@@ -103,6 +103,7 @@
     line-height: var(--jp-widgets-inline-height);
 }
 
+.nbtools-fileinput .widget-vbox,
 .nbtools-fileinput .widget-text {
     width: 100%;
 }
