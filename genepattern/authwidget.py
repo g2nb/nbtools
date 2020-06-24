@@ -1,6 +1,6 @@
 import gp
 from IPython.display import display
-from nbtools import UIBuilder, ToolManager, NBTool
+from nbtools import UIBuilder, ToolManager, NBTool, EventManager
 from .sessions import session
 from .shim import login, system_message
 from .taskwidget import TaskTool
@@ -67,6 +67,7 @@ class GPAuthWidget(UIBuilder):
             self.register_session()     # Register the session with the SessionList
             self.register_modules()     # Register the modules with the ToolManager
             self.system_message()       # Display the system message
+            self.trigger_login()        # Trigger login callbacks of job and task widgets
 
             # Display the widget with the system message and no form
             UIBuilder.__init__(self, lambda: None, name=self.session.url, display_header=False, display_footer=False,
@@ -130,6 +131,10 @@ class GPAuthWidget(UIBuilder):
         if hasattr(self.session, 'system_message'): message = self.session.system_message()
         else: message = system_message(self.session)
         self.info = message
+
+    def trigger_login(self):
+        """Dispatch a login event after authentication"""
+        EventManager.instance().dispatch("gp.login", self.session)
 
 
 def server_name(search_url):

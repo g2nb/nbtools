@@ -5,6 +5,8 @@ import requests
 import urllib.parse
 import urllib.request
 
+from gp import GPTask
+
 
 def get_permissions(job):
     url = f'{job.server_data.url}/rest/v1/jobs/{job.job_number}/permissions'
@@ -51,6 +53,18 @@ def system_message(session):
     url = f"{safe_url}/rest/v1/config/system-message"
     response = requests.get(url)
     return strip_html(response.text)
+
+
+def get_task(session, lsid_or_name):
+    url = f'{session.url}/rest/v1/tasks/{lsid_or_name}/'
+    request = urllib.request.Request(url)
+    if session.authorization_header() is not None:
+        request.add_header('Authorization', session.authorization_header())
+    request.add_header('User-Agent', 'GenePatternRest')
+
+    response = urllib.request.urlopen(request)
+    task_dict = json.loads(response.read())
+    return GPTask(session, task_dict['lsid'], task_dict)
 
 
 class HTMLStripper(HTMLParser):

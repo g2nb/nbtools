@@ -1,6 +1,8 @@
 from IPython import get_ipython
 from IPython.display import display
 from ipykernel.comm import Comm
+from ipywidgets import Output
+from .event_manager import EventManager
 from .uioutput import UIOutput
 
 
@@ -86,6 +88,12 @@ class ToolManager(object):
 
                 # Notify the client of the registration
                 cls.instance().send_update()
+
+                # Dispatch the register event
+                EventManager.instance().dispatch('nbtools.register', {
+                    'origin': tool_or_widget.origin,
+                    'id': tool_or_widget.id
+                })
             else:
                 raise ValueError("register() must be passed a tool with an instantiated origin and id")
         else:
@@ -110,7 +118,23 @@ class ToolManager(object):
         if cls.exists(id, origin):
             return cls.instance().tools[origin][id]
         else:
-            display(UIOutput(name='Cannot find tool', error=f'Cannot find tool: {origin} | {id}'))
+            display(cls.create_placeholder_widget(origin, id))
+
+    @classmethod
+    def create_placeholder_widget(cls, origin, id):
+        output = Output()                                                                            # Output widget
+        placeholder = UIOutput(name='Cannot find tool', error=f'Cannot find tool: {origin} | {id}')  # Placeholder widget
+        output.append_display_data(placeholder)
+
+        # Callback to see if the placeholder needs replaced after a new widget is registered
+        def check_registration_callback(data):
+            if 'origin' in data and 'id' in data and data['origin'] == origin and data['id'] == id:
+                placeholder.close()
+                with output: display(tool(id=id, origin=origin))
+
+        # Register the callback with the event manager
+        EventManager.instance().register("nbtools.register", check_registration_callback)
+        return output
 
     @classmethod
     def exists(cls, id, origin):

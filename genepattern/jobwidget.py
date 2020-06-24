@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 from ipywidgets import Dropdown, Button, VBox, HBox
 
 from genepattern.shim import get_permissions, set_permissions
-from nbtools import UIOutput
+from nbtools import UIOutput, EventManager
 
 
 class GPJobWidget(UIOutput):
@@ -19,6 +19,9 @@ class GPJobWidget(UIOutput):
         self.job = job
         self.poll()  # Query the GP server and begin polling, if needed
         self.attach_sharing()
+
+        # Register the event handler for GP login
+        EventManager.instance().register("gp.login", self.login_callback)
 
     def poll(self):
         """Poll the GenePattern server for the job info and display it in the widget"""
@@ -181,3 +184,10 @@ class GPJobWidget(UIOutput):
             self.sharing_displayed = self.appendix.children if self.appendix.children else True
             # Attach to the job widget
             self.appendix.children = [permissions_box]
+
+    def login_callback(self, data):
+        """Callback for after a user authenticates"""
+        if self.job is not None and self.job.server_data is None:
+            self.job.server_data = data
+            self.error = ''
+            self.poll()

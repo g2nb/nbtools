@@ -3,7 +3,8 @@ import os
 import tempfile
 from IPython.display import display
 from .jobwidget import GPJobWidget
-from nbtools import NBTool, UIBuilder, python_safe
+from nbtools import NBTool, UIBuilder, python_safe, EventManager
+from .shim import get_task
 
 
 class GPTaskWidget(UIBuilder):
@@ -16,7 +17,7 @@ class GPTaskWidget(UIBuilder):
 
     def create_function_wrapper(self, task):
         """Create a function that accepts the expected input and submits a GenePattern job"""
-        if task is None: return lambda: None  # Dummy function for null task
+        if task is None or task.server_data is None: return lambda: None  # Dummy function for null task
         name_map = {}  # Map of Python-safe parameter names to GP parameter names
 
         # Function for submitting a new GenePattern job based on the task form
@@ -83,27 +84,44 @@ class GPTaskWidget(UIBuilder):
 
     def handle_null_task(self):
         """Display an error message if the task is None"""
-        if self.task is None:
-            self.name = 'GenePattern Module'
-            self.display_header = False
-            self.display_footer = False
-            self.error = 'No GenePattern module specified.'
+        self.name = 'GenePattern Module'
+        self.display_header = False
+        self.display_footer = False
+        self.error = 'No GenePattern module specified.'
 
     def __init__(self, task=None, **kwargs):
         """Initialize the task widget"""
-        if task is not None and task.params is None: task.param_load()  # Load params from GP server
         self.task = task
-        self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
-        self.parameter_spec = self.create_param_spec(task)
-        UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
-                           upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
-        self.handle_null_task()  # Set the right look and error message if task is None
+
+        if self.task is None or self.task.server_data is None:  # Set the right look and error message if task is None
+            UIBuilder.__init__(self, lambda: None, color=self.default_color, **kwargs)
+            self.handle_null_task()
+        else:
+            if task.params is None: task.param_load()  # Load params from GP server
+            self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
+            self.parameter_spec = self.create_param_spec(task)
+            UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
+                               upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
+
+        # Register the event handler for GP login
+        EventManager.instance().register("gp.login", self.login_callback)
 
     @staticmethod
     def form_value(raw_value):
         """Give the default parameter value in format the UI Builder expects"""
         if raw_value is not None: return raw_value
         else: return ''
+
+    def login_callback(self, data):
+        """Callback upon authentication for unauthenticated task widgets"""
+        if self.task is not None and self.task.server_data is None:
+            task = data.get_task(self.task.uri) if hasattr(data, 'get_task') else get_task(data, self.task.uri)
+            task.param_load()  # Get the GPTask object and load its data
+
+            # Create a new task widget and close the old unauthenticated one
+            with self.output:
+                display(GPTaskWidget(task))
+                self.close()
 
 
 class TaskTool(NBTool):
