@@ -1466,7 +1466,14 @@ define("nbtools/uibuilder", ["base/js/namespace",
                     else if (pObj.success) pObj.success('Successfully uploaded file', pObj.file.name);
                 };
 
-                Jupyter.notebook.contents.save(dir_path + pObj.file.name, model).then(on_success, on_error);
+                // Save the file, making sure not to overwrite
+                Jupyter.notebook.contents.get(dir_path + pObj.file.name, { content: false }).then(() => {
+                    // Conflicting file exists, make the error callback
+                    pObj.error(`Conflicting file ${pObj.file.name} exists`)
+                }).catch(() => {
+                    // Trying to get the file throw a 404 error, conflicting file doesn't exist, save the file!
+                    Jupyter.notebook.contents.save(dir_path + pObj.file.name, model).then(on_success, on_error);
+                });
             };
 
             // now let's start the read with the first block
