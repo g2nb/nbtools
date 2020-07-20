@@ -1,10 +1,10 @@
 
-# nbtools JupyterLab Prototype
+# nbtools for JupyterLab
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/lab?urlpath=lab)
 [![Build Status](https://travis-ci.org/genepattern/nbtools.svg?branch=lab)](https://travis-ci.org/genepattern/nbtools)
 
-nbtools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike.
+nbtools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike. It is a core component of the GenePattern Notebook environment.
 
 Prerequisites
 
