@@ -95,6 +95,7 @@ class UIBuilder(BaseWidget, NBTool):
     output_var = Unicode(sync=True)
     origin = Unicode(sync=True)
     _parameters = List(sync=True)
+    parameter_groups = List(sync=True)
     function_import = Unicode(sync=True)  # Deprecated
     register_tool = Bool(True, sync=True)
     collapse = Bool(sync=True)

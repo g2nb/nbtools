@@ -72,6 +72,18 @@ class GPTaskWidget(UIBuilder):
         return spec
 
     @staticmethod
+    def extract_parameter_groups(task):
+        if 'paramGroups' in task.dto and (len(task.dto['paramGroups']) > 1 or 'name' in task.dto['paramGroups'][0]):
+            groups = task.dto['paramGroups']
+            for group in groups:
+                if 'parameters' in group:
+                    for i in range(len(group['parameters'])):
+                        group['parameters'][i] = python_safe(group['parameters'][i])
+            return groups
+        else:
+            return []
+
+    @staticmethod
     def generate_upload_callback(task):
         """Create an upload callback to pass to file input widgets"""
         def genepattern_upload_callback(values):
@@ -101,6 +113,7 @@ class GPTaskWidget(UIBuilder):
             self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
             self.parameter_spec = self.create_param_spec(task)
             UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
+                               parameter_groups=GPTaskWidget.extract_parameter_groups(self.task),
                                upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
 
         # Register the event handler for GP login

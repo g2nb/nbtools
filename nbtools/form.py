@@ -339,25 +339,27 @@ class InteractiveForm(interactive):
         default_value = spec['default']
 
         # Use specified type, or fall back on default from value
-        type = spec['type']
+        param_type = spec['type']
 
-        if type == 'text':
+        if param_type == 'text':
             return TextFormInput(spec, value=unicode_type(default_value))
-        elif type == 'password':
+        elif param_type == 'password':
             return PasswordFormInput(spec, value=default_value)
-        elif type == 'choice' and InteractiveForm.is_combo(spec):
+        elif param_type == 'choice' and InteractiveForm.is_combo(spec):
             return ComboFormInput(spec, value=default_value)
-        elif type == 'choice' and InteractiveForm.is_multiple(spec):
+        elif param_type == 'choice' and InteractiveForm.is_multiple(spec):
             return MultiselectFormInput(spec, value=default_value)
-        elif type == 'choice':
+        elif param_type == 'choice':
             return SelectFormInput(spec, value=default_value)
-        elif type == 'number' and isinstance(default_value, Integral):
+        elif param_type == 'number' and isinstance(default_value, Integral):
             return IntegerFormInput(spec, value=default_value)
-        elif type == 'number' and isinstance(default_value, Real):
+        elif param_type == 'number' and isinstance(default_value, str) and default_value.lstrip('-').isnumeric():
+            return IntegerFormInput(spec, value=default_value)
+        elif param_type == 'number' and isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
-        elif type == 'number' and (default_value is None or default_value == ''):
+        elif param_type == 'number' and (default_value is None or default_value == ''):
             return FloatFormInput(spec, value=0)
-        elif type == 'file':
+        elif param_type == 'file':
             return FileFormInput(spec, value=unicode_type(default_value), upload_callback=self.upload_callback)
 
         # No known type specified, guess based on default value

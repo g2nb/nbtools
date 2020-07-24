@@ -154,3 +154,6 @@ nbtools/labextension/*.tgz
 
 # Packed lab extensions
 nbtools/labextension
+
+# PyCharm
+.idea/

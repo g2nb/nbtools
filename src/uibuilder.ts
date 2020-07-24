@@ -9,7 +9,7 @@ import '../style/uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { ISerializers, ManagerBase, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
-import { element_rendered } from "./utils";
+import { element_rendered, toggle } from "./utils";
 
 export class UIBuilderModel extends BaseWidgetModel {
     static model_name = 'UIBuilderModel';
@@ -40,6 +40,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             description: '',
             origin: '',
             _parameters: [],
+            parameter_groups: [],
             function_import: '',
             register_tool: true,
             collapse: true,
@@ -96,8 +97,14 @@ export class UIBuilderView extends BaseWidgetView {
         // Add the interactive form widget
         this.attach_child_widget('.nbtools-form', 'form');
 
-        // Attach ID and event callbacks once the view is rendered
-        element_rendered(this.el).then(() => this._attach_callbacks());
+        // After the view is rendered
+        element_rendered(this.el).then(() => {
+            // // Attach ID and event callbacks
+            this._attach_callbacks();
+
+            // Create parameter groups
+            this._init_parameter_groups();
+        });
     }
 
     display_header_changed() {
@@ -175,6 +182,117 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     /**
+     * Create group headers and reorder the form widget according to the group spec
+     *
+     * @private
+     */
+    _init_parameter_groups() {
+        // Get the parameter groups
+        const groups = this.model.get('parameter_groups');
+        if (!groups || !groups.length) return; // No groups are defined, skip this step
+
+        // Get the UI Builder form container
+        const form = this.el.querySelector('.nbtools-form > .widget-interact');
+        if (!form) return; // If no container is found, skip this step
+
+        // Iterate over each group, create headers and add parameters
+        groups.reverse().forEach((group: any) => {
+            // Create and add the header
+            const header = this._create_group_header(group['name']);
+            const body = this._create_group_body(header, group['description']);
+            form.prepend(body);
+            form.prepend(header);
+
+            // Add the parameters
+            group['parameters'] && group['parameters'].forEach((param_name: string) => {
+                const param = this._param_dom_by_name(form, param_name);
+                if (!param) return; // If the parameter is not found, skip
+                body.append(param);
+            })
+        });
+    }
+
+    _create_group_header(name: string|null) {
+        // Create the expand / collapse button
+        const controls = document.createElement('controls');
+        const button = document.createElement('button');
+        const icon = document.createElement('span');
+        controls.classList.add('nbtools-controls');
+        button.classList.add('nbtools-collapse');
+        icon.classList.add('fa', 'fa-minus');
+        button.append(icon);
+        controls.append(button);
+
+        // Create the header
+        const header = document.createElement('div');
+        header.classList.add('nbtools-header', 'nbtools-group-header');
+        header.append(name || '');
+        header.append(controls);
+
+        // Apply the color
+        header.style.backgroundColor = this.model.get('parameter_groups');
+
+        // Return the container
+        return header;
+    }
+
+    _create_group_body(header:HTMLElement, description:string|null) {
+        // Create the container
+        const box = document.createElement('div');
+        box.classList.add('nbtools-group');
+
+        // Create the description
+        if (description) {
+            const desc = document.createElement('div');
+            desc.classList.add('nbtools-description');
+            desc.append(description || '');
+            box.append(desc);
+        }
+
+        // Add controls to the expand / collapse button
+        const button = header.querySelector('button') as HTMLElement;
+        const icon = button.querySelector('span') as HTMLElement;
+        button.addEventListener('click', () => {
+            this._group_toggle_collapse(box, icon);
+        });
+
+        return box
+    }
+
+    _group_toggle_collapse(group_box:HTMLElement, button:HTMLElement) {
+        const collapsed = group_box.style.display === "none";
+
+        // Hide or show widget body
+        toggle(group_box);
+
+        // Toggle the collapse button
+        if (collapsed) {
+            button.classList.add('fa-minus');
+            button.classList.remove('fa-plus');
+        }
+        else {
+            button.classList.remove('fa-minus');
+            button.classList.add('fa-plus');
+        }
+    }
+
+    _param_dom_by_name(form: HTMLElement, name: string) {
+        // First attempt: Try to get parameter by data-name attribute (created by attach_callbacks() method)
+        let param = form.querySelector(`.nbtools-input[data-name='${name}']`);
+        if (param) return param; // Found it! Return the parameter
+
+        // Second attempt: Try to locate by parameter name label
+        const label = form.querySelector(`.nbtools-input > .widget-label:first-child`);
+        if (!label) return null; // No matching label found, return null
+        const match = name.toLowerCase().replace(/[^a-zA-Z]/g, '') ===
+            (label.textContent as string).toLowerCase().replace(/[^a-zA-Z]/g, '');
+        if (match) return label.closest('.nbtools-input');
+
+        // Match not found, return null
+        return null;
+    }
+
+    /**
      * Attach ID and event callbacks to the UI Builder
      *
      * @private
@@ -190,6 +308,9 @@ export class UIBuilderView extends BaseWidgetView {
         for (let i = 0; i < json_parameters.length; i++) {
             const param_spec = json_parameters[i];
             const param_el = dom_parameters[i];
+
+            // Attach the data-name attribute
+            param_el.setAttribute('data-name', param_spec.name);
 
             // Attach specified ID as a data-id attribute
             if (!!param_spec.id) param_el.setAttribute('data-id', param_spec.id);

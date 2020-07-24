@@ -108,7 +108,7 @@
     width: 100%;
 }
 
-.nbtools-input:last-child {
+.widget-interact > .nbtools-input:last-child {
     position: relative;
     top: 13px;
     z-index: 1;
@@ -148,4 +148,22 @@
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 7;
+}
+
+.nbtools-group-header {
+    background-color: var(--jp-layout-color4);
+    color: var(--jp-ui-inverse-font-color0);
+    font-weight: bold;
+    padding: 5px 5px 5px 10px;
+    margin: 5px 0 5px 0;
+    min-height: 25px;
+    line-height: 25px;
+    position: relative;
+}
+
+.nbtools-group > .nbtools-description {
+    top: -5px;
+    left: 0;
+    padding: 10px;
+    width: calc(100% - 20px);
 }
