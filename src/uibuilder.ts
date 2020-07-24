@@ -230,7 +230,7 @@ export class UIBuilderView extends BaseWidgetView {
         header.append(controls);
 
         // Apply the color
-        header.style.backgroundColor = this.model.get('parameter_groups');
+        header.style.backgroundColor = this.model.get('color');
 
         // Return the container
         return header;
