@@ -14,6 +14,6 @@ from .r_support import r_build_ui
 
 __author__ = 'Thorin Tabor'
 __copyright__ = 'Copyright 2016-2020, Regents of the University of California & Broad Institute'
-__version__ = '20.05.1'
+__version__ = '20.07'
 __status__ = 'Beta'
 __license__ = 'BSD'
