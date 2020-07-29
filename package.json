@@ -51,9 +51,9 @@
   },
   "dependencies": {
     "@jupyter-widgets/base": "^1.1.10 || ^2",
-    "@jupyterlab/application": ">=1.1.2 <1.2.0",
-    "@jupyterlab/mainmenu": ">=1.1.2 <1.2.0",
-    "@jupyterlab/notebook": ">=1.1.2 <1.2.0"
+    "@jupyterlab/application": ">=1.1.2 <2",
+    "@jupyterlab/mainmenu": ">=1.1.2 <2",
+    "@jupyterlab/notebook": ">=1.1.2 <2"
   },
   "devDependencies": {
     "@phosphor/application": "^1.6.0",
