@@ -3,8 +3,8 @@ FROM jupyter/scipy-notebook:1386e2046833
 RUN git clone https://github.com/genepattern/nbtools.git
 RUN cd nbtools && git checkout lab
 
-RUN jupyter nbextension enable --py widgetsnbextension
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
+# RUN jupyter nbextension enable --py widgetsnbextension
+# RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 RUN cd nbtools && pip install .
 RUN cd nbtools && jupyter labextension install .
