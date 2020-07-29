@@ -10,4 +10,4 @@ RUN cd nbtools && pip install .
 RUN cd nbtools && jupyter labextension install .
 RUN cd nbtools && jupyter nbextension install --py nbtools --sys-prefix
 RUN cd nbtools && jupyter nbextension enable --py nbtools --sys-prefix
-RUN cd nbtools && cp ./examples/overrides.json /srv/conda/envs/notebook/share/jupyter/lab/settings/overrides.json
+# RUN cd nbtools && cp ./examples/overrides.json /srv/conda/envs/notebook/share/jupyter/lab/settings/overrides.json
