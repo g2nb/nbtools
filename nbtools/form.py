@@ -334,6 +334,24 @@ class InteractiveForm(interactive):
     def is_multiple(spec):
         return 'multiple' in spec and spec['multiple']
 
+    @staticmethod
+    def is_integer(value):
+        if isinstance(value, Integral): return True
+        try:
+            int(value)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def is_float(value):
+        if isinstance(value, Real): return True
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
     def widget_from_spec(self, spec):
         """Instantiate a widget based on the default value in the spec"""
         default_value = spec['default']
@@ -351,11 +369,9 @@ class InteractiveForm(interactive):
             return MultiselectFormInput(spec, value=default_value)
         elif param_type == 'choice':
             return SelectFormInput(spec, value=default_value)
-        elif param_type == 'number' and isinstance(default_value, Integral):
+        elif param_type == 'number' and self.is_integer(default_value):
             return IntegerFormInput(spec, value=default_value)
-        elif param_type == 'number' and isinstance(default_value, str) and default_value.lstrip('-').isnumeric():
-            return IntegerFormInput(spec, value=default_value)
-        elif param_type == 'number' and isinstance(default_value, Real):
+        elif param_type == 'number' and self.is_float(default_value):
             return FloatFormInput(spec, value=default_value)
         elif param_type == 'number' and (default_value is None or default_value == ''):
             return FloatFormInput(spec, value=0)
