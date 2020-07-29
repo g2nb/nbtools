@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook:1386e2046833
+FROM jupyter/scipy-notebook:9f4983c5d1f3
 
 RUN git clone https://github.com/genepattern/nbtools.git
 RUN cd nbtools && git checkout lab
