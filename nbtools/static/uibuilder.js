@@ -1098,12 +1098,12 @@ define("nbtools/uibuilder", ["base/js/namespace",
                             widget._display_output(code);
                         },
                         error: function (exception) {
-                            widget.errorMessage("Error evaluating kernel variables in preparation of job submission: " + exception.statusText);
+                            widget.errorMessage("Error evaluating kernel variables in preparation of job submission: " + exception);
                         }
                     });
                 },
                 error: function(exception) {
-                    widget.errorMessage("Error uploading in preparation of job submission: " + exception.statusText);
+                    widget.errorMessage("Error uploading in preparation of job submission: " + exception);
                 }
             });
         },
@@ -1543,7 +1543,8 @@ define("nbtools/uibuilder", ["base/js/namespace",
                         },
                         error: function(exception) {
                             // On the error callback set the error and call finalize
-                            error = exception;
+                            if (exception.statusText) error = exception.statusText;
+                            else error = exception;
                             finalizeUploads();
                         }
                     });
