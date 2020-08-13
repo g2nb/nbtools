@@ -1,5 +1,5 @@
-import { Application, IPlugin } from '@phosphor/application';
-import { Widget } from '@phosphor/widgets';
+import { Application, IPlugin } from '@lumino/application';
+import { Widget } from '@lumino/widgets';
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import * as base_exports from './basewidget';

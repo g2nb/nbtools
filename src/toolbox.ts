@@ -1,4 +1,4 @@
-import { PanelLayout, Widget } from '@phosphor/widgets';
+import { PanelLayout, Widget } from '@lumino/widgets';
 import { toggle } from "./utils";
 import { ContextManager } from "./context";
 import { NotebookActions, NotebookPanel } from "@jupyterlab/notebook";
@@ -52,10 +52,10 @@ export class Toolbox extends Widget {
 
         // Fill the cell with the tool's code
         cell = ContextManager.notebook_tracker.activeCell; // The active cell may just have been updated
-        cell.model.value.text = code;
+        if (cell) cell.model.value.text = code;
 
         // Run the cell
-        return NotebookActions.run(current.content, current.context.session);
+        return NotebookActions.run(current.content, current.context.sessionContext);
     }
 
     fill_toolbox() {

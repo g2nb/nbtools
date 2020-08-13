@@ -246,9 +246,9 @@ export class BaseWidgetView extends DOMWidgetView {
     float_menus() {
         const fix_cell = () => {
             const elements = [
-                this.el.closest('.p-Widget.jp-OutputPrompt.jp-OutputArea-prompt'),
-                this.el.closest('.p-Widget.p-Panel.jp-OutputArea-child'),
-                this.el.closest('.p-Widget.jp-OutputArea.jp-Cell-outputArea')
+                this.el.closest('.lm-Widget.jp-OutputPrompt.jp-OutputArea-prompt'),
+                this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea-child'),
+                this.el.closest('.lm-Widget.jp-OutputArea.jp-Cell-outputArea')
             ];
 
             elements.forEach((e:HTMLElement) => {

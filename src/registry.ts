@@ -1,4 +1,4 @@
-import { Widget } from "@phosphor/widgets";
+import { Widget } from "@lumino/widgets";
 import { NotebookPanel, NotebookTracker } from "@jupyterlab/notebook";
 import { Kernel } from "@jupyterlab/services";
 
@@ -39,12 +39,13 @@ export class ToolRegistry {
 
     import_default_tools() {
         const current = this.current as NotebookPanel;
-        if (current && current.context && current.context.session)
-            current.context.session.kernelChanged.connect(() => {
-                if (!current.context.session.kernel) return;  // Protect against null kernels
+        if (current && current.context && current.context.sessionContext)
+            current.context.sessionContext.kernelChanged.connect(() => {
+                if (!current.context.sessionContext.session ||
+                    !current.context.sessionContext.session.kernel) return;  // Protect against null kernels
 
                 // Import the default tools
-                current.context.session.kernel.requestExecute({code: 'from nbtools import import_defaults\nimport_defaults()'});
+                current.context.sessionContext.session.kernel.requestExecute({code: 'from nbtools import import_defaults\nimport_defaults()'});
             });
     }
 
@@ -56,11 +57,11 @@ export class ToolRegistry {
         if (!(this.current instanceof NotebookPanel)) return;
 
         // Make sure the session is ready before initializing the comm
-        this.current.context.session.ready.then(() => {
+        this.current.context.sessionContext.ready.then(() => {
             const current:any = this.current;
 
             // Register the comm target with the kernel
-            const kernel = current.context.session.kernel;
+            const kernel = current.context.sessionContext.session.kernel;
             kernel.registerCommTarget('nbtools_comm', (comm:Kernel.IComm) => {
                 comm.onMsg = (msg:any) => {
                     const data = msg.content.data;
@@ -121,10 +122,11 @@ export class ToolRegistry {
         // Protect against null
         if (!this.current ||
             !this.current.context ||
-            !this.current.context.session ||
-            !this.current.context.session.kernel) return null;
+            !this.current.context.sessionContext ||
+            !this.current.context.sessionContext.session ||
+            !this.current.context.sessionContext.session.kernel) return null;
 
-        return this.current.context.session.kernel.id;
+        return this.current.context.sessionContext.session.kernel.id;
     }
 
     /**

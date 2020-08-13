@@ -6,7 +6,7 @@
  * Copyright 2020 Regents of the University of California and the Broad Institute
  */
 import '../style/uioutput.css'
-import {ISerializers, ManagerBase, unpack_models} from '@jupyter-widgets/base';
+import { ISerializers, ManagerBase, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, is_url, process_template } from './utils';

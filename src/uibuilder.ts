@@ -557,7 +557,7 @@ export class UIBuilderView extends BaseWidgetView {
             const func = new Function(str_func) as EventListener;
 
             // Handle the load event as a special case (run now)
-            if (key === 'load') func.call(this);
+            if (key === 'load') func.call(this, new CustomEvent('load'));
 
             // Handle the run event as a special case (bind as click to the Run button)
             else if (key === 'run') {

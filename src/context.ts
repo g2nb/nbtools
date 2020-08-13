@@ -120,7 +120,7 @@ class LabContext extends Context {
         if (cell instanceof CodeCell) {
             const current = ContextManager.notebook_tracker.currentWidget;
             if (current) {
-                CodeCell.execute(cell, current.context.session);
+                CodeCell.execute(cell, current.context.sessionContext);
             }
         }
 
