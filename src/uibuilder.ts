@@ -99,7 +99,7 @@ export class UIBuilderView extends BaseWidgetView {
 
         // After the view is rendered
         element_rendered(this.el).then(() => {
-            // // Attach ID and event callbacks
+            // Attach ID and event callbacks
             this._attach_callbacks();
 
             // Create parameter groups
@@ -329,6 +329,19 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Attach send to / come from menus
         this._attach_menus();
+
+        // Attach enter key submit event
+        this._submit_keypress();
+    }
+
+    _submit_keypress() {
+        this.el.querySelectorAll('.nbtools-form input, .nbtools-form select').forEach((element:HTMLElement) => {
+            element.addEventListener("keydown", (event:KeyboardEvent) => {
+                if (event.keyCode === 13) {
+                    this.el.querySelector('.nbtools-run').click();
+                }
+            });
+        });
     }
 
     /**
