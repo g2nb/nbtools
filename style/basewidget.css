@@ -60,7 +60,7 @@
     padding: 5px 0 5px 0;
     list-style-type: none;
     cursor: pointer;
-    z-index: 2;
+    z-index: 3;
     white-space: nowrap;
 }
 
