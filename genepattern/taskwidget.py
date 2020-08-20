@@ -4,7 +4,7 @@ import tempfile
 from IPython.display import display
 from .jobwidget import GPJobWidget
 from nbtools import NBTool, UIBuilder, python_safe, EventManager
-from .shim import get_task
+from .shim import get_task, get_kinds
 
 
 class GPTaskWidget(UIBuilder):
@@ -24,6 +24,7 @@ class GPTaskWidget(UIBuilder):
         def submit_job(**kwargs):
             spec = task.make_job_spec()
             for name, value in kwargs.items():
+                if value is None: value = ''  # Handle the case of blank optional parameters
                 spec.set_parameter(name_map[name], value)
             job = task.server_data.run_job(spec, wait_until_done=False)
             display(GPJobWidget(job))
@@ -68,6 +69,7 @@ class GPTaskWidget(UIBuilder):
             spec[safe_name]['default'] = GPTaskWidget.form_value(p.get_default_value())
             spec[safe_name]['description'] = GPTaskWidget.form_value(p.description)
             spec[safe_name]['optional'] = p.is_optional()
+            spec[safe_name]['kinds'] = p.get_kinds() if hasattr(p, 'get_kinds') else get_kinds(p)
             self.add_type_spec(p, spec[safe_name])
         return spec
 
@@ -90,6 +92,7 @@ class GPTaskWidget(UIBuilder):
             for k in values:
                 with tempfile.NamedTemporaryFile() as f:
                     f.write(values[k]['content'])
+                    f.flush()
                     gpfile = task.server_data.upload_file(k, os.path.realpath(f.name))
                     return gpfile.get_url()
         return genepattern_upload_callback

@@ -247,7 +247,9 @@ export class BaseWidgetView extends DOMWidgetView {
         const fix_cell = () => {
             const elements = [
                 this.el.closest('.lm-Widget.jp-OutputPrompt.jp-OutputArea-prompt'),
+                this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea'),
                 this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea-child'),
+                this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea-output'),
                 this.el.closest('.lm-Widget.jp-OutputArea.jp-Cell-outputArea')
             ];
 

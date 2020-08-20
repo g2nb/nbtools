@@ -8,6 +8,19 @@ import urllib.request
 from gp import GPTask
 
 
+def get_kinds(param):
+    if 'fileFormat' not in param.attributes:
+        return []  # Default to an empty list
+
+    # Get the list from the attributes
+    kinds_string = param.attributes['fileFormat']
+
+    if kinds_string == '' or kinds_string == '*':
+        return []  # Accepts all known kinds
+
+    return kinds_string.split(';')
+
+
 def get_permissions(job):
     url = f'{job.server_data.url}/rest/v1/jobs/{job.job_number}/permissions'
     request = urllib.request.Request(url)

@@ -156,3 +156,14 @@ button.nbtools-connect {
     font-size: 0.9em;
     cursor: pointer;
 }
+
+
+/* Hack fix for floating menus */
+
+.lm-Widget.jp-OutputPrompt.jp-OutputArea-prompt,
+.lm-Widget.lm-Panel.jp-OutputArea,
+.lm-Widget.lm-Panel.jp-OutputArea-child,
+.lm-Widget.lm-Panel.jp-OutputArea-output,
+.lm-Widget.jp-OutputArea.jp-Cell-outputArea {
+    overflow: visible;
+}

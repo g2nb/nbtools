@@ -39,7 +39,7 @@ class BaseFormInput(GridBox, ValueWidget):
                 '''), **kwargs)
 
         # Apply overrides from the parameters={} spec
-        self._apply_spec(spec)
+        self.__class__.apply_spec(self, spec)
 
     @property
     def value(self):
@@ -49,7 +49,7 @@ class BaseFormInput(GridBox, ValueWidget):
     def value(self, val):
         self.input.value = val
 
-    def _apply_spec(self, spec):
+    def apply_spec(self, spec):
         """Apply the parameter spec to the widget"""
 
         # If the spec if empty, ignore this call
@@ -64,7 +64,7 @@ class BaseFormInput(GridBox, ValueWidget):
         self.label.description = spec['label']
 
         # Set the default value
-        self.input.value = self.__class__.type_safe(spec['default'], spec['type'])
+        self.input.value = self.__class__.type_safe(spec['default'], self.input_class)
 
         # Set the description
         self.description.value = spec['description']
@@ -74,19 +74,18 @@ class BaseFormInput(GridBox, ValueWidget):
         if spec['hide']: self.layout.display = 'none'
 
     @staticmethod
-    def type_safe(val, to_type):
+    def type_safe(val, input_class):
         # Handle casting to numbers, default to 0 on an error
-        if to_type == 'number':
+        if input_class == IntText:
             try: return int(val)
-            except (ValueError, TypeError):
-                try: return float(val)
-                except (ValueError, TypeError): return 0
+            except (ValueError, TypeError): return 0
+        if input_class == FloatText:
+            try: return float(val)
+            except (ValueError, TypeError): return 0.0
         # Handle casting to strings, default to empty string
-        if to_type == 'text' or to_type == 'password':
-            try:
-                return str(val)
-            except (ValueError, TypeError):
-                return ''
+        if input_class == Text or input_class == Password:
+            try: return str(val)
+            except (ValueError, TypeError): return ''
         # Otherwise, just return the value
         else:
             return val
@@ -129,6 +128,20 @@ class SelectFormInput(BaseFormInput):
         self.input = Dropdown(options=choices, layout=Layout(width='auto', grid_area='input'))
         super(SelectFormInput, self).__init__(spec, **kwargs)
 
+    def apply_spec(self, spec):
+        """Override parent class' method to handle non-matching default values"""
+
+        # Handle blank defaults, revert to first item in list
+        if ('default' not in spec or spec['default'] == '') and '' not in spec['choices']:
+            spec['default'] = list(spec['choices'].values())[0]
+
+        # Handle non-matching defaults, revert to first item in list
+        if spec['default'] not in list(spec['choices'].values()):
+            spec['default'] = list(spec['choices'].values())[0]
+
+        # Call the superclass method to finish
+        super(SelectFormInput, self).apply_spec(spec)
+
 
 class ComboFormInput(BaseFormInput):
     dom_class = 'nbtools-comboinput'
@@ -153,9 +166,9 @@ class MultiselectFormInput(BaseFormInput):
         super(MultiselectFormInput, self).__init__(spec, **kwargs)
 
     @staticmethod
-    def type_safe(val, to_type):
+    def type_safe(val, input_class):
         """Override parent class' method to handle non-lists and blanks"""
-        base_val = BaseFormInput.type_safe(val, to_type)  # Call base class
+        base_val = BaseFormInput.type_safe(val, input_class)  # Call base class
 
         if not base_val and isinstance(base_val, str): return []       # Handle empty values
         if not isinstance(base_val, (list, tuple)): return [base_val]  # Ensure val is a list
@@ -176,12 +189,6 @@ class FileFormInput(BaseFormInput):
             self.file_list = VBox()
             self.urls = []
             self.file_list.children = self.urls
-
-            # Set up menu support for url widgets
-            if 'kinds' in spec and spec['kinds']:
-                for i in self.file_list.children:
-                    i.kinds = spec['kinds']
-                    i.choices = self.choices_dict(spec)
 
             # Set up the upload function
             self.upload_callback = self.default_upload_callback if upload_callback is None else upload_callback
@@ -234,6 +241,13 @@ class FileFormInput(BaseFormInput):
             else:  # If not specified, accept all kinds
                 return ''
 
+        def init_menu_support(self, combobox):
+            """Set up menu support for given widgets"""
+            combobox.add_class('nbtools-menu-attached')
+            if 'kinds' in self.spec and self.spec['kinds']:
+                combobox.kinds = self.spec['kinds']
+            combobox.choices = self.choices_dict(self.spec)
+
         def _file_list_values(self, append=None):
             """Return a values from the file list widgets, stripping blank values and with an optional value appended"""
             value_list = [i.value for i in self.file_list.children if i.value != '']
@@ -251,6 +265,7 @@ class FileFormInput(BaseFormInput):
                 self.file_list.children = [Combobox() for i in range(widget_number)]
                 for i in self.file_list.children:
                     i.observe(self.change_url)
+                    self.init_menu_support(i)
 
             # Set the values
             for i in range(len(values)): self.file_list.children[i].value = values[i]
@@ -277,6 +292,7 @@ class FileFormInput(BaseFormInput):
                 if len(widget_values) == len(self.file_list.children) and len(widget_values) != self.maximum():
                     new_widget = Combobox()
                     new_widget.observe(self.change_url)
+                    self.init_menu_support(new_widget)
                     self.file_list.children = list(self.file_list.children) + [new_widget]
                 if len(widget_values) < len(self.file_list.children)-1 and len(self.file_list.children) > self.minimum():
                     self.file_list.children = list(self.file_list.children)[:-1]
