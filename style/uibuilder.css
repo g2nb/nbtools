@@ -138,7 +138,12 @@
     right: 0;
     height: 20px;
     width: 20px;
-    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 14px;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
 }
 .nbtools-uibuilder .nbtools-file-menu {
     left: 0;
