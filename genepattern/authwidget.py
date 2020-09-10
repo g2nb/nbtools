@@ -43,11 +43,13 @@ class GPAuthWidget(UIBuilder):
                 'choices': GENEPATTERN_SERVERS
             },
             'username': {
-                'name': 'Username'
+                'name': 'Username',
+                'sendto': False,
             },
             'password': {
                 'name': 'Password',
-                'type': 'password'
+                'type': 'password',
+                'sendto': False,
             }
         }
     }
