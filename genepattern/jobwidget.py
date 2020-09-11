@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 from ipywidgets import Dropdown, Button, VBox, HBox
 
 from genepattern.shim import get_permissions, set_permissions
-from nbtools import UIOutput, EventManager
+from nbtools import UIOutput, EventManager, ToolManager
 
 
 class GPJobWidget(UIOutput):
@@ -39,6 +39,9 @@ class GPJobWidget(UIOutput):
             self.description = self.submitted_text()
             self.files = self.files_list()
             self.visualization = self.visualizer()
+
+            # Send notification if completed
+            self.handle_notification()
 
             self.extra_file_menu_items = {
                 'Send to Code': {
@@ -101,6 +104,12 @@ class GPJobWidget(UIOutput):
         """Return the list of output and log files in the format the widget can handle"""
         if self.job is None: return  # Ensure the job has been set
         return [f['link']['href'] for f in (self.job.output_files + self.job.log_files)]
+
+    def handle_notification(self):
+        if self.status == 'Error':
+            ToolManager.instance().send('notification', {'message': f'Job #{self.name} has an error!', 'sender': 'GenePattern Notebook'})
+        elif self.status == 'Completed':
+            ToolManager.instance().send('notification', {'message': f'Job #{self.name} is complete!', 'sender': 'GenePattern Notebook'})
 
     def status_text(self):
         """Return concise status text"""

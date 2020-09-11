@@ -1,6 +1,7 @@
 import { Widget } from "@lumino/widgets";
 import { NotebookPanel, NotebookTracker } from "@jupyterlab/notebook";
 import { Kernel } from "@jupyterlab/services";
+import {send_notification} from "./utils";
 
 export interface IToolRegistry extends ToolRegistry {}
 
@@ -67,6 +68,7 @@ export class ToolRegistry {
                     const data = msg.content.data;
 
                     if (data.func === 'update') this.update_tools(data.payload);
+                    else if (data.func === 'notification') send_notification(data.payload.message, data.payload.sender);
                     else console.error('ToolRegistry received unknown message: ' + data);
                 };
               });

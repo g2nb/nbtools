@@ -1,4 +1,38 @@
 /**
+ * Send a browser notification
+ *
+ * @param message
+ * @param sender
+ * @param icon
+ */
+export function send_notification(message:string, sender:string = 'nbtools', icon:string = 'https://notebook.genepattern.org/hub/logo') {  // FIXME: NBToolManager.options.logo;
+    // Internal function to display the notification
+    function notification() {
+        new Notification(sender, {
+            body: message,
+            badge: icon,
+            icon: icon,
+            silent: true
+        });
+    }
+
+    // Browser supports notifications and permission is granted
+    if ("Notification" in window && Notification.permission === "granted") {
+        notification()
+    }
+
+    // Otherwise, we need to ask the user for permission
+    else if ("Notification" in window && Notification.permission !== "denied") {
+        Notification.requestPermission(function (permission) {
+            // If the user accepts, let's create a notification
+            if (permission === "granted") {
+                notification()
+            }
+        });
+    }
+}
+
+/**
  * Decides if a string represents a valid URL or not
  *
  * @param path_or_url
