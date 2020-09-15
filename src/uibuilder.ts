@@ -48,6 +48,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             buttons: {},
             display_header: true,
             display_footer: true,
+            busy: false,
             run_label: 'Run',
             form: undefined,
             output: undefined
@@ -68,6 +69,11 @@ export class UIBuilderView extends BaseWidgetView {
             <button class="nbtools-run" data-traitlet="run_label"></button>
         </div>
         <div class="nbtools-description" data-traitlet="description"></div>
+        <div class="nbtools-busy">
+            <div>
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+        </div>
         <div class="nbtools-error" data-traitlet="error"></div>
         <div class="nbtools-info" data-traitlet="info"></div>
         <div class="nbtools-form"></div>
@@ -84,6 +90,10 @@ export class UIBuilderView extends BaseWidgetView {
         this.display_footer_changed();
         this.model.on(`change:display_header`, this.display_header_changed, this);
         this.model.on(`change:display_footer`, this.display_footer_changed, this);
+
+        // Show or hide the "busy" UI
+        this.busy_changed();
+        this.model.on(`change:busy`, this.busy_changed, this);
 
         // Attach the Reset Parameters gear option
         this.add_menu_item('Reset Parameters', () => this.reset_parameters());
@@ -105,6 +115,11 @@ export class UIBuilderView extends BaseWidgetView {
             // Create parameter groups
             this._init_parameter_groups();
         });
+    }
+
+    busy_changed() {
+        const display = this.model.get('busy') ? 'block': 'none';
+        (this.element.querySelector('.nbtools-busy') as HTMLElement).style.display = display;
     }
 
     display_header_changed() {

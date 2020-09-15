@@ -310,7 +310,8 @@ class FileFormInput(BaseFormInput):
 
 
 class InteractiveForm(interactive):
-    def __init__(self, function_or_method, parameter_specs, upload_callback=None, **kwargs):
+    def __init__(self, function_or_method, parameter_specs, parent=None, upload_callback=None, **kwargs):
+        self.parent = parent                    # Set reference to UI Builder
         self.upload_callback = upload_callback  # Set the upload callback
 
         # Create parameter widgets from spec and add to kwargs
@@ -410,7 +411,15 @@ class InteractiveForm(interactive):
 
     def update(self, *args):
         """Call the superclass update() method after manipulating the call"""
+
+        # Display the loading UI
+        if self.parent: self.parent.busy = True
+
+        # Call the function
         super(InteractiveForm, self).update(*args)
+
+        # Hide the loading UI
+        if self.parent: self.parent.busy = False
 
         # Assign value to output_var
         get_ipython().push({self.children[-1].value: self.result})

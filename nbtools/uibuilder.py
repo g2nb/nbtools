@@ -104,6 +104,7 @@ class UIBuilder(BaseWidget, NBTool):
     display_header = Bool(True, sync=True)
     display_footer = Bool(True, sync=True)
     run_label = Unicode('Run', sync=True)
+    busy = Bool(False, sync=True)
     form = Instance(InteractiveForm, (None, [])).tag(sync=True, **widget_serialization)
     output = Instance(Output, ()).tag(sync=True, **widget_serialization)
     function_or_method = None
@@ -124,7 +125,7 @@ class UIBuilder(BaseWidget, NBTool):
         if not self.parameters: self.parameters = self.parameters
 
         # Create the form and output child widgets
-        self.form = InteractiveForm(function_or_method, self.parameters, upload_callback=upload_callback)
+        self.form = InteractiveForm(function_or_method, self.parameters, parent=self, upload_callback=upload_callback)
         self.output = self.form.out
 
         # Display the output underneath the UI Builder widget
