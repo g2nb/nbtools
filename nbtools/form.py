@@ -179,7 +179,7 @@ class MultiselectFormInput(BaseFormInput):
 
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
-        def __init__(self, spec, upload_callback=None, **kwargs):
+        def __init__(self, spec, parent=None, upload_callback=None, **kwargs):
             # Set child widgets
             self.spec = spec
             self._value = ''
@@ -189,6 +189,9 @@ class FileFormInput(BaseFormInput):
             self.file_list = VBox()
             self.urls = []
             self.file_list.children = self.urls
+
+            # Set the reference to the parent UI Builder
+            self.parent = parent
 
             # Set up the upload function
             self.upload_callback = self.default_upload_callback if upload_callback is None else upload_callback
@@ -273,7 +276,9 @@ class FileFormInput(BaseFormInput):
 
         def change_file(self, change):
             if isinstance(change['owner'].value, dict) and change['name'] == 'data':
+                if self.parent: self.parent.busy = True
                 path = self.upload_callback(change['owner'].value)
+                if self.parent: self.parent.busy = False
                 if path not in self.value:
                     values_length = len(self._file_list_values())
                     if values_length == self.maximum():  # Handle uploads when the max values has been reached
@@ -301,8 +306,8 @@ class FileFormInput(BaseFormInput):
             """Connect value change events of children to parent widget"""
             self.upload.observe(self.change_file)
 
-    def __init__(self, spec, upload_callback=None, **kwargs):
-        self.input = self.FileOrURL(spec, upload_callback=upload_callback, layout=Layout(width='auto', grid_area='input'))
+    def __init__(self, spec, parent=None, upload_callback=None, **kwargs):
+        self.input = self.FileOrURL(spec, parent=parent, upload_callback=upload_callback, layout=Layout(width='auto', grid_area='input'))
         super(FileFormInput, self).__init__(spec, **kwargs)
 
     dom_class = 'nbtools-fileinput'
@@ -393,7 +398,7 @@ class InteractiveForm(interactive):
         elif param_type == 'number' and (default_value is None or default_value == ''):
             return FloatFormInput(spec, value=0)
         elif param_type == 'file':
-            return FileFormInput(spec, value=unicode_type(default_value), upload_callback=self.upload_callback)
+            return FileFormInput(spec, value=unicode_type(default_value), parent=self.parent, upload_callback=self.upload_callback)
 
         # No known type specified, guess based on default value
         elif isinstance(default_value, string_types):
@@ -405,7 +410,7 @@ class InteractiveForm(interactive):
         elif isinstance(default_value, Real):
             return FloatFormInput(spec, value=default_value)
         elif hasattr(default_value, 'read'):
-            return FileFormInput(spec, value=default_value, upload_callback=self.upload_callback)
+            return FileFormInput(spec, value=default_value, parent=self.parent, upload_callback=self.upload_callback)
         else:
             return Text(value=unicode_type(default_value))
 
