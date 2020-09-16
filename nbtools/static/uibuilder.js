@@ -1466,14 +1466,8 @@ define("nbtools/uibuilder", ["base/js/namespace",
                     else if (pObj.success) pObj.success('Successfully uploaded file', pObj.file.name);
                 };
 
-                // Save the file, making sure not to overwrite
-                Jupyter.notebook.contents.get(dir_path + pObj.file.name, { content: false }).then(() => {
-                    // Conflicting file exists, make the error callback
-                    pObj.error(`Conflicting file ${pObj.file.name} exists`)
-                }).catch(() => {
-                    // Trying to get the file throw a 404 error, conflicting file doesn't exist, save the file!
-                    Jupyter.notebook.contents.save(dir_path + pObj.file.name, model).then(on_success, on_error);
-                });
+                // Save the file
+                Jupyter.notebook.contents.save(dir_path + pObj.file.name, model).then(on_success, on_error);
             };
 
             // now let's start the read with the first block
@@ -1522,6 +1516,38 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 }
             };
 
+            const check_existing_file = function(upload) {
+                const dir_path = Jupyter.notebook.notebook_path.substring(0, Jupyter.notebook.notebook_path.lastIndexOf("\/") + 1);
+
+                return new Promise((resolve, reject) => {
+                    // Check for conflicting file
+                    Jupyter.notebook.contents.get(dir_path + upload.file.name, { content: false }).then(() => {
+                        // Conflicting file exists, prompt the user whether to overwrite
+                        const dialog = require('base/js/dialog');
+                        dialog.modal({
+                            notebook: Jupyter.notebook,
+                            keyboard_manager: this.keyboard_manager,
+                            title: `${upload.file.name} exists`,
+                            body: `You are attempting to upload a file named ${upload.file.name}, which already exists. Do you wish to overwrite the file?`,
+                            buttons: {
+                                "Cancel": {},
+                                "Use Existing": {
+                                    "class": "btn-info",
+                                    "click": () => resolve(false)
+                                },
+                                "Overwrite": {
+                                    "class": "btn-warning",
+                                    "click": () => resolve(true)
+                                }
+                            }
+                        });
+                    }).catch(() => {
+                        // Trying to get the file throw a 404 error, conflicting file doesn't exist, continue!
+                        resolve(true);
+                    });
+                });
+            };
+
             // Declare grabNextUpload()
             const grabNextUpload = function() {
                 // Pop the upload off the list
@@ -1530,23 +1556,34 @@ define("nbtools/uibuilder", ["base/js/namespace",
                 // If it's not undefined, upload
                 if (upload !== undefined) {
                     widget.successMessage("Uploading file " + upload.file.name);
-                    widget._jupyter_upload({
-                        file: upload.file,
-                        success: function(response, url) {
-                            // Mark the file as uploaded
+                    check_existing_file(upload).then((do_upload) => {
+                        if (!do_upload) { // Skip if not doing the upload
                             const display = upload.widget._singleDisplay(upload.file);
-                            upload.widget._replaceValue(display, url);
-                            widget.updateCode(upload.widget._param.name(), [url]);
-
-                            // On the success callback call grabNextUpload()
+                            upload.widget._replaceValue(display, upload.file.name);
+                            widget.updateCode(upload.widget._param.name(), [upload.file.name]);
                             grabNextUpload();
-                        },
-                        error: function(exception) {
-                            // On the error callback set the error and call finalize
-                            if (exception.statusText) error = exception.statusText;
-                            else error = exception;
-                            finalizeUploads();
+                            return;
                         }
+
+                        // Otherwise, do the upload
+                        widget._jupyter_upload({
+                            file: upload.file,
+                            success: function(response, url) {
+                                // Mark the file as uploaded
+                                const display = upload.widget._singleDisplay(upload.file);
+                                upload.widget._replaceValue(display, url);
+                                widget.updateCode(upload.widget._param.name(), [url]);
+
+                                // On the success callback call grabNextUpload()
+                                grabNextUpload();
+                            },
+                            error: function(exception) {
+                                // On the error callback set the error and call finalize
+                                if (exception.statusText) error = exception.statusText;
+                                else error = exception;
+                                finalizeUploads();
+                            }
+                        });
                     });
                 }
 
