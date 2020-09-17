@@ -161,6 +161,8 @@ button.nbtools-connect {
 /* Hack fix for floating menus */
 
 .lm-Widget.jp-OutputPrompt.jp-OutputArea-prompt,
+.lm-Widget.p-Widget.jp-OutputArea,
+.lm-Widget.lm-Widget.jp-OutputArea,
 .lm-Widget.lm-Panel.jp-OutputArea,
 .lm-Widget.lm-Panel.jp-OutputArea-child,
 .lm-Widget.lm-Panel.jp-OutputArea-output,

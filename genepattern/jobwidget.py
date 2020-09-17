@@ -18,6 +18,7 @@ class GPJobWidget(UIOutput):
         UIOutput.__init__(self, color=self.default_color, **kwargs)
         self.job = job
         self.poll()  # Query the GP server and begin polling, if needed
+        self.attach_detach()
         self.attach_sharing()
 
         # Register the event handler for GP login
@@ -123,14 +124,19 @@ class GPJobWidget(UIOutput):
         else:
             return 'Running'
 
+    def attach_detach(self):
+        """Attach the menu option to detach the job widget from the analysis cell"""
+        self.extra_menu_items = {**self.extra_menu_items, **{'Detach Job': {
+                'action': 'cell',
+                'code': f'genepattern.display(gp.GPJob(genepattern.session.get(0), {self.job.job_number}))'  # FIXME: support non-default sessions
+            }}}
+
     def attach_sharing(self):
         if self.sharing_displayed: self.toggle_job_sharing()  # Display sharing if toggled on
-        self.extra_menu_items = {
-            'Share Job': {
+        self.extra_menu_items = {**self.extra_menu_items, **{'Share Job': {
                 'action': 'method',
                 'code': 'toggle_job_sharing'
-            }
-        }
+            }}}
 
     def build_sharing_controls(self):
         """Create and return a VBox with the job sharing controls"""
@@ -182,6 +188,10 @@ class GPJobWidget(UIOutput):
 
     def toggle_job_sharing(self):
         """Toggle displaying the job sharing controls off and on"""
+        # Handle None's
+        if self.job is None or self.job.server_data is None:
+            return  # Ignore this call if the job has not been properly initialized
+
         if self.sharing_displayed:
             # Add the old appendix children back to the widget if any exist, else simply remove the sharing box
             self.appendix.children = self.sharing_displayed if self.sharing_displayed is not True else []
