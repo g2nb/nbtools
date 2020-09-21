@@ -29,7 +29,7 @@ export class Toolbox extends Widget {
         this.fill_toolbox();
     }
 
-    add_tool_cell(tool:any) {
+    static add_tool_cell(tool:any) {
         // Check to see if nbtools needs to be imported
         const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
 
@@ -141,7 +141,7 @@ export class Toolbox extends Widget {
 
         // Add the click event
         tool_wrapper.addEventListener("click", () => {
-            this.add_tool_cell(tool);
+            Toolbox.add_tool_cell(tool);
         })
     }
 

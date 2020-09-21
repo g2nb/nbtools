@@ -1,0 +1,15 @@
+{
+  "title": "nbtools",
+  "description": "Settings for nbtools",
+  "type": "object",
+  "jupyter.lab.shortcuts": [
+    {
+      "command": "nbtools:insert-tool",
+      "keys": [
+        "G"
+      ],
+      "selector": ".jp-Notebook:focus"
+    }
+  ],
+  "properties": {}
+}

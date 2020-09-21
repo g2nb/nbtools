@@ -7,7 +7,7 @@ import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
 import * as toolbox_exports from './toolbox';
 import { IMainMenu } from '@jupyterlab/mainmenu';
-import { ToolBrowser } from "./toolbox";
+import { ToolBrowser, Toolbox } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
 import { INotebookTracker, NotebookTracker } from '@jupyterlab/notebook';
@@ -53,6 +53,9 @@ function activate_widget_extension(app: Application<Widget>,
     // Add items to the help menu
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
 
+    // Add keyboard shortcuts
+    add_keyboard_shortcuts(app as JupyterFrontEnd, tool_registry);
+
     // Add the toolbox
     add_tool_browser(app as JupyterFrontEnd, restorer);
 
@@ -72,6 +75,20 @@ function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|nu
     ContextManager.notebook_tracker = notebook_tracker;
     ContextManager.tool_registry = tool_registry;
     //(window as any).ContextManager = ContextManager;  // Left in for development purposes
+}
+
+function add_keyboard_shortcuts(app:JupyterFrontEnd, tool_registry:ToolRegistry) {
+    app.commands.addCommand("nbtools:insert-tool", {
+        label: 'Insert Notebook Tool',
+        execute: () => {
+            // Open the tool manager, if necessary
+            app.shell.activateById('nbtools-browser');
+
+            // If only one tool is available, add it
+            const tools = tool_registry.list();
+            if (tools.length === 1) Toolbox.add_tool_cell(tools[0]);
+        },
+    });
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
