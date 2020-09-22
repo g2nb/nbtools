@@ -87,6 +87,9 @@ function add_keyboard_shortcuts(app:JupyterFrontEnd, tool_registry:ToolRegistry)
             // If only one tool is available, add it
             const tools = tool_registry.list();
             if (tools.length === 1) Toolbox.add_tool_cell(tools[0]);
+
+            // Otherwise give the search box focus
+            else (document.querySelector('.nbtools-search') as HTMLElement).focus()
         },
     });
 }
