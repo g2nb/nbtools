@@ -18,6 +18,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
             description: '',
             collapsed: false,
             color: 'var(--jp-layout-color4)',
+            logo: 'https://notebook.genepattern.org/hub/logo', // FIXME: Find some way to host locally
             info: '',
             error: '',
             extra_menu_items: {}
@@ -74,6 +75,10 @@ export class BaseWidgetView extends DOMWidgetView {
         this.set_color();
         this.model.on('change:color', this.set_color, this);
 
+        // Apply the logo
+        this.set_logo();
+        this.model.on('change:logo', this.set_logo, this);
+
         // Set the traitlet values
         this.traitlets.forEach(traitlet => this.traitlet_changed(traitlet));
 
@@ -108,10 +113,6 @@ export class BaseWidgetView extends DOMWidgetView {
         // Apply the header
         (this.element.querySelector('div.nbtools-header') as HTMLElement).innerHTML = this.header;
 
-        // Set the logo
-        const logo = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
-        logo.src = "https://notebook.genepattern.org/hub/logo"; // FIXME: NBToolManager.options.logo;
-
         // Attach collapse event
         const collapse = this.element.querySelector("button.nbtools-collapse") as HTMLButtonElement;
         collapse.addEventListener("click", () => {
@@ -136,6 +137,11 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Set the element
         this.setElement(this.element);
+    }
+
+    set_logo() {
+        const logo = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
+        logo.src = this.model.get('logo');
     }
 
     set_color() {
