@@ -1400,6 +1400,15 @@ define("nbtools/uibuilder", ["base/js/namespace",
             let chunk = 0;
             let chunk_reader = null;
 
+            const remove_existing_file = function() {
+                // Delete any existing file of the same name so as not to append to it
+                return new Promise((resolve, reject) => {
+                    Jupyter.notebook.contents.delete(dir_path + pObj.file.name)
+                        .then(() => resolve())    // File has been deleted, move on!
+                        .catch(() => resolve());  // Error deleting the file likely means it doesn't exist
+                });
+            };
+
             const large_reader_onload = function(event) {
                 if (event.target.error == null) {
                     offset += chunk_size;
@@ -1414,7 +1423,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             };
 
             const on_error = function(event) {
-                Jupyter.notebook.contents.delete(path);
+                Jupyter.notebook.contents.delete(dir_path + pObj.file.name);
                 if (pObj.error) pObj.error();
             };
 
@@ -1471,7 +1480,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
             };
 
             // now let's start the read with the first block
-            chunk_reader(offset, pObj.file);
+            remove_existing_file().then(() => chunk_reader(offset, pObj.file));
         },
 
         /**
