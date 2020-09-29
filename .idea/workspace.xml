@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6173000d-85f8-40d4-a325-ae0c173648d6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="lab" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="JupyterTrust" id="f67eb521-56ac-4403-9543-6fffaba80082" />
+  <component name="ProjectId" id="1YJDWUJRKAWD5QZa7NplPYYeg8w" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="run.code.analysis.last.selected.profile" value="aDefault" />
+    <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
+  </component>
+  <component name="RunManager" selected="Docker.Docker">
+    <configuration name="Jupyter" type="ShConfigurationType">
+      <option name="SCRIPT_PATH" value="$USER_HOME$/opt/anaconda3/bin/jupyter" />
+      <option name="SCRIPT_OPTIONS" value="notebook" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Docker" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="buildCliOptions" value="" />
+          <option name="buildOnly" value="true" />
+          <option name="command" value="" />
+          <option name="containerName" value="" />
+          <option name="entrypoint" value="" />
+          <option name="imageTag" value="" />
+          <option name="commandLineOptions" value="" />
+          <option name="sourceFilePath" value="Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Docker.Docker" />
+      <item itemvalue="Shell Script.Jupyter" />
+    </list>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Docker" type="9fbbdea:ServiceModel$ServiceNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR,SHOW_INHERITED" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6173000d-85f8-40d4-a325-ae0c173648d6" name="Default Changelist" comment="" />
+      <created>1582651834507</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1582651834507</updated>
+      <workItem from="1582651838341" duration="1563000" />
+      <workItem from="1584461021772" duration="1484000" />
+      <workItem from="1585769235090" duration="368000" />
+      <workItem from="1585769630722" duration="22000" />
+      <workItem from="1588003602847" duration="1541000" />
+      <workItem from="1588186762756" duration="621000" />
+      <workItem from="1588623421629" duration="21000" />
+      <workItem from="1588868542719" duration="581000" />
+      <workItem from="1589210871030" duration="1134000" />
+      <workItem from="1589212053241" duration="29000" />
+      <workItem from="1589212120578" duration="3638000" />
+      <workItem from="1589245155979" duration="19897000" />
+      <workItem from="1589559580159" duration="18385000" />
+      <workItem from="1589830404015" duration="271000" />
+      <workItem from="1589833288216" duration="13565000" />
+      <workItem from="1589926226991" duration="44483000" />
+      <workItem from="1590605195099" duration="12763000" />
+      <workItem from="1591025265156" duration="66318000" />
+      <workItem from="1593438701160" duration="4824000" />
+      <workItem from="1595448658890" duration="16912000" />
+      <workItem from="1595873360465" duration="318000" />
+      <workItem from="1595972555906" duration="7941000" />
+      <workItem from="1597076763224" duration="1202000" />
+      <workItem from="1597078184628" duration="5453000" />
+      <workItem from="1597256712837" duration="17854000" />
+      <workItem from="1597866378396" duration="1507000" />
+      <workItem from="1597941170480" duration="13896000" />
+      <workItem from="1599087651028" duration="2298000" />
+      <workItem from="1599768155716" duration="9349000" />
+      <workItem from="1600202772755" duration="14268000" />
+      <workItem from="1600463083258" duration="430000" />
+      <workItem from="1600719885499" duration="6548000" />
+      <workItem from="1601063174892" duration="4675000" />
+      <workItem from="1601309179001" duration="7056000" />
+    </task>
+    <task id="LOCAL-00018" summary="Import default tools when a notebook is loaded">
+      <created>1590089410363</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1590089410363</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Added support for custom GenePattern servers in the auth widget">
+      <created>1590163495842</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1590163495842</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Added registration button to the auth widget">
+      <created>1590168182328</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1590168182328</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Removing TODO comment">
+      <created>1590168214790</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1590168214790</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Removed the special case for importing genepattern at launch">
+      <created>1590169662867</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1590169662867</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Initial implementation of job widget">
+      <created>1590605533052</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1590605533053</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Better handling of job description">
+      <created>1590606034520</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1590606034520</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Implemented Pop Out Visualizer">
+      <created>1590684566001</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1590684566001</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Implemented Send to Code and Send to Dataframe">
+      <created>1590772759736</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1590772759737</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Initial implementation of task widgets">
+      <created>1591125487223</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1591125487223</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Implemented required/optional and parameter types in task widget">
+      <created>1591199056054</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1591199056054</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Placeholder widget for task cells before login">
+      <created>1591203366623</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1591203366623</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Support for multiselect parameters">
+      <created>1591371467271</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1591371467272</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Implemented file uploads for GenePattern">
+      <created>1591718637792</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1591718637792</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Added support for child jobs">
+      <created>1591808729402</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1591808729402</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Job sharing functionality">
+      <created>1592324500721</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1592324500721</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Support for file lists">
+      <created>1592425613357</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1592425613357</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Implemented cross-widget signaling for tool registration and authentication">
+      <created>1593014309179</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1593014309179</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Implemented cross-widget signaling for tool registration and authentication">
+      <created>1593438601042</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1593438601042</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Fix for UI Builder upload concatenation issue">
+      <created>1593443450806</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1593443450806</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Adding support for parameter groups">
+      <created>1595632618468</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1595632618468</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Group header color fix">
+      <created>1595633046269</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1595633046269</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Adding genepattern-python to setup.py">
+      <created>1595973659488</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1595973659488</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Removing last checkin">
+      <created>1596040641262</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1596040641262</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Fix for text inputs that parse to float values">
+      <created>1596041373446</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1596041373446</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Adding Dockerfile for binder">
+      <created>1596045017854</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1596045017854</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Adding Dockerfile for binder">
+      <created>1596045459777</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1596045459777</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Fixing lab version range">
+      <created>1596046323597</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1596046323597</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Fleshing out Dockerfile">
+      <created>1596046467579</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1596046467579</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Updating version range">
+      <created>1596047298461</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1596047298461</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Update Dockerfile base image">
+      <created>1596048450727</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1596048450727</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Update Dockerfile base image">
+      <created>1596049251241</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1596049251242</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Dockerfile update and upload error message fix">
+      <created>1597081553093</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1597081553093</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Updated for compatibility with JupyterLab 2.x">
+      <created>1597348273316</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1597348273317</updated>
+    </task>
+    <task id="LOCAL-00052" summary="JupyterLab now building in Dockerfile">
+      <created>1597784306092</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1597784306093</updated>
+    </task>
+    <task id="LOCAL-00053" summary="CSS fix for menus not floating over text cells">
+      <created>1597866671435</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1597866671435</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Fixed rendering of TopHat and other modules, Fixed error submitting blank optional parameters, Fixed file menus">
+      <created>1597964914322</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1597964914322</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Fix down chevron display">
+      <created>1598028123131</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1598028123131</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Fix for sendto bug with auth widget">
+      <created>1599768574578</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1599768574578</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Browser notifications enabled for job completion">
+      <created>1599852556978</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1599852556978</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Loading UI on login">
+      <created>1600190369364</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1600190369364</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Loading UI on upload">
+      <created>1600194728575</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1600194728575</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Bug fix for upload issue">
+      <created>1600275505660</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1600275505660</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Implemented detach job widget">
+      <created>1600376096630</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1600376096630</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Adding keyboard shortcut">
+      <created>1600725367892</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1600725367893</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Add focus to search after highlighting toolbox">
+      <created>1600801758028</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1600801758033</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Allow configuration of widget logo">
+      <created>1601070367713</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1601070367713</updated>
+    </task>
+    <task id="LOCAL-00065" summary="Another UI Builder upload fix">
+      <created>1601313585150</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1601313585150</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Update version numbers">
+      <created>1601327298834</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1601327298834</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Adding genepattern-python to setup.py" />
+    <MESSAGE value="Removing last checkin" />
+    <MESSAGE value="Fix for text inputs that parse to float values" />
+    <MESSAGE value="Adding Dockerfile for binder" />
+    <MESSAGE value="Fixing lab version range" />
+    <MESSAGE value="Fleshing out Dockerfile" />
+    <MESSAGE value="Updating version range" />
+    <MESSAGE value="Update Dockerfile base image" />
+    <MESSAGE value="Dockerfile update and upload error message fix" />
+    <MESSAGE value="Updated for compatibility with JupyterLab 2.x" />
+    <MESSAGE value="JupyterLab now building in Dockerfile" />
+    <MESSAGE value="CSS fix for menus not floating over text cells" />
+    <MESSAGE value="Fixed rendering of TopHat and other modules, Fixed error submitting blank optional parameters, Fixed file menus" />
+    <MESSAGE value="Fix down chevron display" />
+    <MESSAGE value="Fix for sendto bug with auth widget" />
+    <MESSAGE value="Browser notifications enabled for job completion" />
+    <MESSAGE value="Loading UI on login" />
+    <MESSAGE value="Loading UI on upload" />
+    <MESSAGE value="Bug fix for upload issue" />
+    <MESSAGE value="Implemented detach job widget" />
+    <MESSAGE value="Adding keyboard shortcut" />
+    <MESSAGE value="Add focus to search after highlighting toolbox" />
+    <MESSAGE value="Allow configuration of widget logo" />
+    <MESSAGE value="Another UI Builder upload fix" />
+    <MESSAGE value="Update version numbers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update version numbers" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="622" y="141" key="#Docker" timestamp="1595449206339">
+      <screen x="64" y="23" width="1728" height="1097" />
+    </state>
+    <state x="622" y="141" key="#Docker/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1595449206339" />
+    <state x="621" y="141" key="#Docker/62.23.1730.1097@62.23.1730.1097" timestamp="1593438465382" />
+    <state x="-1219" y="283" key="#Jupyter" timestamp="1601311546566">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1219" y="283" key="#Jupyter/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601311546566" />
+    <state x="-1512" y="227" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1601311696546">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1506" y="227" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1860.23.1860.1057/0.23.1792.1097@-1860.23.1860.1057" timestamp="1600211221067" />
+    <state x="-1512" y="227" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601311696546" />
+    <state x="393" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1595449337128" />
+    <state x="395" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.23.1725.1097@67.23.1725.1097" timestamp="1600722957519" />
+    <state x="641" y="436" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1597950286806">
+      <screen x="0" y="23" width="1792" height="1097" />
+    </state>
+    <state x="641" y="436" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1860.23.1860.1057/0.23.1792.1097@0.23.1792.1097" timestamp="1597950286806" />
+    <state x="-1385" y="170" key="CommitChangelistDialog2" timestamp="1601327298719">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1379" y="170" key="CommitChangelistDialog2/-1858.23.1858.1057/0.23.1792.1097@-1858.23.1858.1057" timestamp="1600801757684" />
+    <state x="-1380" y="170" key="CommitChangelistDialog2/-1860.23.1860.1057/0.23.1792.1097@-1860.23.1860.1057" timestamp="1600376096446" />
+    <state x="-1384" y="170" key="CommitChangelistDialog2/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1601070367565" />
+    <state x="-1385" y="170" key="CommitChangelistDialog2/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601327298719" />
+    <state x="503" y="176" key="CommitChangelistDialog2/1792.23.1920.1057/55.23.1737.1097@55.23.1737.1097" timestamp="1596047298244" />
+    <state x="507" y="176" key="CommitChangelistDialog2/1792.23.1920.1057/60.23.1732.1097@60.23.1732.1097" timestamp="1596049251116" />
+    <state x="508" y="176" key="CommitChangelistDialog2/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1597081552930" />
+    <state x="509" y="176" key="CommitChangelistDialog2/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1593014309058" />
+    <state x="503" y="176" key="CommitChangelistDialog2/55.23.1737.1097@55.23.1737.1097" timestamp="1597784305918" />
+    <state x="507" y="176" key="CommitChangelistDialog2/60.23.1732.1097@60.23.1732.1097" timestamp="1595633046148" />
+    <state x="508" y="176" key="CommitChangelistDialog2/62.23.1730.1097@62.23.1730.1097" timestamp="1593438600939" />
+    <state x="512" y="176" key="CommitChangelistDialog2/67.23.1725.1097@67.23.1725.1097" timestamp="1600725367754" />
+    <state x="-1759" y="119" width="1647" height="865" key="DiffContextDialog" timestamp="1601317152007">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1750" y="119" width="1644" height="865" key="DiffContextDialog/-1858.23.1858.1057/0.23.1792.1097@-1858.23.1858.1057" timestamp="1600189213265" />
+    <state x="-1752" y="119" width="1645" height="865" key="DiffContextDialog/-1860.23.1860.1057/0.23.1792.1097@-1860.23.1860.1057" timestamp="1600373915146" />
+    <state x="-1757" y="119" width="1650" height="865" key="DiffContextDialog/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1601070362400" />
+    <state x="-1759" y="119" width="1647" height="865" key="DiffContextDialog/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601317152007" />
+    <state x="160" y="123" width="1532" height="897" key="DiffContextDialog/1792.23.1920.1057/60.23.1732.1097@60.23.1732.1097" timestamp="1596040917769" />
+    <state x="162" y="123" width="1530" height="897" key="DiffContextDialog/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1597078253172" />
+    <state x="164" y="123" width="1528" height="897" key="DiffContextDialog/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1593014231868" />
+    <state x="160" y="123" width="1532" height="897" key="DiffContextDialog/60.23.1732.1097@60.23.1732.1097" timestamp="1595632603697" />
+    <state x="-1425" y="190" key="SettingsEditor" timestamp="1601311425951">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1425" y="190" key="SettingsEditor/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601311425951" />
+    <state x="-1365" y="302" key="Vcs.Push.Dialog.v2" timestamp="1601327299776">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1359" y="302" key="Vcs.Push.Dialog.v2/-1858.23.1858.1057/0.23.1792.1097@-1858.23.1858.1057" timestamp="1600801759253" />
+    <state x="-1360" y="302" key="Vcs.Push.Dialog.v2/-1860.23.1860.1057/0.23.1792.1097@-1860.23.1860.1057" timestamp="1600376098130" />
+    <state x="-1364" y="302" key="Vcs.Push.Dialog.v2/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1601070369999" />
+    <state x="-1365" y="302" key="Vcs.Push.Dialog.v2/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601327299776" />
+    <state x="522" y="313" key="Vcs.Push.Dialog.v2/1792.23.1920.1057/55.23.1737.1097@55.23.1737.1097" timestamp="1596047299592" />
+    <state x="526" y="313" key="Vcs.Push.Dialog.v2/1792.23.1920.1057/60.23.1732.1097@60.23.1732.1097" timestamp="1596049252207" />
+    <state x="527" y="313" key="Vcs.Push.Dialog.v2/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1597081556219" />
+    <state x="528" y="313" key="Vcs.Push.Dialog.v2/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1593014310421" />
+    <state x="522" y="313" key="Vcs.Push.Dialog.v2/55.23.1737.1097@55.23.1737.1097" timestamp="1597784307684" />
+    <state x="525" y="313" key="Vcs.Push.Dialog.v2/60.23.1732.1097@60.23.1732.1097" timestamp="1595633047415" />
+    <state x="531" y="313" key="Vcs.Push.Dialog.v2/67.23.1725.1097@67.23.1725.1097" timestamp="1600725369193" />
+    <state x="376" y="322" width="1012" height="525" key="com.intellij.docker.deployment.ui.DockerVolumeBindingsField.v173.dialogSize" timestamp="1595449330183">
+      <screen x="64" y="23" width="1728" height="1097" />
+    </state>
+    <state x="376" y="322" width="1012" height="525" key="com.intellij.docker.deployment.ui.DockerVolumeBindingsField.v173.dialogSize/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1595449330183" />
+    <state x="-1221" y="694" key="com.intellij.ide.util.TipDialog" timestamp="1601063200643">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="620" y="719" key="com.intellij.ide.util.TipDialog/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1597941295134" />
+    <state x="620" y="719" key="com.intellij.ide.util.TipDialog/-1865.23.1865.1057/0.23.1792.1097@0.23.1792.1097" timestamp="1597866600684" />
+    <state x="-1221" y="694" key="com.intellij.ide.util.TipDialog/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601063200643" />
+    <state x="582" y="406" key="com.intellij.ide.util.TipDialog/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1597076763293" />
+    <state x="620" y="719" key="com.intellij.ide.util.TipDialog/62.23.1730.1097@62.23.1730.1097" timestamp="1593438702037" />
+    <state x="-1126" y="476" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1597345825935">
+      <screen x="-1865" y="23" width="1865" height="1057" />
+    </state>
+    <state x="-1126" y="476" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1597345825935" />
+    <state x="-1303" y="324" width="914" height="519" key="find.popup" timestamp="1601316929507">
+      <screen x="-1867" y="23" width="1867" height="1057" />
+    </state>
+    <state x="-1298" y="324" width="909" height="519" key="find.popup/-1858.23.1858.1057/0.23.1792.1097@-1858.23.1858.1057" timestamp="1600188920826" />
+    <state x="-1299" y="324" width="909" height="519" key="find.popup/-1860.23.1860.1057/0.23.1792.1097@-1860.23.1860.1057" timestamp="1600374771821" />
+    <state x="-1302" y="324" width="912" height="519" key="find.popup/-1865.23.1865.1057/0.23.1792.1097@-1865.23.1865.1057" timestamp="1600274515311" />
+    <state x="-1303" y="324" width="914" height="519" key="find.popup/-1867.23.1867.1057/0.23.1792.1097@-1867.23.1867.1057" timestamp="1601316929507" />
+    <state x="-1304" y="324" width="914" height="519" key="find.popup/-1868.23.1868.1057/0.23.1792.1097@-1868.23.1868.1057" timestamp="1601067979216" />
+    <state x="579" y="335" width="850" height="538" key="find.popup/1792.23.1920.1057/55.23.1737.1097@55.23.1737.1097" timestamp="1596046902891" />
+    <state x="584" y="335" width="845" height="538" key="find.popup/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1597076968273" />
+    <state x="585" y="335" width="845" height="538" key="find.popup/1792.23.1920.1057/64.23.1728.1097@64.23.1728.1097" timestamp="1593010225935" />
+    <state x="587" y="335" width="842" height="538" key="find.popup/1792.23.1920.1057/67.23.1725.1097@67.23.1725.1097" timestamp="1592924662073" />
+    <state x="587" y="335" width="844" height="539" key="find.popup/67.23.1725.1097@67.23.1725.1097" timestamp="1600725152190" />
+    <state x="-1202" y="283" key="git4idea.branch.GitSmartOperationDialog" timestamp="1600371932707">
+      <screen x="-1858" y="23" width="1858" height="1057" />
+    </state>
+    <state x="-1202" y="283" key="git4idea.branch.GitSmartOperationDialog/-1858.23.1858.1057/0.23.1792.1097@-1858.23.1858.1057" timestamp="1600371932707" />
+    <state x="674" y="293" key="git4idea.branch.GitSmartOperationDialog/64.23.1728.1097@64.23.1728.1097" timestamp="1600202755956" />
+    <state x="615" y="371" key="git4idea.merge.GitPullDialog" timestamp="1595873370501">
+      <screen x="62" y="23" width="1730" height="1097" />
+    </state>
+    <state x="615" y="371" key="git4idea.merge.GitPullDialog/1792.23.1920.1057/62.23.1730.1097@62.23.1730.1097" timestamp="1595873370501" />
+  </component>
+</project>
