@@ -396,7 +396,7 @@ class InteractiveForm(interactive):
         elif param_type == 'number' and self.is_float(default_value):
             return FloatFormInput(spec, value=default_value)
         elif param_type == 'number' and (default_value is None or default_value == ''):
-            return FloatFormInput(spec, value=0)
+            return TextFormInput(spec, value='')
         elif param_type == 'file':
             return FileFormInput(spec, value=unicode_type(default_value), parent=self.parent, upload_callback=self.upload_callback)
 
