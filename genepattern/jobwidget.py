@@ -47,12 +47,12 @@ class GPJobWidget(UIOutput):
             self.extra_file_menu_items = {
                 'Send to Code': {
                     'action': 'cell',
-                    'code': 'job{{widget_name}}.get_file("{{file_name}}")'
+                    'code': f'import genepattern\n\ngenepattern.session.get("{self.job.server_data.url}").get_job({self.job.job_number}).get_file("{{{{file_name}}}}")'
                 },
                 'Send to Dataframe': {
                     'action': 'cell',
                     'kinds': ['gct', 'odf'],
-                    'code': 'from gp.data import GCT as gct, ODF as odf\n{{type}}(job{{widget_name}}.get_file("{{file_name}}"))'
+                    'code': f'import genepattern\nfrom gp.data import GCT as gct, ODF as odf\n\n{{{{type}}}}(genepattern.session.get("{self.job.server_data.url}").get_job({self.job.job_number}).get_file("{{{{file_name}}}}"))'
                 }
             }
 
