@@ -22,7 +22,7 @@ from setuptools import setup
 name = 'nbtools'
 
 # Ensure a valid python version
-ensure_python('>=3.4')
+ensure_python('>=3.6')
 
 # Get our version
 version = get_version(pjoin(name, '_version.py'))
@@ -68,7 +68,7 @@ setup_args = dict(
     packages        = find_packages(),
     author          = 'Thorin Tabor',
     author_email    = 'tmtabor@cloud.ucsd.edu',
-    url             = 'https://github.com/genepattern/nbtools-lab-prototype',
+    url             = 'https://github.com/genepattern/nbtools',
     license         = 'BSD',
     platforms       = "Linux, Mac OS X, Windows",
     keywords        = ['Jupyter', 'Widgets', 'IPython'],
@@ -78,16 +78,16 @@ setup_args = dict(
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Jupyter',
     ],
     include_package_data = True,
     install_requires = [
         'ipywidgets>=7.0.0',
         'genepattern-python',
+        'pandas',
     ],
     extras_require = {
         'test': [
