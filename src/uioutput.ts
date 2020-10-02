@@ -174,6 +174,7 @@ export class UIOutputView extends BaseWidgetView {
             this.add_menu_item(input['name'], () => {
                 const form_input = input['element'].querySelector('input') as HTMLFormElement;
                 form_input.value = href;
+                form_input.dispatchEvent(new Event('change', { bubbles: true} ));
                 const widget = form_input.closest('.nbtools') as HTMLElement;
                 widget.scrollIntoView();
             }, 'nbtools-menu-subitem', menu);
