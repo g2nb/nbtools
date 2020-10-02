@@ -128,7 +128,7 @@ class GPJobWidget(UIOutput):
         """Attach the menu option to detach the job widget from the analysis cell"""
         self.extra_menu_items = {**self.extra_menu_items, **{'Detach Job': {
                 'action': 'cell',
-                'code': f'genepattern.display(gp.GPJob(genepattern.session.get(0), {self.job.job_number}))'  # FIXME: support non-default sessions
+                'code': f'import gp\n\ngenepattern.display(gp.GPJob(genepattern.session.get(0), {self.job.job_number}))'  # FIXME: support non-default sessions
             }}}
 
     def attach_sharing(self):
