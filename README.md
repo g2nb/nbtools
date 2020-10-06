@@ -64,4 +64,4 @@ This is exciting, but it is far from the only feature of the nbtools package. Yo
 * [UI Builder](doc/uibuilder.md)
 * [UI Output](doc/uioutput.md)
 * [Tool Manager API](doc/toolmanager.md)
-* [WYSWYG Editor](wyswyg.md)
+* [WYSWYG Editor](doc/wysiwyg.md)
