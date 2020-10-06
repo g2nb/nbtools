@@ -118,7 +118,7 @@ function add_documentation_link(app:JupyterFrontEnd, mainmenu:IMainMenu|null) {
         caption: 'Open documentation for nbtools',
         isEnabled: () => !!app.shell,
         execute: () => {
-            const url = 'https://github.com/genepattern/nbtools';
+            const url = 'https://github.com/genepattern/nbtools#nbtools';
             let element = document.createElement('a');
             element.href = url;
             element.target = '_blank';
