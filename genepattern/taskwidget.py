@@ -97,24 +97,27 @@ class GPTaskWidget(UIBuilder):
                     return gpfile.get_url()
         return genepattern_upload_callback
 
-    def handle_null_task(self):
+    def handle_error_task(self, error_message, name='GenePattern Module', **kwargs):
         """Display an error message if the task is None"""
-        self.name = 'GenePattern Module'
+        UIBuilder.__init__(self, lambda: None, color=self.default_color, **kwargs)
+
+        self.name = name
         self.display_header = False
         self.display_footer = False
-        self.error = 'No GenePattern module specified.'
+        self.error = error_message
 
     def __init__(self, task=None, **kwargs):
         """Initialize the task widget"""
         self.task = task
 
         if self.task is None or self.task.server_data is None:  # Set the right look and error message if task is None
-            UIBuilder.__init__(self, lambda: None, color=self.default_color, **kwargs)
-            self.handle_null_task()
+            self.handle_error_task('No GenePattern module specified.', **kwargs)
+        elif self.is_java_visualizer():  # Checks if deprecated visualizer and displays an error message
+            self.handle_error_task('Java-based visualizers are deprecated in GenePattern and will not function in Jupyter', name=task.name, **kwargs)
         else:
-            if task.params is None: task.param_load()  # Load params from GP server
-            self.function_wrapper = self.create_function_wrapper(task)  # Create run task function
-            self.parameter_spec = self.create_param_spec(task)
+            if self.task.params is None: self.task.param_load()  # Load params from GP server
+            self.function_wrapper = self.create_function_wrapper(self.task)  # Create run task function
+            self.parameter_spec = self.create_param_spec(self.task)
             UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
                                parameter_groups=GPTaskWidget.extract_parameter_groups(self.task),
                                upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
@@ -127,6 +130,10 @@ class GPTaskWidget(UIBuilder):
         """Give the default parameter value in format the UI Builder expects"""
         if raw_value is not None: return raw_value
         else: return ''
+
+    def is_java_visualizer(self):
+        if self.task.params is None: self.task.param_load()  # Load params from GP server
+        return 'Visualizer' in self.task.dto['categories']
 
     def login_callback(self, data):
         """Callback upon authentication for unauthenticated task widgets"""
