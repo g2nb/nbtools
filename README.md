@@ -107,7 +107,7 @@ This is exciting, but it is far from the only feature of the nbtools package. Yo
 
 ## Features
 
-* [UI Builder](doc/uibuilder.md)
-* [UI Output](doc/uioutput.md)
-* [Tool Manager API](doc/toolmanager.md)
-* [WYSWYG Editor](wyswyg.md)
+* [UI Builder](docs/uibuilder.md)
+* [UI Output](docs/uioutput.md)
+* [Tool Manager API](docs/toolmanager.md)
+* [WYSWYG Editor](docs/wyswyg.md)
