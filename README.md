@@ -8,10 +8,10 @@
 * Flexible theming and APIs to extend the nbtools functionality.
 * A WYSIWYG editor for markdown cells (provided as part of the accompanying `juptyter-wyswyg` package).
 
-> ### **Looking for JupyterLab support?**
-> **JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/genepattern/nbtools/tree/lab)**
-
 **nbtools** was developed as part of the [GenePattern Notebook](http://genepattern-notebook.org) environment. This environment also serves as an example of how nbtools can be extended and applied to a specific domain: in its case, bioinformatics.
+
+### **Looking for JupyterLab support?**
+**JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/genepattern/nbtools/tree/lab)**
 
 ## Installation
 
