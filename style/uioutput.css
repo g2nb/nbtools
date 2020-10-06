@@ -18,6 +18,7 @@
     display: block;
     color: var(--jp-content-link-color);
     text-decoration: none;
+    line-break: anywhere;
 }
 
 .nbtools-file-menu {
