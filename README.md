@@ -19,6 +19,15 @@
 * JupyterLab >= 2.0.0
 * ipywidgets >= 7.0.0
 
+## Docker
+
+A Docker image with nbtools and the full JupyterLab stack is available through DockerHub.
+
+```bash
+docker pull genepattern/lab
+docker run --rm -p 8888:8888 genepattern/lab
+```
+
 ## Installation
 
 This is a beta version that has not yet been released to PIP or conda. For now you will need to install from GitHub:
