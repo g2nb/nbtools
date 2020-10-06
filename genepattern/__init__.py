@@ -1,7 +1,7 @@
 from .authwidget import GENEPATTERN_SERVERS, GPAuthWidget
 from .taskwidget import GPTaskWidget
 from .jobwidget import GPJobWidget
-from .sessions import session
+from .sessions import session, get_session
 from .display import display
 from nbtools import UIBuilder as GPUIBuilder, UIOutput as GPUIOutput, build_ui, open
 
