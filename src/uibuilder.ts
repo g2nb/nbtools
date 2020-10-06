@@ -463,6 +463,16 @@ export class UIBuilderView extends BaseWidgetView {
         attach_point.setAttribute('data-type', kinds.join(', '));
     }
 
+    _attach_name(attach_point:any) {
+        let name = '';
+        let param_element = null;
+        let name_element = null;
+        param_element = attach_point.closest('.nbtools-input');
+        if (param_element) name_element = param_element.querySelector('div:first-child');
+        if (name_element) name = name_element.textContent.replace(/\*/g, '');
+        attach_point.setAttribute('data-name', name);
+    }
+
     /**
      * Attach sent to / come from menu support to the UI Builder widget
      *
@@ -471,6 +481,7 @@ export class UIBuilderView extends BaseWidgetView {
     _attach_menus() {
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
             this._attach_kinds(attach_point);
+            this._attach_name(attach_point);
             attach_point.addEventListener("click", (event:Event) => {
                 const target = event.target as HTMLElement;                                     // Get click target
                 const element = target.closest('.nbtools-menu-attached') || target;    // Get parent widget
@@ -482,7 +493,6 @@ export class UIBuilderView extends BaseWidgetView {
 
                     // Get the list of compatible kinds
                     const kinds = model.get('kinds') || ['text'];
-                    // this._attach_kinds(attach_point);
 
                     // Get all compatible outputs and build display -> value map
                     const display_value_map = {};

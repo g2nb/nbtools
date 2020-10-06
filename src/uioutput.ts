@@ -171,7 +171,7 @@ export class UIOutputView extends BaseWidgetView {
 
         // Add the send to options
         this.get_input_list(type).forEach(input => {
-            this.add_menu_item(input['name'], () => {
+            this.add_menu_item(input['name'] + ' -> ' + input['param'], () => {
                 const form_input = input['element'].querySelector('input') as HTMLFormElement;
                 form_input.value = href;
                 form_input.dispatchEvent(new Event('change', { bubbles: true} ));
@@ -243,6 +243,7 @@ export class UIOutputView extends BaseWidgetView {
 
             // Ignore incompatible inputs
             const kinds = input.getAttribute('data-type') || '';
+            const param_name = input.getAttribute('data-name') || '';
             const kinds_list = kinds.split(', ') as any;
             if (!kinds_list.includes(type) && kinds !== '') return;
 
@@ -252,6 +253,7 @@ export class UIOutputView extends BaseWidgetView {
             if (!name) name = "Untitled Widget";
             compatible_inputs.push({
                 'name': name,
+                'param': param_name,
                 'element': input
             });
         });
