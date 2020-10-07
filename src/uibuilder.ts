@@ -408,7 +408,9 @@ export class UIBuilderView extends BaseWidgetView {
             }
 
             // Include if matching kind
-            if (kinds.includes(kind)) compatible_outputs[label] = href;
+            if (UIBuilderView.matching_kind(kinds, href)) compatible_outputs[label] = href;
+            else if (kind === 'text' && kinds.includes(kind)) // Special case for text "send to"
+                compatible_outputs[label] = href;
             // Include if kinds blank and not text
             else if (kinds.length === 0 && kind !== 'text') compatible_outputs[label] = href;
         });
@@ -580,6 +582,14 @@ export class UIBuilderView extends BaseWidgetView {
      */
     static get_kind(url:any): any {
         return url.split(/\#|\?/)[0].split('.').pop().trim();
+    }
+
+    static matching_kind(kinds:Array<string>, url:string) {
+        let match = false;
+        kinds.forEach((kind) => {
+            if (url.trim().endsWith(kind)) match = true;
+        });
+        return match;
     }
 
     /**
