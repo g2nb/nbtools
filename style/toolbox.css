@@ -99,12 +99,14 @@ header.nbtools-origin {
     padding: 4px;
 }
 
-.nbtools-expanded {
-    background-image: var(--jp-image-caretdown);
+.nbtools-expanded::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f0d7";
 }
 
-.nbtools-collapsed {
-    background-image: var(--jp-image-caretright);
+.nbtools-collapsed::before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f0da";
 }
 
 ul.nbtools-origin {
