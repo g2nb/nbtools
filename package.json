@@ -1,6 +1,6 @@
 {
   "name": "@genepattern/nbtools",
-  "version": "0.2.0",
+  "version": "0.2.0-alpha.0",
   "description": "Framework for creating user-friendly Jupyter notebooks, accessible to both programming and non-programming users alike.",
   "keywords": [
     "jupyter",
@@ -77,6 +77,22 @@
   },
   "jupyterlab": {
     "extension": "lib/plugin",
-    "schemaDir": "schema"
+    "schemaDir": "schema",
+    "discovery": {
+      "kernel": [
+        {
+          "kernel_spec": {
+            "language": "^python"
+          },
+          "base": {
+            "name": "nbtools"
+          },
+          "managers": [
+            "pip",
+            "conda"
+          ]
+        }
+      ]
+    }
   }
 }
