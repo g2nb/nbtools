@@ -85,16 +85,18 @@ class GPTaskWidget(UIBuilder):
         else:
             return []
 
-    @staticmethod
-    def generate_upload_callback(task):
+    def generate_upload_callback(self):
         """Create an upload callback to pass to file input widgets"""
         def genepattern_upload_callback(values):
-            for k in values:
-                with tempfile.NamedTemporaryFile() as f:
-                    f.write(values[k]['content'])
-                    f.flush()
-                    gpfile = task.server_data.upload_file(k, os.path.realpath(f.name))
-                    return gpfile.get_url()
+            try:
+                for k in values:
+                    with tempfile.NamedTemporaryFile() as f:
+                        f.write(values[k]['content'])
+                        f.flush()
+                        gpfile = self.task.server_data.upload_file(k, os.path.realpath(f.name))
+                        return gpfile.get_url()
+            except Exception as e:
+                self.error = f"Error encountered uploading file: {e}"
         return genepattern_upload_callback
 
     def handle_error_task(self, error_message, name='GenePattern Module', **kwargs):
@@ -120,7 +122,7 @@ class GPTaskWidget(UIBuilder):
             self.parameter_spec = self.create_param_spec(self.task)
             UIBuilder.__init__(self, self.function_wrapper, parameters=self.parameter_spec, color=self.default_color,
                                parameter_groups=GPTaskWidget.extract_parameter_groups(self.task),
-                               upload_callback=GPTaskWidget.generate_upload_callback(self.task), **kwargs)
+                               upload_callback=self.generate_upload_callback(), **kwargs)
 
         # Register the event handler for GP login
         EventManager.instance().register("gp.login", self.login_callback)
