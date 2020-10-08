@@ -9,4 +9,4 @@ Information about the frontend package of the widgets.
 """
 
 module_name = "@genepattern/nbtools"
-module_version = "^0.2.0"
+module_version = "^20.10.0-alpha.0"
