@@ -30,7 +30,15 @@ docker run --rm -p 8888:8888 genepattern/lab
 
 ## Installation
 
-This is a beta version that has not yet been released to PIP or conda. For now you will need to install from GitHub:
+JupyterLab support is in beta. For now you will need to either install the specific prerelease version from pip or install from GitHub:
+
+```bash
+jupyter labextension install @jupyter-widgets/jupyterlab-manager
+pip install nbtools==20.10a0
+jupyter labextension install nbtools
+```
+
+***OR***
 
 ```bash
 # Install ipywidgets, if you haven't already
