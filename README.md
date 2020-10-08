@@ -34,7 +34,7 @@ JupyterLab support is in beta. For now you will need to either install the speci
 
 ```bash
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
-pip install nbtools==20.10a0
+pip install nbtools==20.10a1
 jupyter labextension install nbtools
 ```
 
