@@ -1,6 +1,6 @@
 {
   "name": "@genepattern/nbtools",
-  "version": "0.2.0-alpha.0",
+  "version": "20.10.0-alpha.0",
   "description": "Framework for creating user-friendly Jupyter notebooks, accessible to both programming and non-programming users alike.",
   "keywords": [
     "jupyter",
