@@ -4,7 +4,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/lab?urlpath=lab)
 [![Build Status](https://travis-ci.org/genepattern/nbtools.svg?branch=lab)](https://travis-ci.org/genepattern/nbtools)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://gpnotebook-website-docs.readthedocs.io/en/latest/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/genepattern/genepattern-notebook.svg)](https://hub.docker.com/r/genepattern/genepattern-notebook/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/genepattern/genepattern-notebook.svg)](https://hub.docker.com/r/genepattern/lab/)
 [![Join the chat at https://gitter.im/genepattern](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [GenePattern Notebook environment](https://notebook.genepattern.org). The package provides:
