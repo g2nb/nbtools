@@ -73,7 +73,8 @@
     "typescript": "~3.6.4",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2",
-    "file-loader": "^6.0.0"
+    "file-loader": "^6.0.0",
+    "karma": "^5.2.3"
   },
   "jupyterlab": {
     "extension": "lib/plugin",

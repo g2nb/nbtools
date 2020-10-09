@@ -6,9 +6,9 @@
 
 import pytest
 
-from ..uioutput import ExampleWidget
+from ..uioutput import UIOutput
 
 
 def test_example_creation_blank():
-    w = ExampleWidget()
-    assert w.value == 'Hello World'
+    w = UIOutput()
+    assert w.name == 'Python Results'
