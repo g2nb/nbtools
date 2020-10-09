@@ -1,10 +1,10 @@
 language: python
 python:
+  - 3.8
   - 3.7
   - 3.6
-  - 3.5
 sudo: false
-dist: xenial
+dist: focal
 services:
   - xvfb
 addons:
@@ -15,10 +15,9 @@ env:
     - GROUP=python
 matrix:
   include:
-    - python: 3.5
+    - python: 3.7
       env: GROUP=js
-  include:
-    - python: 3.6
+    - python: 3.8
       env: GROUP=docs
 cache:
   pip: true

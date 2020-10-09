@@ -12,25 +12,25 @@ import {
 } from './utils.spec';
 
 import {
-  BaseWidgetModel, BaseWidgetView
+  UIOutputModel
 } from '../../src/'
 
 
-describe('Example', () => {
+describe('UIOutput', () => {
 
-  describe('ExampleModel', () => {
+  describe('UIOutputModel', () => {
 
     it('should be createable', () => {
-      let model = createTestModel(BaseWidgetModel);
-      expect(model).to.be.an(BaseWidgetModel);
-      expect(model.get('value')).to.be('Hello World');
+      let model = createTestModel(UIOutputModel);
+      expect(model).to.be.an(UIOutputModel);
+      expect(model.get('name')).to.be('Python Results');
     });
 
     it('should be createable with a value', () => {
-      let state = { value: 'Foo Bar!' };
-      let model = createTestModel(BaseWidgetModel, state);
-      expect(model).to.be.an(BaseWidgetModel);
-      expect(model.get('value')).to.be('Foo Bar!');
+      let state = { name: 'Foo Bar!' };
+      let model = createTestModel(UIOutputModel, state);
+      expect(model).to.be.an(UIOutputModel);
+      expect(model.get('name')).to.be('Foo Bar!');
     });
 
   });

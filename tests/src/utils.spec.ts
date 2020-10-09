@@ -107,7 +107,7 @@ function createTestModel<T extends widgets.WidgetModel>(constructor: Constructor
   let modelOptions = {
       widget_manager: widget_manager,
       model_id: id,
-  }
+  };
 
   return new constructor(attributes, modelOptions);
 }
