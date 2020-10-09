@@ -313,9 +313,12 @@ The look and feel of a UI Builder widget can customized by setting any of the fo
 
 * **color:** Sets the header and border color of the widget. (default based on the current JupyterLab theme)
 * **logo:** A URL pointing to the logo to display in the UI Builder header. 
+* **run_label:** Change the label on the Run buttons. (default='Run')
+* **display_header:** Toggle whether to display the UI Builder header. (default=True)
+* **display_footer:** Whether or not to display the UI Builder footer. (default=True)
 
 ```python
-@nbtools.build_ui(color='#0000FF', logo='http://custom.logo')
+@nbtools.build_ui(color='#0000FF', logo='http://custom.logo', run_label='Execute', display_header=False, display_footer=False)
 def example_function(first_parameter, second_parameter):
     . . .
 ```
@@ -381,10 +384,11 @@ The following minor features are available available in the UI Builder.
 * **register_tool:** Sets whether to register this function with the Notebook Tool Manager. Defaults to True.
 * **function_import:** Override the import name of an existing function.
 * **collapse:** Set whether the widget collapses upon submission (default=True).
-* **collapsed:** Set whether the widget is currently expanded or collapsed (default=True). *(JupyterLab Only)*
+* **collapsed:** Set whether the widget is currently expanded or collapsed (default=False). *(JupyterLab Only)*
+* **busy:** Set whether the widget controls are disabled because it is busy. (default=False) *(JupyterLab Only)*
                 
 ```python
-@nbtools.build_ui(register_tool=False, function_import='example_package.example_function', collapse=False)
+@nbtools.build_ui(register_tool=False, function_import='example_package.example_function', collapse=False, collapsed=False, busy=True)
 def example_function(first_parameter, second_parameter):
     . . .
 ```
