@@ -239,6 +239,23 @@ def example_function(param_1, param_2):
     . . .
 ```
 
+Similar to choice parameters, a file parameter may likewise be given a list of possible options. These options will appear in a dropdown when the parameter it selected.
+
+```python
+@nbtools.build_ui(parameters={
+    "param_1": {
+        "type": "file",
+        "choices": {
+            "Example Label #1": "ftp://fake.example.com/example_1.csv",
+            "Example Label #2": "ftp://fake.example.com/example2.csv",
+            "Example Label #3": "ftp://fake.example.com/example_3.csv"
+        }
+    }
+})
+def file_choice_example(param_1):
+    . . .
+```
+
 ## Client-side Interactivity
 
 Notebook authors who wish to integrate the UI Builder with client-side programmatic functionality can make use of the `id` and `events` attribute of parameters.
@@ -280,6 +297,83 @@ def example_function(first_parameter, second_parameter):
     . . .
 ```
 
+### Send to Text
+
+Specific text options can be made easily accessible from a text input by annotating them with the nbtools-text-option class. Any text annotated in this way will appear in a dropdown whenever a text input parameter is selected.
+
+```html
+<span class="nbtools-text-option">Text to send to parameter</span>
+```
+
+### Look and Feel
+
+*(JupyterLab Only)*
+
+The look and feel of a UI Builder widget can customized by setting any of the following options:
+
+* **color:** Sets the header and border color of the widget. (default based on the current JupyterLab theme)
+* **logo:** A URL pointing to the logo to display in the UI Builder header. 
+
+```python
+@nbtools.build_ui(color='#0000FF', logo='http://custom.logo')
+def example_function(first_parameter, second_parameter):
+    . . .
+```
+
+### Messages
+
+*(JupyterLab Only)*
+
+These values can be set in order to display a message to the user. Usually they are used to bring attention to an error or to highlight important feedback.
+
+* **info:** Sets an informative message to display to the user in a highlighted info callout.
+* **error:** Sets an error message to display to the user in an error callout.
+
+```python
+@nbtools.build_ui(info='You must do something before running this method', error='An error was encountered performing method')
+def example_function(first_parameter, second_parameter):
+    . . .
+```
+
+```python
+uibuilder = UIBuilder(f)
+uibuilder.info = 'You must do something before running this method'
+uibuilder.error = 'An error was encountered performing method'
+```
+
+### Menu Items
+
+*(JupyterLab Only)*
+
+Set `extra_menu_items` to a dict of additional menu items to display in the widget's gear menu. The key should be the label to display in the menu and the value should be a dict containing the action to perform and the code to execute. Valid actions are:
+
+* **cell:** Creates a new cell below the current one, inserts the provided Python code and executes that cell.
+* **method:** Executes the indicated function in Python kernel.
+
+A code example is provided below.
+
+```python
+@nbtools.build_ui(extra_menu_items={
+    'Show Help Information': {
+        'action': 'cell',
+        'code': 'help(nbtools)'
+    }
+})
+def example_function(first_parameter, second_parameter):
+    . . .
+```
+
+```python
+@nbtools.build_ui(extra_menu_items={
+    'Call Function': {
+        'action': 'method',
+        'code': 'method_name'
+    }
+})
+def example_function(first_parameter, second_parameter):
+    . . .
+```
+
 ## Other Options
 
 The following minor features are available available in the UI Builder.
@@ -287,6 +381,7 @@ The following minor features are available available in the UI Builder.
 * **register_tool:** Sets whether to register this function with the Notebook Tool Manager. Defaults to True.
 * **function_import:** Override the import name of an existing function.
 * **collapse:** Set whether the widget collapses upon submission (default=True).
+* **collapsed:** Set whether the widget is currently expanded or collapsed (default=True). *(JupyterLab Only)*
                 
 ```python
 @nbtools.build_ui(register_tool=False, function_import='example_package.example_function', collapse=False)
