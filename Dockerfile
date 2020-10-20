@@ -10,7 +10,8 @@ RUN git clone https://github.com/genepattern/nbtools.git && \
 
 # RUN jupyter nbextension enable --py widgetsnbextension
 # RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
-RUN conda install -c conda-forge jupyterlab=2.2.4 pandas
+RUN conda install -c conda-forge jupyterlab=2.2.4 && \
+    pip install plotnine bioblend plotly
 
 #RUN pip install wheel
 #RUN cd nbtools && npm install
@@ -21,4 +22,4 @@ RUN cd nbtools && pip install --no-binary=nbtools . && \
     jupyter labextension install . && \
     jupyter nbextension install --py nbtools --sys-prefix && \
     jupyter nbextension enable --py nbtools --sys-prefix
-# RUN cd nbtools && cp ./examples/overrides.json /srv/conda/envs/notebook/share/jupyter/lab/settings/overrides.json
+RUN cd nbtools && cp ./examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
