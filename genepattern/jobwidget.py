@@ -3,7 +3,7 @@ from urllib.error import HTTPError
 
 from ipywidgets import Dropdown, Button, VBox, HBox
 
-from genepattern.shim import get_permissions, set_permissions
+from genepattern.shim import get_permissions, set_permissions, get_token
 from nbtools import UIOutput, EventManager, ToolManager
 
 
@@ -70,11 +70,15 @@ class GPJobWidget(UIOutput):
     def visualizer(self):
         if self.job is None: return  # Ensure the job has been set
 
+        # Get the token, using the shim if necessary
+        if hasattr(self.job.server_data, 'get_token'): token = self.job.server_data.get_token()
+        else: token = get_token(self.job.server_data)
+
         # Handle server-relative URLs
         if 'launchUrl' in self.job.info:
             launch_url = self.job.info["launchUrl"]
             if launch_url[0] == '/': launch_url = launch_url[3:]
-            return f'{self.job.server_data.url}{launch_url}'
+            return f'{self.job.server_data.url}{launch_url}#{token}'
 
         # Handle index.html or single HTML returns
         single_html = None
@@ -85,7 +89,7 @@ class GPJobWidget(UIOutput):
                 single_html = f
             elif f.endswith('.html') and single_html is not None:
                 single_html = False
-        if single_html: return single_html
+        if single_html: return f'{single_html}#{token}'
 
         # Otherwise there is no visualizer
         return ''

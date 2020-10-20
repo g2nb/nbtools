@@ -8,6 +8,12 @@ import urllib.request
 from gp import GPTask
 
 
+def get_token(session):
+    if not hasattr(session, 'token') or not session.token:
+        session.token = session.login()
+    return session.token
+
+
 def get_kinds(param):
     if 'fileFormat' not in param.attributes:
         return []  # Default to an empty list
