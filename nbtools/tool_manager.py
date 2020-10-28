@@ -17,18 +17,25 @@ class ToolManager(object):
         return ToolManager._instance
 
     def __init__(self):
-        self.tools = {}  # Initialize the tools map
-        # Establish the comm with the client
-        self.comm = Comm(target_name=ToolManager.COMM_NAME, data={})
-        self.send_update()  # Push an update, even if empty, to initialize the client-side
+        self.tools = {}   # Initialize the tools map
+        self.comm = None  # The comm to communicate with the client
 
-        @self.comm.on_msg
-        def receive(msg):
-            data = msg['content']['data']
-            if data['func'] == 'request_update':
-                self.send_update()
-            else:
-                print('ToolManager received unknown message')
+        # Create the nbtools comm target
+        def comm_target(comm, open_msg):
+            # Handle messages sent to the comm target
+            @comm.on_msg
+            def receive(msg):
+                data = msg['content']['data']
+                if data['func'] == 'request_update':
+                    self.send_update()
+                else:
+                    print('ToolManager received unknown message')
+
+            # Keep a reference to the comm
+            self.comm = comm
+
+        # Register the comm target
+        get_ipython().kernel.comm_manager.register_target(ToolManager.COMM_NAME, comm_target)
 
     def send_update(self):
         self.send('update', {
@@ -40,11 +47,10 @@ class ToolManager(object):
         """
         Send a message to the comm on the client
 
-        :param func:
+        :param message_type:
         :param payload:
         :return:
         """
-
         self.comm.send({
             "func": message_type,
             "payload": payload

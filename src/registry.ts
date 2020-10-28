@@ -1,7 +1,6 @@
 import { Widget } from "@lumino/widgets";
 import { NotebookPanel, NotebookTracker } from "@jupyterlab/notebook";
-import { Kernel } from "@jupyterlab/services";
-import {send_notification} from "./utils";
+import { send_notification } from "./utils";
 
 export interface IToolRegistry extends ToolRegistry {}
 
@@ -61,17 +60,29 @@ export class ToolRegistry {
         this.current.context.sessionContext.ready.then(() => {
             const current:any = this.current;
 
-            // Register the comm target with the kernel
-            const kernel = current.context.sessionContext.session.kernel;
-            kernel.registerCommTarget('nbtools_comm', (comm:Kernel.IComm) => {
-                comm.onMsg = (msg:any) => {
+            // Create a new comm that connects to the nbtools_comm target
+            const connect_comm = () => {
+                const kernel = current.context.sessionContext.session.kernel;
+                const comm = kernel.createComm('nbtools_comm');
+                comm.onMsg = (msg:any) => {  // Handle message sent by the kernel
                     const data = msg.content.data;
 
                     if (data.func === 'update') this.update_tools(data.payload);
                     else if (data.func === 'notification') send_notification(data.payload.message, data.payload.sender);
                     else console.error('ToolRegistry received unknown message: ' + data);
                 };
-              });
+
+                comm.open({});          // Open the comm
+                comm.send({             // Request the current tool list
+                    'func': 'request_update'
+                });
+            };
+
+            // When the kernel restarts or is changed, reconnect the comm
+            current.context.sessionContext.kernelChanged.connect(() => connect_comm());
+
+            // Connect to the comm upon initial startup
+            connect_comm();
 
             // Update tools from the cache
             this.update_from_cache();
