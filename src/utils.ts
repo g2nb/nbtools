@@ -33,6 +33,17 @@ export function send_notification(message:string, sender:string = 'nbtools', ico
 }
 
 /**
+ * Determines ia a given string is an absolute file path
+ *
+ * @param path_or_url
+ * @returns {boolean}
+ */
+export function is_absolute_path(path_or_url:string) {
+    let path_exp = new RegExp('^/');
+    return path_exp.test(path_or_url);
+}
+
+/**
  * Decides if a string represents a valid URL or not
  *
  * @param path_or_url

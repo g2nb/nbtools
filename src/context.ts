@@ -70,6 +70,11 @@ abstract class Context {
     abstract run_tool_cells(): void;
 
     /**
+     * Returns a path to the active notebook, relative to the top directory
+     */
+    abstract notebook_path(): string
+
+    /**
      * Determines if the given cell contains a notebook tool widget
      *
      * @param cell
@@ -141,6 +146,20 @@ class LabContext extends Context {
             if (this.is_tool_cell(widget)) this.run_cell(widget);
         });
     }
+
+    /**
+     * Get the relative path to the current notebook
+     */
+    notebook_path():string {
+        if (!ContextManager.notebook_tracker) return '';                        // If no notebook_tracker, do nothing
+        if (!ContextManager.notebook_tracker.currentWidget) return '';          // If no active notebook, do nothing
+        if (!ContextManager.notebook_tracker.currentWidget.context) return '';  // If no context, do nothing
+
+        const notebook_context = ContextManager.notebook_tracker.currentWidget.context;
+        const notebook_path = notebook_context.path;
+        const directory_path = notebook_path.substring(0, notebook_path.lastIndexOf("/") + 1);
+        return directory_path;
+    }
 }
 
 /**
@@ -179,6 +198,10 @@ class NotebookContext extends Context {
             if (this.is_tool_cell(cell)) this.run_cell(cell);
         });
     }
+
+    notebook_path():string {
+        return (window as any).Jupyter.notebook.path;
+    }
 }
 
 /**
@@ -203,4 +226,9 @@ class EmbedContext extends Context {
      * No cells in this context, so do nothing
      */
     run_tool_cells() {}
+
+    /**
+     * No notebook in this context
+     */
+    notebook_path() { return ''; }
 }

@@ -9,8 +9,9 @@ import '../style/uioutput.css'
 import { ISerializers, ManagerBase, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
-import { extract_file_name, extract_file_type, is_url, process_template } from './utils';
+import { extract_file_name, extract_file_type, is_absolute_path, is_url, process_template } from './utils';
 import { Toolbox } from "./toolbox";
+import { ContextManager } from "./context";
 
 
 export class UIOutputModel extends BaseWidgetModel {
@@ -83,7 +84,8 @@ export class UIOutputView extends BaseWidgetView {
         files.forEach(path => {
             const name = extract_file_name(path);
             const type = extract_file_type(path) as string;
-            to_return += `<a class="nbtools-file" href="${path}" data-type="${type}" onclick="return false;">${name} <i class="fa fa-info-circle"></i></a>`;
+            const path_prefix = UIOutputView.pick_path_prefix(path);
+            to_return += `<a class="nbtools-file" href="${path_prefix}${path}" data-type="${type}" onclick="return false;">${name} <i class="fa fa-info-circle"></i></a>`;
             to_return += `<ul class="nbtools-menu nbtools-file-menu" style="display: none;"></ul>`
         });
 
@@ -115,6 +117,12 @@ export class UIOutputView extends BaseWidgetView {
 
         // Otherwise, embed visualization as HTML
         else return visualization;
+    }
+
+    static pick_path_prefix(path:string) {
+        if (is_url(path)) return '';                // is a URL
+        else if (is_absolute_path(path)) return ''; // is an absolute
+        else return 'files/' + ContextManager.context().notebook_path();  // is relative path
     }
 
     attach_menu_options() {
@@ -202,9 +210,9 @@ export class UIOutputView extends BaseWidgetView {
             this.add_menu_item(name,  callback, 'nbtools-menu-subitem', menu);
         });
 
-        // Add download option
-        this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string),
-            '', menu);
+        // Add download and new tab options
+        this.add_menu_item('Download', () => window.open(link.getAttribute('href') + '?download=1'), '', menu);
+        this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string), '', menu);
     }
 
     toggle_file_menu(link:HTMLElement) {
