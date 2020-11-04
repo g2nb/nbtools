@@ -407,10 +407,14 @@ export class UIBuilderView extends BaseWidgetView {
                 kind = 'text';
             }
 
+            // Special case for text "send to"
+            if (group_name === "Text Options") {
+                if (kinds.includes('text')) compatible_outputs[label] = href;
+                kind = 'text';
+            }
+
             // Include if matching kind
             if (UIBuilderView.matching_kind(kinds, href)) compatible_outputs[label] = href;
-            else if (kind === 'text' && kinds.includes(kind)) // Special case for text "send to"
-                compatible_outputs[label] = href;
             // Include if kinds blank and not text
             else if (kinds.length === 0 && kind !== 'text') compatible_outputs[label] = href;
         });
