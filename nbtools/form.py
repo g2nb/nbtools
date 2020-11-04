@@ -350,7 +350,8 @@ class InteractiveForm(interactive):
 
     @staticmethod
     def is_combo(spec):
-        return 'combo' in spec and spec['combo']
+        return ('combo' in spec and spec['combo']) or \
+               ('type' in spec and spec['type'] == 'text' and 'choices' in spec and spec['choices'])
 
     @staticmethod
     def is_multiple(spec):
@@ -381,7 +382,9 @@ class InteractiveForm(interactive):
         # Use specified type, or fall back on default from value
         param_type = spec['type']
 
-        if param_type == 'text':
+        if param_type == 'text' and InteractiveForm.is_combo(spec):
+            return ComboFormInput(spec, value=default_value)
+        elif param_type == 'text':
             return TextFormInput(spec, value=unicode_type(default_value))
         elif param_type == 'password':
             return PasswordFormInput(spec, value=default_value)
