@@ -190,14 +190,14 @@ export class SearchBox extends Widget {
 
     filter(search_box:HTMLInputElement) {
         // Update the value state
-        this.value = search_box.value;
+        this.value = search_box.value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
         // Get the toolbox
         const toolbox = document.querySelector('#nbtools-browser > .nbtools-toolbox') as HTMLElement;
 
         // Show any tool that matches and hide anything else
         toolbox.querySelectorAll('li.nbtools-tool').forEach((tool:any) => {
-            if (tool.textContent.toLowerCase().includes(this.value.toLowerCase())) tool.style.display = 'block';
+            if (tool.textContent.toLowerCase().replace(/[^a-z0-9]/g, '').includes(this.value)) tool.style.display = 'block';
             else tool.style.display = 'none';
         });
     }
