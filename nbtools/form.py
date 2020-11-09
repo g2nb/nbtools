@@ -102,6 +102,8 @@ class TextFormInput(BaseFormInput):
     def __init__(self, spec, **kwargs):
         super(TextFormInput, self).__init__(spec, **kwargs)
         self.input.add_class('nbtools-menu-attached')
+        no_send_to = 'sendto' in spec and not spec['sendto']
+        if no_send_to: self.input.add_class('nbtools-nosendto')
 
 
 class PasswordFormInput(BaseFormInput):
