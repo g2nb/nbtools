@@ -212,9 +212,11 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Iterate over each group, create headers and add parameters
         groups.reverse().forEach((group: any) => {
+            const hidden = !!group['hidden'];  // Is the group collapsed by default?
+
             // Create and add the header
             const header = this._create_group_header(group['name']);
-            const body = this._create_group_body(header, group['description']);
+            const body = this._create_group_body(header, group['description'], hidden);
             form.prepend(body);
             form.prepend(header);
 
@@ -223,7 +225,7 @@ export class UIBuilderView extends BaseWidgetView {
                 const param = this._param_dom_by_name(form, param_name);
                 if (!param) return; // If the parameter is not found, skip
                 body.append(param);
-            })
+            });
         });
     }
 
@@ -251,7 +253,7 @@ export class UIBuilderView extends BaseWidgetView {
         return header;
     }
 
-    _create_group_body(header:HTMLElement, description:string|null) {
+    _create_group_body(header:HTMLElement, description:string|null, hidden?: boolean) {
         // Create the container
         const box = document.createElement('div');
         box.classList.add('nbtools-group');
@@ -270,6 +272,9 @@ export class UIBuilderView extends BaseWidgetView {
         button.addEventListener('click', () => {
             this._group_toggle_collapse(box, icon);
         });
+
+        // Collapse if hidden
+        if (hidden) this._group_toggle_collapse(box, icon);
 
         return box
     }
