@@ -1,8 +1,9 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
-import { toggle } from "./utils";
+import { process_template, toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView, reject, WidgetView } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./version";
+import { Toolbox } from "./toolbox";
 
 export class BaseWidgetModel extends DOMWidgetModel {
     static model_name = 'BaseWidgetModel';
@@ -91,6 +92,9 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Hide the code
         this.toggle_code(false);
+
+        // Attach the extra menu options
+        this.attach_menu_options();
 
         // Allow menus to overflow the container
         this.float_menus();
@@ -247,6 +251,32 @@ export class BaseWidgetView extends DOMWidgetView {
             document.removeEventListener('click', hide_next_click);
         };
         document.addEventListener('click', hide_next_click)
+    }
+
+    create_menu_callback(item:any, template_vars:any={}) {
+        // Create callback for string literal
+        if (typeof item === 'string') return new Function(process_template(item, template_vars));
+
+        // Create callback for cell event type
+        else if (item['action'] === 'cell') return () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
+
+        // Create callback for method event type
+        else if (item['action'] === 'method') return () => {
+            this.send({ event: 'method', method: process_template(item['code'], template_vars) });
+        };
+
+        // Create callback for custom event type
+        else return new Function(process_template(item['code'], template_vars));
+    }
+
+    attach_menu_options() {
+        const menu_items = this.model.get('extra_menu_items');
+
+        Object.keys(menu_items).forEach((name) => {
+            const item = menu_items[name] as any;
+            const callback = this.create_menu_callback(item);
+            this.add_menu_item(name,  callback);
+        });
     }
 
     float_menus() {

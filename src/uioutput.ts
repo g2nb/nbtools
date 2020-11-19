@@ -9,8 +9,7 @@ import '../style/uioutput.css'
 import { ISerializers, ManagerBase, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
-import { extract_file_name, extract_file_type, is_absolute_path, is_url, process_template } from './utils';
-import { Toolbox } from "./toolbox";
+import { extract_file_name, extract_file_type, is_absolute_path, is_url } from './utils';
 import { ContextManager } from "./context";
 
 
@@ -73,7 +72,6 @@ export class UIOutputView extends BaseWidgetView {
 
     render() {
         super.render();
-        this.attach_menu_options();
 
         // Add the child widgets
         this.attach_child_widget('.nbtools-appendix', 'appendix');
@@ -130,13 +128,8 @@ export class UIOutputView extends BaseWidgetView {
         const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
         visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
 
-        const menu_items = this.model.get('extra_menu_items');
-
-        Object.keys(menu_items).forEach((name) => {
-            const item = menu_items[name] as any;
-            const callback = this.create_menu_callback(item);
-            this.add_menu_item(name,  callback);
-        });
+        // Call the base widget's attach_menu_options()
+        super.attach_menu_options();
     }
 
     open_visualizer() {
@@ -151,22 +144,6 @@ export class UIOutputView extends BaseWidgetView {
                 widget.toggle_file_menu(link);
             });
         });
-    }
-
-    create_menu_callback(item:any, template_vars:any={}) {
-        // Create callback for string literal
-        if (typeof item === 'string') return new Function(process_template(item, template_vars));
-
-        // Create callback for cell event type
-        else if (item['action'] === 'cell') return () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
-
-        // Create callback for method event type
-        else if (item['action'] === 'method') return () => {
-            this.send({ event: 'method', method: process_template(item['code'], template_vars) });
-        };
-
-        // Create callback for custom event type
-        else return new Function(process_template(item['code'], template_vars));
     }
 
     initialize_menu_items(link:HTMLElement) {
