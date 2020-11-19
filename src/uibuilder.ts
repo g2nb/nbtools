@@ -630,23 +630,6 @@ export class UIBuilderView extends BaseWidgetView {
         });
     }
 
-    all_input_models() {
-        const get_all_recursively = (model: any, value_list: Array<any>) => {
-            const value = model.get('value');
-            const children = model.get('children');
-
-            if (model.name === 'DropdownModel' || (value !== undefined && model.name !== "LabelModel")) value_list.push(model);
-            if (children !== undefined) children.forEach((child: any) => {
-                get_all_recursively(child, value_list)
-            });
-        };
-
-        const input_models:Array<any> = [];
-        const form = this.model.get('form');
-        get_all_recursively(form, input_models);
-        return input_models;
-    }
-
     set_input_model(model: any, spec: any) {
         // Special case for DropdownModel
         if (model.name === 'DropdownModel') {
@@ -670,13 +653,29 @@ export class UIBuilderView extends BaseWidgetView {
 
     reset_parameters() {
         const params = this.model.get('_parameters');
-        const models = this.all_input_models();
 
         for (let i = 0; i < params.length; i++) {
             const spec = params[i];
-            const model = models[i];
+            const name = spec['name'];
+            const param_element = this.element.querySelector(`[data-name='${name}']:not(.nbtools-input)`);
 
-            this.set_input_model(model, spec);
+            if (!param_element) { // Protect against nulls
+                if (name !== 'output_var') console.log(`Error finding ${name} in reset_parameters()`);
+                return;
+            }
+
+            const view = (param_element as any).widget;
+            this.set_input_model(view.model, spec);
+
+            // Special case for file lists
+            const all_inputs = param_element.parentNode ? param_element.parentNode.querySelectorAll('input') : [];
+            if (all_inputs.length > 1) {
+                let first = true;
+                all_inputs.forEach((input:HTMLInputElement) => {
+                    if (first) first = false;
+                    else (input as any).value = '';
+                });
+            }
         }
     }
 }
