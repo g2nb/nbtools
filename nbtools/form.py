@@ -178,6 +178,10 @@ class MultiselectFormInput(BaseFormInput):
             return []                                                  # Special case for ['']
         return base_val
 
+    @property
+    def value(self):
+        return list(self.input.value)
+
 
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
