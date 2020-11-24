@@ -10,11 +10,25 @@ RUN git clone https://github.com/genepattern/nbtools.git && \
 
 # RUN jupyter nbextension enable --py widgetsnbextension
 # RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
-RUN conda install -c conda-forge jupyterlab=2.2.4 && \
-    pip install plotnine bioblend plotly
+RUN conda install -c conda-forge jupyterlab=2.2.4 voila && \
+    pip install plotnine bioblend plotly jupyterlab-git
 
 #RUN pip install wheel
 #RUN cd nbtools && npm install
+
+RUN jupyter labextension install plotlywidget@4.9.0 --no-build && \
+    jupyter labextension install jupyterlab-plotly@4.9.0 --no-build && \
+    jupyter labextension install jupyterlab-chart-editor --no-build && \
+    jupyter labextension install @jupyterlab/toc --no-build && \
+    jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
+#    jupyter labextension install jupyter-scribe --no-build && \
+    jupyter labextension install @jupyterlab/git --no-build && \
+#    jupyter labextension install @jupyterlab/github --no-build && \
+    jupyter labextension install @jupyterlab/hub-extension --no-build && \
+    jupyter labextension install jupyterlab-code-snippets --no-build && \
+    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \
+    jupyter labextension install @jupyter-voila/jupyterlab-preview --no-build
+# c.Spawner.cmd = ['jupyter-labhub']
 
 ENV JUPYTER_ENABLE_LAB="true"
 ARG NODE_OPTIONS="--max-old-space-size=8192"
