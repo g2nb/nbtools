@@ -1,5 +1,5 @@
 {
   "load_extensions": {
-    "nbtools/extension": true
+    "nbtools/index": true
   }
 }
