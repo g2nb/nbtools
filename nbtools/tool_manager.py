@@ -51,6 +51,9 @@ class ToolManager(object):
         :param payload:
         :return:
         """
+        # Protect against uninitialized comms
+        if self.comm is None: return
+
         self.comm.send({
             "func": message_type,
             "payload": payload
