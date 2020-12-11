@@ -10,7 +10,7 @@
   ],
   "files": [
     "lib/**/*.{js,css}",
-    "style/*.{js,css}",
+    "style/*.{js,css,png,svg}",
     "schema/**/*.json",
     "dist/*.{js,css}"
   ],

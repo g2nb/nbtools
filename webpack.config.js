@@ -5,8 +5,8 @@ const version = require('./package.json').version;
 const rules = [
   { test: /\.ts$/, loader: 'ts-loader' },
   { test: /\.js$/, loader: 'source-map-loader' },
-  { test: /\.css$/i, use: ['style-loader', 'css-loader']},
-  { test: /\.svg$/i, use: ['file-loader']}
+  { test: /\.css$/i, use: ['style-loader', 'css-loader'] },
+  { test: /\.(png|svg|jpg)$/i, use: ['file-loader'] }
 ];
 
 // Packages that shouldn't be bundled but loaded at runtime
@@ -56,7 +56,7 @@ module.exports = [
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'amd',
         library: "@genepattern/nbtools",
-        publicPath: 'https://unpkg.com/nbtools@' + version + '/dist/'
+        publicPath: 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {

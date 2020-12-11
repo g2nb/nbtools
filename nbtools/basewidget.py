@@ -17,7 +17,7 @@ class BaseWidget(DOMWidget):
     description = Unicode('').tag(sync=True)
     collapsed = Bool(False).tag(sync=True)
     color = Unicode('var(--jp-layout-color4)').tag(sync=True)
-    logo = Unicode('https://notebook.genepattern.org/hub/logo').tag(sync=True)  # FIXME: Find way to local host
+    logo = Unicode('').tag(sync=True)
     info = Unicode('', sync=True)
     error = Unicode('', sync=True)
     extra_menu_items = Dict(sync=True)

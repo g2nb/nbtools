@@ -1,3 +1,6 @@
+export const genepattern_logo =  require("../style/logo.png").default;
+export const genepattern_icon =  require("../style/icon.svg").default;
+
 /**
  * Send a browser notification
  *
@@ -5,7 +8,7 @@
  * @param sender
  * @param icon
  */
-export function send_notification(message:string, sender:string = 'nbtools', icon:string = 'https://notebook.genepattern.org/hub/logo') {  // FIXME: NBToolManager.options.logo;
+export function send_notification(message:string, sender:string = 'nbtools', icon:string = genepattern_logo) {
     // Internal function to display the notification
     function notification() {
         new Notification(sender, {

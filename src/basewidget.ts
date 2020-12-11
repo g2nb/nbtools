@@ -1,6 +1,6 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
-import { process_template, toggle } from "./utils";
+import { genepattern_logo, process_template, toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView, reject, WidgetView } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 import { Toolbox } from "./toolbox";
@@ -19,7 +19,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
             description: '',
             collapsed: false,
             color: 'var(--jp-layout-color4)',
-            logo: 'https://notebook.genepattern.org/hub/logo', // FIXME: Find some way to host locally
+            logo: genepattern_logo,
             info: '',
             error: '',
             extra_menu_items: {}
@@ -144,8 +144,19 @@ export class BaseWidgetView extends DOMWidgetView {
     }
 
     set_logo() {
-        const logo = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
-        logo.src = this.model.get('logo');
+        // Get custom logo
+        let logo = this.model.get('logo');
+
+        // Fall back to default logo if no custom logo is set
+        if (!logo) {
+            logo = genepattern_logo;
+            this.model.set('logo', genepattern_logo);
+            this.model.save();
+        }
+
+        // Display the logo on the widget
+        const logo_element = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
+        logo_element.src = logo;
     }
 
     set_color() {
