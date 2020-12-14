@@ -5,7 +5,6 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import * as base_exports from './basewidget';
 import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
-import * as toolbox_exports from './toolbox';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser, Toolbox } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
@@ -15,7 +14,7 @@ import { ContextManager } from "./context";
 
 
 const documentation = 'nbtools:documentation';
-const all_exports = {...base_exports, ...uioutput_exports, ...uibuilder_exports, ...toolbox_exports, documentation } as any;
+const module_exports = { ...base_exports, ...uioutput_exports, ...uibuilder_exports };
 const EXTENSION_ID = '@genepattern/nbtools:plugin';
 const NAMESPACE = 'nbtools';
 
@@ -23,14 +22,15 @@ const NAMESPACE = 'nbtools';
 /**
  * The nbtools plugin.
  */
-const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = {
+const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = ({
     id: EXTENSION_ID,
     // provides: IToolRegistry,
     requires: [IJupyterWidgetRegistry],
     optional: [IMainMenu, ILayoutRestorer, ILabShell, INotebookTracker],
     activate: activate_widget_extension,
     autoStart: true
-};
+} as unknown) as IPlugin<Application<Widget>, IToolRegistry>;
+
 export default nbtools_plugin;
 
 
@@ -39,7 +39,7 @@ export default nbtools_plugin;
  */
 function activate_widget_extension(app: Application<Widget>,
                                    widget_registry: IJupyterWidgetRegistry,
-                                   mainmenu:IMainMenu|null,
+                                   mainmenu: IMainMenu|null,
                                    restorer: ILayoutRestorer|null,
                                    shell: ILabShell|null,
                                    notebook_tracker: INotebookTracker|null): IToolRegistry {
@@ -63,7 +63,7 @@ function activate_widget_extension(app: Application<Widget>,
     widget_registry.registerWidget({
         name: MODULE_NAME,
         version: MODULE_VERSION,
-        exports: all_exports,
+        exports: module_exports,
     });
 
     // Return the tool registry so that it is provided to other extensions

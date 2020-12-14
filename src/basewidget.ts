@@ -1,7 +1,7 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
 import { genepattern_logo, process_template, toggle } from "./utils";
-import { DOMWidgetModel, DOMWidgetView, reject, WidgetView } from "@jupyter-widgets/base";
+import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, WidgetView } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 import { Toolbox } from "./toolbox";
 
@@ -13,8 +13,11 @@ export class BaseWidgetModel extends DOMWidgetModel {
     static view_module = MODULE_NAME;
     static view_module_version = MODULE_VERSION;
 
+    static serializers: ISerializers = { ...DOMWidgetModel.serializers };
+
     defaults() {
         return {
+            ...super.defaults(),
             name: '',
             description: '',
             collapsed: false,

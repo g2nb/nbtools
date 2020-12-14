@@ -173,7 +173,10 @@ class NotebookContext extends Context {
      * @param {boolean} display
      */
     toggle_code(element:HTMLElement, display?:boolean) {
-        const code = (element.closest(".cell") as any).querySelector(".input");
+        const cell_element = element.closest(".cell");
+        if (!cell_element) return; // Widget has not yet been added to the DOM
+
+        const code = (cell_element as any).querySelector(".input");
 
         // Set display to toggle if not specified
         if (!!display) show(code);
