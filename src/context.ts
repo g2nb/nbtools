@@ -85,6 +85,16 @@ abstract class Context {
         if (!!dom_node) return !!dom_node.querySelector('.nbtools');
         else return false;
     }
+
+    /**
+     * Path to the default GenePattern logo
+     */
+    abstract default_logo(): string
+
+    /**
+     * Path to the default GenePattern icon
+     */
+    abstract default_icon(): string
 }
 
 
@@ -160,6 +170,20 @@ class LabContext extends Context {
         const directory_path = notebook_path.substring(0, notebook_path.lastIndexOf("/") + 1);
         return directory_path;
     }
+
+    /**
+     * Path to the default GenePattern logo
+     */
+    default_logo():string {
+        return  require("../style/logo.png").default;
+    }
+
+    /**
+     * Path to the default GenePattern icon
+     */
+    default_icon():string {
+        return  require("../style/icon.svg").default;
+    }
 }
 
 /**
@@ -173,15 +197,17 @@ class NotebookContext extends Context {
      * @param {boolean} display
      */
     toggle_code(element:HTMLElement, display?:boolean) {
-        const cell_element = element.closest(".cell");
-        if (!cell_element) return; // Widget has not yet been added to the DOM
+        setTimeout(() => {
+            const cell_element = element.closest(".cell");
+            if (!cell_element) return; // Widget has not yet been added to the DOM
 
-        const code = (cell_element as any).querySelector(".input");
+            const code = (cell_element as any).querySelector(".input");
 
-        // Set display to toggle if not specified
-        if (!!display) show(code);
-        else if (display === false) hide(code);
-        else toggle(code);
+            // Set display to toggle if not specified
+            if (!!display) show(code);
+            else if (display === false) hide(code);
+            else toggle(code);
+        }, 10);
     }
 
     /**
@@ -204,6 +230,26 @@ class NotebookContext extends Context {
 
     notebook_path():string {
         return (window as any).Jupyter.notebook.path;
+    }
+
+    base_path():string {
+        const body = document.querySelector('body');
+        if (!body) return ''; // If there is no body, unable to get path
+        return body.getAttribute('data-base-url') + 'nbextensions/nbtools/';
+    }
+
+    /**
+     * Path to the default GenePattern logo
+     */
+    default_logo():string {
+        return  this.base_path() + require("../style/logo.png").default;
+    }
+
+    /**
+     * Path to the default GenePattern icon
+     */
+    default_icon():string {
+        return  this.base_path() + require("../style/icon.svg").default;
     }
 }
 
@@ -234,4 +280,18 @@ class EmbedContext extends Context {
      * No notebook in this context
      */
     notebook_path() { return ''; }
+
+    /**
+     * Path to the default GenePattern logo
+     */
+    default_logo():string {
+        return  require("../style/logo.png").default;
+    }
+
+    /**
+     * Path to the default GenePattern icon
+     */
+    default_icon():string {
+        return  require("../style/icon.svg").default;
+    }
 }

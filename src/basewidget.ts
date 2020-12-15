@@ -1,9 +1,11 @@
 import '../style/basewidget.css';
 import { ContextManager } from "./context";
-import { genepattern_logo, process_template, toggle } from "./utils";
+import { process_template, toggle } from "./utils";
 import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, WidgetView } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 import { Toolbox } from "./toolbox";
+
+const genepattern_logo = ContextManager.context().default_logo();
 
 export class BaseWidgetModel extends DOMWidgetModel {
     static model_name = 'BaseWidgetModel';
