@@ -80,11 +80,7 @@ abstract class Context {
      * @param cell
      * @returns boolean
      */
-    is_tool_cell(cell:any):boolean {
-        const dom_node = cell.node || cell.element;
-        if (!!dom_node) return !!dom_node.querySelector('.nbtools');
-        else return false;
-    }
+    abstract is_tool_cell(cell:any):boolean
 
     /**
      * Path to the default GenePattern logo
@@ -172,6 +168,18 @@ class LabContext extends Context {
     }
 
     /**
+     * Determines if the given cell contains a notebook tool widget
+     *
+     * @param cell
+     * @returns boolean
+     */
+    is_tool_cell(cell:any):boolean {
+        const dom_node = cell.node || cell.element;
+        if (!!dom_node) return !!dom_node.querySelector('.nbtools');
+        else return false;
+    }
+
+    /**
      * Path to the default GenePattern logo
      */
     default_logo():string {
@@ -216,16 +224,18 @@ class NotebookContext extends Context {
      * @param cell
      */
     run_cell(cell:any) {
-        (window as any).Jupyter.notebook.execute(cell);
+        (window as any).Jupyter.notebook.execute_cell(cell);
     }
 
     /**
      * Execute all cells with nbtools widgets in the current notebook
      */
     run_tool_cells() {
-        (window as any).Jupyter.notebook.get_cells().forEach((cell:any) => {
-            if (this.is_tool_cell(cell)) this.run_cell(cell);
+        const cells_to_run:number[] = [];
+        (window as any).Jupyter.notebook.get_cells().forEach((cell:any, index:number) => {
+            if (this.is_tool_cell(cell)) cells_to_run.push(index);
         });
+        (window as any).Jupyter.notebook.execute_cells(cells_to_run);
     }
 
     notebook_path():string {
@@ -236,6 +246,18 @@ class NotebookContext extends Context {
         const body = document.querySelector('body');
         if (!body) return ''; // If there is no body, unable to get path
         return body.getAttribute('data-base-url') + 'nbextensions/nbtools/';
+    }
+
+    /**
+     * Determines if the given cell contains a notebook tool widget
+     *
+     * @param cell
+     * @returns boolean
+     */
+    is_tool_cell(cell:any):boolean {
+        const dom_node = cell.node || cell.element;
+        if (!!dom_node) return !!dom_node.find('.nbtools').length;
+        else return false;
     }
 
     /**
@@ -280,6 +302,18 @@ class EmbedContext extends Context {
      * No notebook in this context
      */
     notebook_path() { return ''; }
+
+    /**
+     * Determines if the given cell contains a notebook tool widget
+     *
+     * @param cell
+     * @returns boolean
+     */
+    is_tool_cell(cell:any):boolean {
+        const dom_node = cell.node || cell.element;
+        if (!!dom_node) return !!dom_node.querySelector('.nbtools');
+        else return false;
+    }
 
     /**
      * Path to the default GenePattern logo

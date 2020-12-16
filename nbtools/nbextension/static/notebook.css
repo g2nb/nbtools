@@ -10,6 +10,19 @@
     min-height: 42px;
 }
 
+.nbtools-form .nbtools-group > .nbtools-description {
+    width: 100%;
+}
+
+div.cell.rendered,
+div.cell.rendered div.output_wrapper,
+div.cell.rendered div.output_wrapper div.output:not(.output_scroll),
+div.cell.rendered div.output_wrapper div.output:not(.output_scroll) > div.output_area,
+div.cell.rendered div.output_wrapper div.output:not(.output_scroll) > div.output_area > div.output_subarea {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
 :root {
 
   /** Imported from material design */
