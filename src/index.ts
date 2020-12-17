@@ -5,4 +5,5 @@ export * from './version';
 export * from './basewidget';
 export * from './uioutput';
 export * from './uibuilder';
+export * from './registry';
 export * from './toolbox';

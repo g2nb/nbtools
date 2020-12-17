@@ -9,7 +9,7 @@ import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser, Toolbox } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
-import { INotebookTracker, NotebookTracker } from '@jupyterlab/notebook';
+import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
 
 
@@ -44,11 +44,11 @@ function activate_widget_extension(app: Application<Widget>,
                                    shell: ILabShell|null,
                                    notebook_tracker: INotebookTracker|null): IToolRegistry {
 
-    // Create the tool registry
-    const tool_registry = new ToolRegistry(notebook_tracker as NotebookTracker);
-
     // Initialize the ContextManager
-    init_context(app as JupyterFrontEnd, notebook_tracker, tool_registry);
+    init_context(app as JupyterFrontEnd, notebook_tracker);
+
+    // Create the tool registry
+    const tool_registry = new ToolRegistry();
 
     // Add items to the help menu
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
@@ -70,10 +70,10 @@ function activate_widget_extension(app: Application<Widget>,
     return tool_registry;
 }
 
-function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null, tool_registry:ToolRegistry) {
+function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
     ContextManager.jupyter_app = app;
     ContextManager.notebook_tracker = notebook_tracker;
-    ContextManager.tool_registry = tool_registry;
+    ContextManager.context();
     //(window as any).ContextManager = ContextManager;  // Left in for development purposes
 }
 

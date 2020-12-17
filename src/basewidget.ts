@@ -5,8 +5,6 @@ import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, WidgetView } from 
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 import { Toolbox } from "./toolbox";
 
-const genepattern_logo = ContextManager.context().default_logo();
-
 export class BaseWidgetModel extends DOMWidgetModel {
     static model_name = 'BaseWidgetModel';
     static model_module = MODULE_NAME;
@@ -24,7 +22,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
             description: '',
             collapsed: false,
             color: 'var(--jp-layout-color4)',
-            logo: genepattern_logo,
+            logo: ContextManager.context().default_logo(),
             info: '',
             error: '',
             extra_menu_items: {}
@@ -154,8 +152,8 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Fall back to default logo if no custom logo is set
         if (!logo) {
-            logo = genepattern_logo;
-            this.model.set('logo', genepattern_logo);
+            logo = ContextManager.context().default_logo();
+            this.model.set('logo', logo);
             this.model.save();
         }
 

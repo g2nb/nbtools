@@ -22,6 +22,14 @@ define(function () {
             },
         }
     });
+
+    // Load the toolbox
+    require(['nbextensions/nbtools/toolbox'], function() {
+        require(['nbtools/toolbox'], function(toolbox) {
+            toolbox.init();
+        })
+    });
+
     // Export the required load_ipython_extension function
     return {
         load_ipython_extension: function () {

@@ -1,5 +1,5 @@
 import { Widget } from "@lumino/widgets";
-import { NotebookPanel, NotebookTracker } from "@jupyterlab/notebook";
+import { NotebookPanel } from "@jupyterlab/notebook";
 import { send_notification } from "./utils";
 import { ContextManager } from "./context";
 
@@ -13,22 +13,20 @@ export class ToolRegistry {
 
     /**
      * Initialize the ToolRegistry and connect event handlers
-     *
-     * @param notebook_tracker
      */
-    constructor(notebook_tracker:NotebookTracker|null) {
+    constructor() {
+        // Lazily assign the tool registry to the context
+        if (!ContextManager.tool_registry) ContextManager.tool_registry = this;
 
-        // Register an event for when the active cell changes
-        notebook_tracker && notebook_tracker.activeCellChanged.connect(() => {
-
+        ContextManager.context().notebook_focus((current_widget:any) => {
             // Current notebook hasn't changed, no need to do anything, return
-            if (this.current === notebook_tracker.currentWidget) return;
+            if (this.current === current_widget) return;
 
             // Otherwise, update the current notebook reference
-            this.current = notebook_tracker.currentWidget;
+            this.current = current_widget;
 
             // If the current selected widget isn't a notebook, no comm is needed
-            if (!(this.current instanceof NotebookPanel)) return;
+            if (!(this.current instanceof NotebookPanel) && ContextManager.is_lab()) return;
 
             // Initialize the comm
             this.init_comm();
@@ -39,49 +37,38 @@ export class ToolRegistry {
     }
 
     import_default_tools() {
-        const current = this.current as NotebookPanel;
-        if (current && current.context && current.context.sessionContext)
-            current.context.sessionContext.kernelChanged.connect(() => {
-                if (!current.context.sessionContext.session ||
-                    !current.context.sessionContext.session.kernel) return;  // Protect against null kernels
-
-                // Import the default tools
-                current.context.sessionContext.session.kernel.requestExecute({code: 'from nbtools import import_defaults\nimport_defaults()'});
-            });
+        ContextManager.context().execute_code(this.current, 'from nbtools import import_defaults\nimport_defaults()');
     }
 
     /**
      * Initialize the comm between the notebook widget kernel and the ToolManager
      */
     init_comm() {
-        // If the current widget isn't a notebook, there is no kernel
-        if (!(this.current instanceof NotebookPanel)) return;
-
-        // Make sure the session is ready before initializing the comm
-        this.current.context.sessionContext.ready.then(() => {
+        ContextManager.context().kernel_ready(this.current, () => {
             const current:any = this.current;
 
             // Create a new comm that connects to the nbtools_comm target
             const connect_comm = () => {
-                const kernel = current.context.sessionContext.session.kernel;
-                const comm = kernel.createComm('nbtools_comm');
-                comm.onMsg = (msg:any) => {  // Handle message sent by the kernel
+                const comm = ContextManager.context().create_comm(current, 'nbtools_comm', (msg:any) => {
+                    // Handle message sent by the kernel
                     const data = msg.content.data;
 
                     if (data.func === 'update') this.update_tools(data.payload);
                     else if (data.func === 'notification') send_notification(data.payload.message, data.payload.sender,
                         ContextManager.context().default_logo());
                     else console.error('ToolRegistry received unknown message: ' + data);
-                };
+                });
 
-                comm.open({});          // Open the comm
-                comm.send({             // Request the current tool list
+                (window as any).comm = comm;
+
+                // Request the current tool list
+                comm.send({
                     'func': 'request_update'
                 });
             };
 
             // When the kernel restarts or is changed, reconnect the comm
-            current.context.sessionContext.kernelChanged.connect(() => connect_comm());
+            ContextManager.context().kernel_changed(current, () => connect_comm());
 
             // Connect to the comm upon initial startup
             connect_comm();
@@ -131,17 +118,7 @@ export class ToolRegistry {
      * Return null if no kernel or no notebook selected
      */
     current_kernel_id() {
-        // If the current widget isn't a notebook, there is no kernel
-        if (!(this.current instanceof NotebookPanel)) return null;
-
-        // Protect against null
-        if (!this.current ||
-            !this.current.context ||
-            !this.current.context.sessionContext ||
-            !this.current.context.sessionContext.session ||
-            !this.current.context.sessionContext.session.kernel) return null;
-
-        return this.current.context.sessionContext.session.kernel.id;
+        return ContextManager.context().kernel_id(this.current);
     }
 
     /**

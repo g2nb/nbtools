@@ -16,7 +16,7 @@ def load_settings():
         logging.debug(f'unable to parse nbtools setting file: {e}')
 
     # If it couldn't be loaded, return the default settings
-    return {"load": ["genepattern"]}
+    return {"load": ["nbtools", "genepattern"]}  # FIXME: Special case for genepattern should be removed
 
 
 def import_defaults():
