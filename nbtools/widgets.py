@@ -163,7 +163,7 @@ class UIBuilder(widgets.DOMWidget):
         self.function_or_method = function_or_method
 
         # Add widget reference to function
-        function_or_method.__dict__["__widget__"] = self
+        if hasattr(function_or_method, '__dict__'): function_or_method.__dict__["__widget__"] = self
 
         # Store reference to widget
         nbtools.manager._py_funcs[self.origin + '|' + self.name + '|widget'] = self
