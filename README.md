@@ -10,6 +10,9 @@
 
 **nbtools** was developed as part of the [GenePattern Notebook](http://genepattern-notebook.org) environment. This environment also serves as an example of how nbtools can be extended and applied to a specific domain: in its case, bioinformatics.
 
+### **Looking for JupyterLab support?**
+**JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/genepattern/nbtools/tree/lab)**
+
 ## Installation
 
 **nbtools** is available through [PIP](https://pypi.org/) and [conda](https://anaconda.org). Just run one of the following commands.
@@ -61,4 +64,4 @@ This is exciting, but it is far from the only feature of the nbtools package. Yo
 * [UI Builder](doc/uibuilder.md)
 * [UI Output](doc/uioutput.md)
 * [Tool Manager API](doc/toolmanager.md)
-* [WYSWYG Editor](wyswyg.md)
+* [WYSWYG Editor](doc/wysiwyg.md)
