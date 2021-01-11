@@ -141,6 +141,7 @@ export class BaseWidgetView extends DOMWidgetView {
         this.element.appendChild(new DOMParser().parseFromString(this.disconnected, "text/html")
             .querySelector('body > :first-child') as HTMLElement);
         this.attach_connect_event();
+        this.disconnected_sync_fix();
 
         // Set the element
         this.setElement(this.element);
@@ -193,6 +194,25 @@ export class BaseWidgetView extends DOMWidgetView {
             // Run all cells with disconnected nbtools widgets
             ContextManager.context().run_tool_cells();
         });
+    }
+
+    disconnected_sync_fix() {
+        // Fix a bug that can occur when a disconnected widget and a connected widget are somehow rendered in the same cell
+        setTimeout(() => {
+            const cell = this.element.closest('.jp-Cell, .cell');
+            if (!cell) return;  // No cell found, bug cannot occur
+
+            // Do both connected and disconnected widgets appear in the cell?
+            const contains_disconnected = !!cell.querySelectorAll('.nbtools.jupyter-widgets-disconnected').length;
+            const contains_connected = !!cell.querySelectorAll('.nbtools:not(.jupyter-widgets-disconnected)').length;
+
+            // If they do, hide the irrelevant disconnected widgets
+            if (contains_disconnected && contains_connected) {
+                cell.querySelectorAll('.nbtools.jupyter-widgets-disconnected').forEach((e) => {
+                    (e as HTMLElement).style.display = 'none';
+                })
+            }
+        }, 100);
     }
 
     add_menu_item(label:string, callback:any, dom_class:string|null=null, menu:HTMLUListElement|null=null, prepend:boolean=true) {
