@@ -32,8 +32,15 @@ RUN jupyter labextension install plotlywidget@4.9.0 --no-build && \
 
 ENV JUPYTER_ENABLE_LAB="true"
 ARG NODE_OPTIONS="--max-old-space-size=8192"
+RUN cd nbtools && npm install && npm i backbone@1.2.3 && npm i @types/backbone@1.4.4
 RUN cd nbtools && pip install --no-binary=nbtools . && \
     jupyter labextension install . && \
     jupyter nbextension install --py nbtools --sys-prefix && \
     jupyter nbextension enable --py nbtools --sys-prefix
 RUN cd nbtools && cp ./examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+
+# Install genepattern-notebook for lab
+RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
+    cd genepattern-notebook && \
+    git checkout lab
+RUN cd genepattern-notebook && pip install .
