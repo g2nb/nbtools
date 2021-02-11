@@ -75,7 +75,9 @@
     "webpack-cli": "^3.1.2",
     "file-loader": "^6.0.0",
     "karma": "^5.2.3",
-    "karma-typescript": "^5.2.0"
+    "karma-typescript": "^5.2.0",
+    "backbone": "^1.2.3",
+    "@types/backbone": "^1.4.4"
   },
   "jupyterlab": {
     "extension": "lib/plugin",
