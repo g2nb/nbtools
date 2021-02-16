@@ -1,34 +1,19 @@
 include LICENSE.txt
 include README.md
+include pyproject.toml
+include jupyter-config/nbtools.json
 
-include setupbase.py
-include pytest.ini
-include .coverage.rc
-
-include tsconfig.json
 include package.json
-include webpack.config.js
-include nbtools/labextension/*.tgz
+include install.json
+include ts*.json
+include yarn.lock
 
-# Documentation
-graft docs
-exclude docs/\#*
-prune docs/build
-prune docs/gh-pages
-prune docs/dist
-
-# Examples
-graft examples
-
-# Tests
-graft tests
-prune tests/build
+graft nbtools/labextension
 
 # Javascript files
-graft nbtools/nbextension
 graft src
+graft style
 prune **/node_modules
-prune coverage
 prune lib
 
 # Patterns to exclude from any directory

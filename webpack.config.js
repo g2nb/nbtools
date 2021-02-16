@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const version = require('./package.json').version;
 
 // Custom webpack rules
@@ -26,10 +27,13 @@ module.exports = [
    */
   {
     entry: './src/extension.ts',
+    target: 'web',
     output: {
       filename: 'index.js',
       path: path.resolve(__dirname, 'nbtools', 'nbextension', 'static'),
-      libraryTarget: 'amd'
+      libraryTarget: 'amd',
+      // TODO: Replace after release to unpkg.org
+      publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
     },
     module: {
       rules: rules
@@ -37,6 +41,11 @@ module.exports = [
     devtool: 'source-map',
     externals,
     resolve,
+    plugins: [
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
+    ],
   },
 
   /**
@@ -51,12 +60,14 @@ module.exports = [
    */
   {
     entry: './src/index.ts',
+    target: 'web',
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'amd',
         library: "@genepattern/nbtools",
-        publicPath: 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
+        // TODO: Replace after release to unpkg.org
+        publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {
@@ -64,6 +75,11 @@ module.exports = [
     },
     externals,
     resolve,
+    plugins: [
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
+    ],
   },
 
 
@@ -74,11 +90,14 @@ module.exports = [
    */
   {
     entry: './src/index.ts',
+    target: 'web',
     output: {
       filename: 'embed-bundle.js',
       path: path.resolve(__dirname, 'docs', 'source', '_static'),
       library: "@genepattern/nbtools",
-      libraryTarget: 'amd'
+      libraryTarget: 'amd',
+      // TODO: Replace after release to unpkg.org
+      publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
     },
     module: {
       rules: rules
@@ -86,6 +105,11 @@ module.exports = [
     devtool: 'source-map',
     externals,
     resolve,
+    plugins: [
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
+    ],
   }
 
 ];

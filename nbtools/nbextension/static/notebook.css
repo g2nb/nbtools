@@ -2,13 +2,13 @@
  * CSS fixes for widgets in Jupyter Notebook
  */
 
-.nbtools > .nbtools-body > .nbtools-description,
-.nbtools > .nbtools-body > .nbtools-footer {
+body.notebook_app .nbtools > .nbtools-body > .nbtools-description,
+body.notebook_app .nbtools > .nbtools-body > .nbtools-footer {
     width: calc(100% + 20px);
 }
 
-.nbtools.nbtools-uibuilder > .nbtools-body > .nbtools-description,
-.nbtools.nbtools-uibuilder > .nbtools-body > .nbtools-footer {
+body.notebook_app .nbtools.nbtools-uibuilder > .nbtools-body > .nbtools-description,
+body.notebook_app .nbtools.nbtools-uibuilder > .nbtools-body > .nbtools-footer {
     min-height: 42px;
 }
 

@@ -668,7 +668,7 @@ export class UIBuilderView extends BaseWidgetView {
             this.set_input_model(view.model, spec);
 
             // Special case for file lists
-            const all_inputs = param_element.parentNode ? param_element.parentNode.querySelectorAll('input') : [];
+            const all_inputs:any = param_element.parentNode ? param_element.parentNode.querySelectorAll('input') : [];
             if (all_inputs.length > 1) {
                 let first = true;
                 all_inputs.forEach((input:HTMLInputElement) => {

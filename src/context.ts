@@ -508,6 +508,12 @@ class EmbedContext extends Context {
      */
     notebook_path() { return ''; }
 
+    base_path():string {
+        const body = document.querySelector('body');
+        if (!body) return ''; // If there is no body, unable to get path
+        return body.getAttribute('data-base-url') + 'nbextensions/nbtools/';
+    }
+
     /**
      * Determines if the given cell contains a notebook tool widget
      *
@@ -524,7 +530,7 @@ class EmbedContext extends Context {
      * Path to the default GenePattern logo
      */
     default_logo():string {
-        return  require("../style/logo.png").default;
+        return  this.base_path() + require("../style/logo.png").default;
     }
 
     /**

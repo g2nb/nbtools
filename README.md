@@ -1,4 +1,3 @@
-
 # nbtools for JupyterLab
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/lab?urlpath=lab)
@@ -6,6 +5,7 @@
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://gpnotebook-website-docs.readthedocs.io/en/latest/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/genepattern/genepattern-notebook.svg)](https://hub.docker.com/r/genepattern/lab/)
 [![Join the chat at https://gitter.im/genepattern](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<!--- ![Github Actions Status](https://github.com/genepattern/nbtools/workflows/Build/badge.svg) -->
 
 **nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [GenePattern Notebook environment](https://notebook.genepattern.org). The package provides:
 
@@ -14,9 +14,9 @@
 * Flexible theming and APIs to extend the nbtools functionality.
 * A WYSIWYG editor for markdown cells (provided as part of the accompanying `juptyter-wyswyg` package and coming soon to JupyterLab).
 
-**Prerequisites**
+## Requirements
 
-* JupyterLab >= 2.0.0
+* JupyterLab >= 3.0
 * ipywidgets >= 7.0.0
 
 ## Docker
@@ -30,12 +30,12 @@ docker run --rm -p 8888:8888 genepattern/lab
 
 ## Installation
 
-JupyterLab support is in beta. For now you will need to either install the specific prerelease version from pip or install from GitHub:
+JupyterLab support is in beta. For now you will need to either install the specific prerelease version from pip or 
+create a development install from GitHub:
 
 ```bash
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
-pip install nbtools==20.10a1
-jupyter labextension install nbtools
+pip install nbtools==21.2b1
 ```
 
 ***OR***
@@ -46,50 +46,47 @@ jupyter nbextension enable --py widgetsnbextension
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 # Clone the nbtools repository
-git clone https://github.com/genepattern/nbtools-lab-prototype.git
-cd nbtools-lab-prototype
+git clone https://github.com/genepattern/nbtools.git
+cd nbtools
 
 # Install the nbtools JupyterLab prototype
-pip install .
-jupyter labextension install .
-jupyter nbextension install --py nbtools --sys-prefix
-jupyter nbextension enable --py nbtools --sys-prefix
+pip install -e .
+jupyter labextension develop . --overwrite
+jlpm run build:all
+jupyter nbextension install --py nbtools --symlink
+jupyter nbextension enable --py nbtools --symlink
 ```
 
-In the future you will be able to install using pip:
-
-```bash
-pip install nbtools
-```
-
-Or if you use jupyterlab:
-
-```bash
-pip install nbtools
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-jupyter labextension install @genepattern/nbtools
-```
-
-If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
-the nbextension:
-```bash
-jupyter nbextension enable --py [--sys-prefix|--user|--system] nbtools
-```
 
 ## Development
 
-For a development install (requires npm version 4 or later), do the following in the repository directory:
+You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in 
+the extension's source and automatically rebuild the extension. To develop, run each of the following commands in a 
+separate terminal. 
 
 ```bash
-npm install
-jupyter labextension link .
+jlpm run watch
+jupyter lab
 ```
 
-To rebuild the package and the JupyterLab app:
+The `jlpm` command is JupyterLab's pinned version of [yarn](https://yarnpkg.com/) that is installed with JupyterLab. You 
+may use `yarn` or `npm` in lieu of `jlpm`.
+
+With the watch command running, every saved change will immediately be built locally and available in your running 
+JupyterLab. Refresh JupyterLab to load the change in your browser (you may need to wait several seconds for the 
+extension to be rebuilt).
+
+By default, the `jlpm run build` command generates the source maps for this extension to make it easier to debug using 
+the browser dev tools. To also generate source maps for the JupyterLab core extensions, you can run the following command:
 
 ```bash
-npm run build:all
-jupyter lab build
+jupyter lab build --minimize=False
+```
+
+### Uninstall
+
+```bash
+pip uninstall nbtools
 ```
 
 ## Getting Started

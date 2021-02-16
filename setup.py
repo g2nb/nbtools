@@ -1,117 +1,98 @@
-#!/usr/bin/env python
-# coding: utf-8
+import json
+from pathlib import Path
 
-# Copyright (c) Jupyter Development Team.
-# Distributed under the terms of the Modified BSD License.
-
-from __future__ import print_function
-from glob import glob
-from os.path import join as pjoin
-
-
-from setupbase import (
-    create_cmdclass, install_npm, ensure_targets,
-    find_packages, combine_commands, ensure_python,
-    get_version, HERE
+from jupyter_packaging import (
+    create_cmdclass,
+    install_npm,
+    ensure_targets,
+    combine_commands,
+    skip_if_exists
 )
+import setuptools
 
-from setuptools import setup
-
+HERE = Path(__file__).parent.resolve()
 
 # The name of the project
-name = 'nbtools'
+name = "nbtools"
 
-# Ensure a valid python version
-ensure_python('>=3.6')
-
-# Get our version
-version = get_version(pjoin(name, '_version.py'))
-
-nb_path = pjoin(HERE, name, 'nbextension', 'static')
-lab_path = pjoin(HERE, name, 'labextension')
+nb_path = (HERE / name / 'nbextension' / 'static')
+lab_path = (HERE / name / "labextension")
 
 # Representative files that should exist after a successful build
 jstargets = [
-    pjoin(nb_path, 'index.js'),
-    pjoin(HERE, 'lib', 'plugin.js'),
+    (nb_path / 'index.js'),
+    (HERE / 'lib' / 'plugin.js'),
+    str(lab_path / "package.json"),
 ]
 
 package_data_spec = {
-    name: [
-        'nbextension/static/*.*js*',
-        'labextension/*.tgz'
-    ]
+    name: ["*"],
 }
 
+labext_name = "@genepattern/nbtools"
+
 data_files_spec = [
-    ('share/jupyter/nbextensions/nbtools',
-        nb_path, '*.js*'),
-    ('share/jupyter/lab/extensions', lab_path, '*.tgz'),
-    ('etc/jupyter/nbconfig/notebook.d' , HERE, 'nbtools.json')
+    ('share/jupyter/nbextensions/nbtools', str(nb_path), '*.js*'),
+    ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
 ]
 
+cmdclass = create_cmdclass("jsdeps",
+    package_data_spec=package_data_spec,
+    data_files_spec=data_files_spec
+)
 
-cmdclass = create_cmdclass('jsdeps', package_data_spec=package_data_spec,
-    data_files_spec=data_files_spec)
-cmdclass['jsdeps'] = combine_commands(
-    install_npm(HERE, build_cmd='build:all'),
+js_command = combine_commands(
+    install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]),
     ensure_targets(jstargets),
 )
 
+is_repo = (HERE / ".git").exists()
+if is_repo:
+    cmdclass["jsdeps"] = js_command
+else:
+    cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
+
+long_description = (HERE / "README.md").read_text()
+
+# Get the package info from package.json
+pkg_json = json.loads((HERE / "package.json").read_bytes())
 
 setup_args = dict(
-    name            = name,
-    description     = 'nbtools is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users alike.',
-    version         = version,
-    scripts         = glob(pjoin('scripts', '*')),
-    cmdclass        = cmdclass,
-    packages        = find_packages(),
-    author          = 'Thorin Tabor',
-    author_email    = 'tmtabor@cloud.ucsd.edu',
-    url             = 'https://github.com/genepattern/nbtools',
-    license         = 'BSD',
-    platforms       = "Linux, Mac OS X, Windows",
-    keywords        = ['Jupyter', 'Widgets', 'IPython'],
-    classifiers     = [
+    name=name,
+    version=pkg_json["version"],
+    url=pkg_json["homepage"],
+    author=pkg_json["author"]["name"],
+    author_email=pkg_json["author"]["email"],
+    description=pkg_json["description"],
+    license=pkg_json["license"],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    cmdclass=cmdclass,
+    packages=setuptools.find_packages(),
+    install_requires=[
+        "jupyterlab~=3.0",
+        "ipywidgets>=7.0.0",
+    ],
+    zip_safe=False,
+    include_package_data=True,
+    python_requires=">=3.6",
+    platforms="Linux, Mac OS X, Windows",
+    keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
+    classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Framework :: Jupyter',
+        "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Framework :: Jupyter",
     ],
-    include_package_data = True,
-    install_requires = [
-        'ipywidgets>=7.0.0',
-        'genepattern-python',
-        'pandas',
-    ],
-    extras_require = {
-        'test': [
-            'pytest>=3.6',
-            'pytest-cov',
-            'nbval',
-        ],
-        'examples': [
-            # Any requirements for the examples to run
-        ],
-        'docs': [
-            'sphinx>=1.5',
-            'recommonmark',
-            'sphinx_rtd_theme',
-            'nbsphinx>=0.2.13,<0.4.0',
-            'jupyter_sphinx',
-            'nbsphinx-link',
-            'pytest_check_links',
-            'pypandoc',
-        ],
-    },
-    entry_points = {
-    },
 )
 
-if __name__ == '__main__':
-    setup(**setup_args)
+
+if __name__ == "__main__":
+    setuptools.setup(**setup_args)
