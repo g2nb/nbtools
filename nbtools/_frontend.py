@@ -7,6 +7,7 @@
 """
 Information about the frontend package of the widgets.
 """
+from ._version import __version__
 
 module_name = "@genepattern/nbtools"
-module_version = "^21.2.0-alpha.1"
+module_version = f"^{__version__}"
