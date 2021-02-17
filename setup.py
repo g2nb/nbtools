@@ -43,7 +43,7 @@ cmdclass = create_cmdclass("jsdeps",
 )
 
 js_command = combine_commands(
-    install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]),
+    install_npm(HERE, build_cmd="build:all", npm=["jlpm"]),
     ensure_targets(jstargets),
 )
 

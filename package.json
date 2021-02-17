@@ -38,7 +38,6 @@
     "build:labextension:dev": "jupyter labextension build --development True .",
     "build:lib": "tsc",
     "build:nbextension": "webpack --mode production",
-    "build:prod": "jlpm run build:lib && jlpm run build:labextension",
     "clean": "jlpm run clean:lib",
     "clean:all": "jlpm run clean:lib && jlpm run clean:labextension && jlpm run clean:nbextension",
     "clean:labextension": "rimraf nbtools/labextension",
