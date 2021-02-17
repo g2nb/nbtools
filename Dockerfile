@@ -1,46 +1,80 @@
-FROM jupyter/scipy-notebook:13b866ff67b9
+# Dockerfile for running the JupyterLab version of the GenePattern Notebook Environment
+
+# Pull the latest known good scipy notebook image from the official Jupyter stacks
+# Built 02-06-2021
+FROM jupyter/scipy-notebook:016833b15ceb
+
+MAINTAINER Thorin Tabor <tmtabor@cloud.ucsd.edu>
+EXPOSE 8888
+
+#############################################
+##  ROOT                                   ##
+##      Install npm                        ##
+#############################################
 
 USER root
+
 RUN apt-get update && apt-get install -y npm
 
+#############################################
+##  $NB_USER                               ##
+##      Install python libraries           ##
+#############################################
+
 USER $NB_USER
+
+RUN conda install -c conda-forge jupyterlab=3.0.7 voila && \
+    pip install plotnine bioblend plotly jupyterlab-git==0.30.0b2
+
+#############################################
+##  $NB_USER                               ##
+##      Clone the nbtools repo             ##
+#############################################
+
 RUN git clone https://github.com/genepattern/nbtools.git && \
     cd nbtools && \
-    git checkout lab
+    git checkout lab && \
+    npm install
 
-# RUN jupyter nbextension enable --py widgetsnbextension
-# RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager
-RUN conda install -c conda-forge jupyterlab=2.2.4 voila && \
-    pip install plotnine bioblend plotly jupyterlab-git
+#############################################
+##  $NB_USER                               ##
+##      Build and install nbtools          ##
+#############################################
 
-#RUN pip install wheel
-#RUN cd nbtools && npm install
-
-RUN jupyter labextension install plotlywidget@4.9.0 --no-build && \
-    jupyter labextension install jupyterlab-plotly@4.9.0 --no-build && \
-    jupyter labextension install jupyterlab-chart-editor --no-build && \
-    jupyter labextension install @jupyterlab/toc --no-build && \
-    jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
-#    jupyter labextension install jupyter-scribe --no-build && \
-    jupyter labextension install @jupyterlab/git --no-build && \
-#    jupyter labextension install @jupyterlab/github --no-build && \
-    jupyter labextension install @jupyterlab/hub-extension --no-build && \
-    jupyter labextension install jupyterlab-code-snippets --no-build && \
-    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \
-    jupyter labextension install @jupyter-voila/jupyterlab-preview --no-build
-# c.Spawner.cmd = ['jupyter-labhub']
-
-ENV JUPYTER_ENABLE_LAB="true"
-ARG NODE_OPTIONS="--max-old-space-size=8192"
-RUN cd nbtools && npm install && npm i backbone@1.2.3 && npm i @types/backbone@1.4.4
-RUN cd nbtools && pip install --no-binary=nbtools . && \
-    jupyter labextension install . && \
+RUN cd nbtools && pip install -e . && \
+    jupyter labextension develop . --overwrite && \
     jupyter nbextension install --py nbtools --sys-prefix && \
     jupyter nbextension enable --py nbtools --sys-prefix
-RUN cd nbtools && cp ./examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN mkdir /opt/conda/share/jupyter/lab/settings && \
+    cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+
+#############################################
+##  $NB_USER                               ##
+##      Clone and install genepattern      ##
+#############################################
 
 # Install genepattern-notebook for lab
 RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
     cd genepattern-notebook && \
     git checkout lab
 RUN cd genepattern-notebook && pip install .
+
+#############################################
+##  $NB_USER                               ##
+##      Install other labextensions        ##
+#############################################
+
+RUN jupyter labextension install plotlywidget --no-build && \
+    jupyter labextension install jupyterlab-plotly --no-build && \
+#    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
+    jupyter labextension install @aquirdturtle/collapsible_headings && \
+#    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
+#    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
+    printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+
+#############################################
+##  $NB_USER                               ##
+##      Launch lab by default              ##
+#############################################
+
+ENV JUPYTER_ENABLE_LAB="true"
