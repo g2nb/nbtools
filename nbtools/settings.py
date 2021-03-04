@@ -22,4 +22,7 @@ def load_settings():
 def import_defaults():
     settings = load_settings()
     for module in settings['load']:
-        get_ipython().run_cell(f'import {module}')
+        if module == 'nbtools':  # Special case so that nbtools import detection works
+            get_ipython().run_cell(f'import nbtools as _nbtools')
+        else:
+            get_ipython().run_cell(f'import {module}')
