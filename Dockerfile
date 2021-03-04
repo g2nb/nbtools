@@ -41,12 +41,11 @@ RUN git clone https://github.com/genepattern/nbtools.git && \
 ##      Build and install nbtools          ##
 #############################################
 
-RUN cd nbtools && pip install -e . && \
-    jupyter labextension develop . --overwrite && \
+RUN cd nbtools && pip install . && \
+    jupyter labextension install . && \
     jupyter nbextension install --py nbtools --sys-prefix && \
     jupyter nbextension enable --py nbtools --sys-prefix
-RUN mkdir /opt/conda/share/jupyter/lab/settings && \
-    cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##
