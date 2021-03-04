@@ -69,7 +69,7 @@ RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install @aquirdturtle/collapsible_headings && \
 #    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
 #    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
-    printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py
+    printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
 
 #############################################
 ##  $NB_USER                               ##
