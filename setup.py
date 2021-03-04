@@ -17,6 +17,7 @@ name = "nbtools"
 
 nb_path = (HERE / name / 'nbextension' / 'static')
 lab_path = (HERE / name / "labextension")
+tool_path = (HERE / "schema")
 
 # Representative files that should exist after a successful build
 jstargets = [
@@ -32,9 +33,10 @@ package_data_spec = {
 labext_name = "@genepattern/nbtools"
 
 data_files_spec = [
-    ('share/jupyter/nbextensions/nbtools', str(nb_path), '*.js*'),
+    ('share/jupyter/nbextensions/nbtools', str(nb_path), '**'),
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
     ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
+    ("share/jupyter/nbtools", tool_path, "nbtools.json"),
 ]
 
 cmdclass = create_cmdclass("jsdeps",

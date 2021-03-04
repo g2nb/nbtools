@@ -11,5 +11,19 @@
       "selector": ".jp-Notebook:focus"
     }
   ],
-  "properties": {}
+  "additionalProperties": false,
+  "properties": {
+    "nbtools": {
+      "type": "boolean",
+      "title": "List of packages to load",
+      "description": "List of packages containing tools to load on kernel start",
+      "default": true
+    },
+    "autoLoad": {
+      "type": "array",
+      "title": "List of packages to load",
+      "description": "List of packages containing tools to load on kernel start",
+      "default": ["nbtools"]
+    }
+  }
 }
