@@ -8,8 +8,9 @@ dist: focal
 services:
   - xvfb
 addons:
-  apt_packages:
-    - pandoc
+  firefox: latest
+#  apt_packages:
+#    - pandoc
 env:
   matrix:
     - GROUP=python
@@ -25,8 +26,8 @@ cache:
     - node_modules # NPM packages
     - $HOME/.npm
 before_install:
-  - pip install -U pip setuptools
-  - nvm install 8
+  - pip install -U pip setuptools --quiet
+  - nvm install 8 --quiet
   - |
     if [[ $GROUP == python ]]; then
       pip install codecov
@@ -36,11 +37,11 @@ before_install:
 install:
   - |
     if [[ $GROUP == python ]]; then
-      pip install --upgrade ".[test]" -v
+      pip install --upgrade ".[test]"
     elif [[ $GROUP == js ]]; then
-      pip install --upgrade -e ".[test]" -v
-    elif [[ $GROUP == docs ]]; then
-      pip install --upgrade ".[test, examples, docs]" -v
+      pip install --upgrade -e ".[test]"
+#    elif [[ $GROUP == docs ]]; then
+#      pip install --upgrade ".[test, examples, docs]"
     fi
 before_script:
   # Set up a virtual screen for Firefox browser testing:
@@ -71,3 +72,5 @@ script:
     fi
 after_success:
   - codecov
+notifications:
+  - slack: genepattern:OAj2q4hee6Mk5v9r6SUCIacZ
