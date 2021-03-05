@@ -23,7 +23,7 @@ before_install:
 #  - conda activate jupyterenv
 #  - ln -s /home/travis/miniconda/envs/jupyterenv/bin/jlpm /usr/bin/jlpm
 install:
-  - jlpm install
+  - npm install
   - pip install .
   - jupyter labextension install .
   - jupyter nbextension install --py nbtools --sys-prefix
