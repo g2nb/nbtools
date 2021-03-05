@@ -18,7 +18,7 @@ before_install:
   - pip install -U pip setuptools jupyter_packaging --quiet
 install:
   - pip install jupyter lab
-  - pip install --no-binary=nbtools .
+  - pip install --no-binary=:all: .
 script:
   - pytest
 notifications:
