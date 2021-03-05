@@ -7,8 +7,8 @@ sudo: false
 dist: focal
 services:
   - xvfb
-addons:
-  firefox: latest
+#addons:
+#  firefox: latest
 #  apt_packages:
 #    - pandoc
 env:
