@@ -18,16 +18,12 @@ before_install:
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - source "$HOME/miniconda/etc/profile.d/conda.sh"
-  - hash -r
-  - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
-  - conda create -q -n jupyterenv python=$TRAVIS_PYTHON_VERSION
-  - conda install -c conda-forge jupyterlab=3.0.7
-  - conda activate jupyterenv
-  - echo $PATH
-  - ln -s /opt/anaconda3/envs/jupyterenv/bin/jlpm /usr/bin/jlpm
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - pip install jupyterlab==3.0.7
+#  - conda activate jupyterenv
+#  - ln -s /home/travis/miniconda/envs/jupyterenv/bin/jlpm /usr/bin/jlpm
 install:
-  - npm install
+  - jlpm install
   - pip install .
   - jupyter labextension install .
   - jupyter nbextension install --py nbtools --sys-prefix
