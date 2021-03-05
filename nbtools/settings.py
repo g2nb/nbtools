@@ -25,18 +25,6 @@ def load_settings():
 
     # If packages were read, return the list to load
     if len(load): return {"load": list(set(load))}
-
-    ############
-    # OLD WAY - REMOVE ONCE THE NEW WAY IS MORE PROVEN
-    # try:
-    #     with open(os.path.join(str(Path.home()), '.ipython', 'nbtools.json'), 'r') as settings_file:
-    #         return json.load(settings_file)
-    # except FileNotFoundError as e:
-    #     logging.debug(f'nbtools setting file not found: {e}')
-    # except json.JSONDecodeError as e:
-    #     logging.debug(f'unable to parse nbtools setting file: {e}')
-    ############
-
     # If it couldn't be loaded, return the default settings
     else: return {"load": ["nbtools"]}
 
