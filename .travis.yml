@@ -23,8 +23,10 @@ before_install:
   - conda update -q conda
   - conda create -q -n jupyterenv python=$TRAVIS_PYTHON_VERSION
   - conda install -c conda-forge jupyterlab=3.0.7
-install:
   - conda activate jupyterenv
+  - which python
+  - ln -s /opt/anaconda3/envs/jupyterenv/bin/jlpm /usr/bin/jlpm
+install:
   - npm install
   - pip install .
   - jupyter labextension install .
