@@ -21,8 +21,9 @@ before_install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
-  - conda install -q -c conda-forge jupyterlab=3.0.7
+  - conda create -q -n jupyterenv python=$TRAVIS_PYTHON_VERSION -c conda-forge jupyterlab=3.0.7
 install:
+  - conda activate jupyterenv
   - npm install
   - pip install .
   - jupyter labextension install .
