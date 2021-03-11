@@ -160,3 +160,13 @@ export function process_template(template:string, template_vars:any) {
 
 	return template;
 }
+
+export function pulse_red(element:HTMLElement, count:number=0, count_up:boolean=true) {
+    setTimeout(() => {
+        element.style.border = `rgba(255, 0, 0, ${count / 10}) solid ${Math.ceil(count / 2)}px`;
+        if (count_up && count < 10) pulse_red(element, count+1, count_up);
+        else if (count_up) pulse_red(element, count, false);
+        else if (count > 0) pulse_red(element, count-1, count_up);
+        else element.style.border = `none`;
+    }, 25);
+}

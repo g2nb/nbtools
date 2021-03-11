@@ -8,6 +8,7 @@ import * as uibuilder_exports from './uibuilder';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser, Toolbox } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
+import { pulse_red } from "./utils";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
@@ -83,6 +84,7 @@ function add_keyboard_shortcuts(app:JupyterFrontEnd, tool_registry:ToolRegistry)
         execute: () => {
             // Open the tool manager, if necessary
             app.shell.activateById('nbtools-browser');
+            pulse_red(document.getElementById('nbtools-browser'));
 
             // If only one tool is available, add it
             const tools = tool_registry.list();
