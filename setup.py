@@ -17,7 +17,7 @@ name = "nbtools"
 
 nb_path = (HERE / name / 'nbextension' / 'static')
 lab_path = (HERE / name / "labextension")
-tool_path = (HERE / "schema")
+tool_path = (HERE / "nbtools")
 
 # Representative files that should exist after a successful build
 jstargets = [
