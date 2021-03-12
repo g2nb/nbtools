@@ -39,7 +39,6 @@ RUN conda install -c conda-forge jupyterlab=3.0.7 voila && \
 #############################################
 
 RUN pip install -i https://test.pypi.org/simple/ nbtools==21.2.0a1
-RUN cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##
