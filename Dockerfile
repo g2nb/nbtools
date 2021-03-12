@@ -5,7 +5,6 @@
 ##  This Dockerfile mimics a pip install. The Dockerfile that mimics a dev       ##
 ##  install has moved to dev.Dockerfile. This prevents an issue where the dev    ##
 ##  Dockerfile runs out of memory when transpiling JS dependencies on Binder.    ##
-##  RUN: docker build -f prod.Dockerfile.db -n genepattern/lab .                 ##
 ###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks

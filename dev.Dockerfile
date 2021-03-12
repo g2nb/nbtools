@@ -3,8 +3,8 @@
 ###################################################################################
 ##  NOTE                                                                         ##
 ##  This Dockerfile mimics a development install. The Dockerfile that mimics a   ##
-##  pip install is now prod.Dockerfile. This prevents an issue where the dev     ##
-##  Dockerfile runs out of memory when transpiling JS dependencies on Binder.    ##
+##  pip install is now the default Dockerfile. This prevents an issue where the  ##
+##  dev Dockerfile runs out of memory when transpiling JS on Binder.             ##
 ##  RUN: docker build -f dev.Dockerfile.db -n genepattern/lab .                  ##
 ###################################################################################
 
