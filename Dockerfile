@@ -33,8 +33,7 @@ RUN conda install -c conda-forge jupyterlab=3.0.7 voila && \
 
 RUN git clone https://github.com/genepattern/nbtools.git && \
     cd nbtools && \
-    git checkout lab && \
-    npm install
+    git checkout lab
 
 #############################################
 ##  $NB_USER                               ##
@@ -55,8 +54,8 @@ RUN cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/o
 # Install genepattern-notebook for lab
 RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
     cd genepattern-notebook && \
-    git checkout lab
-RUN cd genepattern-notebook && pip install .
+    git checkout lab && \
+    pip install .
 
 #############################################
 ##  $NB_USER                               ##
