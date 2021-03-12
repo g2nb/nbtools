@@ -1,4 +1,12 @@
-# Dockerfile for running the JupyterLab version of the GenePattern Notebook Environment
+# Dockerfile for running nbtools from a dev install
+
+###################################################################################
+##  NOTE                                                                         ##
+##  This Dockerfile mimics a development install. The Dockerfile that mimics a   ##
+##  pip install is now prod.Dockerfile. This prevents an issue where the dev     ##
+##  Dockerfile runs out of memory when transpiling JS dependencies on Binder.    ##
+##  RUN: docker build -f dev.Dockerfile.db -n genepattern/lab .                  ##
+###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks
 # Built 02-06-2021
