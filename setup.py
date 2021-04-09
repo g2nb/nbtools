@@ -18,6 +18,7 @@ name = "nbtools"
 nb_path = (HERE / name / 'nbextension' / 'static')
 lab_path = (HERE / name / "labextension")
 tool_path = (HERE / "nbtools")
+config_path = (HERE / "jupyter-config")
 
 # Representative files that should exist after a successful build
 jstargets = [
@@ -37,6 +38,7 @@ data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
     ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
     ("share/jupyter/nbtools", tool_path, "nbtools.json"),
+    ("etc/jupyter/nbconfig/notebook.d", config_path, "nbtools.json"),
 ]
 
 cmdclass = create_cmdclass("jsdeps",
