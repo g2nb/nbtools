@@ -30,15 +30,20 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.0.7 voila && \
-    pip install plotnine bioblend plotly jupyterlab-git==0.30.0b2
+RUN conda install -c conda-forge jupyterlab=3.0.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
+        jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
+        requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent && \
+    conda install plotly openpyxl && \
+    pip install plotnine bioblend jupyterlab-git==0.30.0b2
 
 #############################################
 ##  $NB_USER                               ##
 ##      Build and install nbtools          ##
 #############################################
 
-RUN pip install -i https://test.pypi.org/simple/ nbtools==21.2.0a1
+RUN pip install --pre nbtools==21.2.0b1 && \
+    pip install --pre genepattern-notebook==21.4b1 && \
+    pip install ccalnoir cuzcatlan ndex2 hca beakerx qgrid ipycytoscape
 
 #############################################
 ##  $NB_USER                               ##
@@ -59,3 +64,4 @@ RUN jupyter labextension install plotlywidget --no-build && \
 #############################################
 
 ENV JUPYTER_ENABLE_LAB="true"
+ENV TERM xterm
