@@ -52,6 +52,7 @@ RUN pip install --pre nbtools==21.2.0b1 && \
 
 RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install jupyterlab-plotly --no-build && \
+    jupyter labextension install qgrid2 --no-build && \
 #    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
     jupyter labextension install @aquirdturtle/collapsible_headings && \
 #    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
