@@ -33,8 +33,8 @@ USER $NB_USER
 RUN conda install -c conda-forge jupyterlab=3.0.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent && \
-    conda install plotly openpyxl && \
-    pip install plotnine bioblend jupyterlab-git==0.30.0b2
+    conda install plotly openpyxl sphinx && \
+    pip install plotnine bioblend jupyterlab-git==0.30.0b2 py4cytoscape
 
 #############################################
 ##  $NB_USER                               ##
