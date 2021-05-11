@@ -45,6 +45,11 @@ RUN pip install --pre nbtools==21.2.0b1 && \
     pip install --pre genepattern-notebook==21.4b1 && \
     pip install ccalnoir cuzcatlan ndex2 hca beakerx qgrid ipycytoscape
 
+RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
+    cd genepattern-theme-extension && \
+    npm install && \
+    jupyter labextension install . --no-build
+
 #############################################
 ##  $NB_USER                               ##
 ##      Install other labextensions        ##
@@ -52,12 +57,19 @@ RUN pip install --pre nbtools==21.2.0b1 && \
 
 RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install jupyterlab-plotly --no-build && \
-    jupyter labextension install qgrid2 --no-build && \
+    jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
 #    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
     jupyter labextension install @aquirdturtle/collapsible_headings && \
 #    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
 #    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
+
+#############################################
+##  $NB_USER                               ##
+##      Set default configuration          ##
+#############################################
+
+RUN printf '{ "@jupyterlab/apputils-extension:themes": { "theme": "GenePattern" } }' >> /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##
