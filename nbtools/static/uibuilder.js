@@ -7,7 +7,8 @@
  * Copyright 2019 Regents of the University of California and the Broad Institute
  */
 
-define("nbtools/uibuilder", ["base/js/namespace",
+define("nbtools/uibuilder", ["jquery",
+                             "base/js/namespace",
                              "nbextensions/jupyter-js-widgets/extension",
                              "nbtools",
                              "nbtools/variables",
@@ -16,7 +17,7 @@ define("nbtools/uibuilder", ["base/js/namespace",
                              "nbtools/text",
                              "nbtools/choice",
                              "nbtools/file",
-                             "nbtools/typeahead"], function (Jupyter, widgets, NBToolManager, VariableManager, MetadataManager, Utils) {
+                             "nbtools/typeahead"], function ($, Jupyter, widgets, NBToolManager, VariableManager, MetadataManager, Utils) {
 
     /**
      * Widget for turning any Python function into a interactive forms
