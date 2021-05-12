@@ -32,23 +32,10 @@ USER $NB_USER
 
 RUN conda install -c conda-forge jupyterlab=3.0.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
-        requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent && \
+        requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
+        mamba_gator jupyterlab-tour jupyterlab-spellchecker && \
     conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend jupyterlab-git==0.30.0b2 py4cytoscape
-
-#############################################
-##  $NB_USER                               ##
-##      Build and install nbtools          ##
-#############################################
-
-RUN pip install --pre nbtools==21.2.0b1 && \
-    pip install --pre genepattern-notebook==21.4b1 && \
-    pip install ccalnoir cuzcatlan ndex2 hca beakerx qgrid ipycytoscape
-
-RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
-    cd genepattern-theme-extension && \
-    npm install && \
-    jupyter labextension install . --no-build
+    pip install plotnine bioblend jupyterlab-git==0.30.0b2 py4cytoscape ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape
 
 #############################################
 ##  $NB_USER                               ##
@@ -59,10 +46,29 @@ RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install jupyterlab-plotly --no-build && \
     jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
 #    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
-    jupyter labextension install @aquirdturtle/collapsible_headings && \
+    jupyter labextension install @aquirdturtle/collapsible_headings  --no-build && \
 #    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
 #    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
+
+#############################################
+##  $NB_USER                               ##
+##      Build and install nbtools          ##
+#############################################
+
+#RUN pip install ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape beakerx #  && \
+#    pip install --pre genepattern-notebook==21.4b1 && \
+#    pip install --pre igv-jupyter && \
+#    pip install --pre nbtools==21.2.0b1 --force-reinstall
+RUN pip install --pre nbtools==21.2.0b1 && \
+    pip install --pre genepattern-notebook==21.4b1 && \
+    pip install --pre igv-jupyter
+
+RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
+    cd genepattern-theme-extension && \
+    npm install && \
+    jupyter labextension install . && \
+    jupyter lab build
 
 #############################################
 ##  $NB_USER                               ##
