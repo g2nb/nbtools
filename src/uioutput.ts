@@ -117,6 +117,19 @@ export class UIOutputView extends BaseWidgetView {
         else return visualization;
     }
 
+    traitlet_changed(event:any) {
+        const widget = this;
+        const name = typeof event === "string" ? event : Object.keys(event.changed)[0];
+        const elements = this.element.querySelectorAll(`[data-traitlet=${name}]`);
+        elements.forEach(element => {
+            // Ignore traitlets in the appendix, unless this is a subwidget in the appendix
+            if (!this.element.closest('.nbtools-appendix') && element.closest('.nbtools-appendix')) return;
+
+            if (name in this.renderers) element.innerHTML = this.renderers[name](this.model.get(name), widget);
+            else element.innerHTML = this.model.get(name)
+        });
+    }
+
     static pick_path_prefix(path:string) {
         if (is_url(path)) return '';                // is a URL
         else if (is_absolute_path(path)) return ''; // is an absolute
