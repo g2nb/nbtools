@@ -23,6 +23,15 @@
     margin: 0;
     line-height: 25px;
     position: absolute;
+    font-size: 1.1em;
+}
+
+.nbtools-subtitle {
+    position: absolute;
+    right: 75px;
+    text-align: right;
+    line-height: 25px;
+    font-size: 0.9em;
 }
 
 .nbtools-controls {

@@ -19,6 +19,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
         return {
             ...super.defaults(),
             name: '',
+            subtitle: '',
             description: '',
             collapsed: false,
             color: 'var(--jp-layout-color4)',
@@ -34,7 +35,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
 export class BaseWidgetView extends DOMWidgetView {
     dom_class = '';
     element:HTMLElement = document.createElement('div');
-    traitlets:string[] = ['name', 'description', 'info', 'error'];
+    traitlets:string[] = ['name', 'subtitle', 'description', 'info', 'error'];
     renderers:any = {
         "description": this.render_description,
         "error": this.render_error,
@@ -46,6 +47,7 @@ export class BaseWidgetView extends DOMWidgetView {
                        </div>`;
     header:string = `<img class="nbtools-logo" src="" />
                      <label class="nbtools-title" data-traitlet="name"></label>
+                     <label class="nbtools-subtitle" data-traitlet="subtitle"></label>
                      <div class="nbtools-controls">
                          <button class="nbtools-collapse">
                              <span class="fa fa-minus"></span>

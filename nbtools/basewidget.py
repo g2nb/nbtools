@@ -14,6 +14,7 @@ class BaseWidget(DOMWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     name = Unicode('').tag(sync=True)
+    subtitle = Unicode('').tag(sync=True)
     description = Unicode('').tag(sync=True)
     collapsed = Bool(False).tag(sync=True)
     color = Unicode('var(--jp-layout-color4)').tag(sync=True)
