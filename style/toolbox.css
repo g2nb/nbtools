@@ -97,6 +97,9 @@ header.nbtools-origin {
     line-height: 24px;
     height: 24px;
     padding: 4px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .nbtools-expanded::before {
