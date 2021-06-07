@@ -292,6 +292,9 @@ export class BaseWidgetView extends DOMWidgetView {
         // Create callback for string literal
         if (typeof item === 'string') return new Function(process_template(item, template_vars));
 
+        // Create callback for javascript event type
+        else if (item['action'] === 'javascript') return () => eval(process_template(item['code'], template_vars));
+
         // Create callback for cell event type
         else if (item['action'] === 'cell') return () => Toolbox.add_code_cell(process_template(item['code'], template_vars));
 
