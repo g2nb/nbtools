@@ -200,3 +200,29 @@
     margin: 0;
     margin-right: -50%;
 }
+
+.nbtools-dialog {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--jp-ui-inverse-font-color3);
+    z-index: 2;
+}
+
+.nbtools-dialog > .nbtools-panel {
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.nbtools-panel-cancel {
+    border: 1px solid var(--jp-border-color1);
+    padding: 6px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+}

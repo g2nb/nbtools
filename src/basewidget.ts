@@ -66,7 +66,7 @@ export class BaseWidgetView extends DOMWidgetView {
                                    <div class="nbtools-header">Widget Disconnected From Kernel</div>
                                    <div class="nbtools-body">
                                        <p>You need to run this cell before it can connect to the notebook kernel. Please click the Connect to Kernel button below.</p>
-                                       <div class="nbtools-connect"><button class="nbtools-connect">Connect to Kernel</button></div>
+                                       <div class="nbtools-connect nbtools-panel-button"><button class="nbtools-connect nbtools-panel-button">Connect to Kernel</button></div>
                                    </div>
                                </div>
                            </div>`;

@@ -152,12 +152,14 @@
     background-color: var(--jp-layout-color1);
 }
 
-div.nbtools-connect {
+div.nbtools-connect,
+div.nbtools-panel-button {
     text-align: center;
     margin-top: 10px;
 }
 
-button.nbtools-connect {
+button.nbtools-connect,
+button.nbtools-panel-button {
     background-color: var(--jp-layout-color4);
     color: var(--jp-ui-inverse-font-color0);
     border: 1px solid var(--jp-border-color1);

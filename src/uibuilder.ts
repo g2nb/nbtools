@@ -82,6 +82,18 @@ export class UIBuilderView extends BaseWidgetView {
         <div class="nbtools-buttons">
             <button class="nbtools-run" data-traitlet="run_label"></button>
         </div>`;
+    dialog:string = `<div class="nbtools-dialog">
+                           <div class="nbtools-panel">
+                               <div class="nbtools-header"></div>
+                               <div class="nbtools-body">
+                                   <p></p>
+                                   <div class="nbtools-panel-button">
+                                       <button class="nbtools-panel-cancel">Cancel</button>
+                                       <button class="nbtools-panel-button"></button>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>`;
 
     render() {
         super.render();
@@ -195,6 +207,24 @@ export class UIBuilderView extends BaseWidgetView {
         });
 
         return valid;
+    }
+
+    widget_dialog({title='', body = '', button_label = 'OK', callback = null}: any) {
+        this.element.appendChild(new DOMParser().parseFromString(this.dialog, "text/html")
+            .querySelector('body > :first-child') as HTMLElement);
+        const dialog = this.element.querySelector('.nbtools-dialog');
+        const header = dialog.querySelector('.nbtools-header') as HTMLElement;
+        const button = dialog.querySelector('button.nbtools-panel-button') as HTMLElement;
+        header.style.backgroundColor = this.model.get('color');
+        header.textContent = title;
+        dialog.querySelector('.nbtools-body > p').textContent = body;
+        dialog.querySelector('.nbtools-panel-cancel').addEventListener('click', () => dialog.remove());
+        button.textContent = button_label;
+        button.style.backgroundColor = this.model.get('color');
+        button.addEventListener('click', () => {
+            dialog.remove();
+            callback();
+        });
     }
 
     /**
@@ -321,7 +351,7 @@ export class UIBuilderView extends BaseWidgetView {
     _attach_callbacks() {
         // Handle widget events
         const widget_events = this.model.get('events');
-        UIBuilderView._attach_all_events(this.el, widget_events);
+        this._attach_all_events(this.el, widget_events);
 
         // Handle parameter IDs and parameter events
         const json_parameters = this.model.get('_parameters');
@@ -338,7 +368,7 @@ export class UIBuilderView extends BaseWidgetView {
 
             // Attach parameter events
             if (!!param_spec.events) {
-                UIBuilderView._attach_all_events(param_el, param_spec.events);
+                this._attach_all_events(param_el, param_spec.events);
             }
 
             // Resize footer, if necessary
@@ -609,7 +639,7 @@ export class UIBuilderView extends BaseWidgetView {
      * @param event_map
      * @private
      */
-    static _attach_all_events(element:HTMLElement, event_map:any) {
+    _attach_all_events(element:HTMLElement, event_map:any) {
         Object.keys(event_map).forEach((key) => {
             const str_func = event_map[key];
             const func = new Function(str_func) as EventListener;
