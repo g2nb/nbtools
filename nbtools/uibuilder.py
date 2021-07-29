@@ -3,7 +3,7 @@ import functools
 import warnings
 
 from IPython.core.display import display
-from traitlets import Unicode, List, Bool, Dict, Instance
+from traitlets import Unicode, List, Bool, Dict, Instance, observe
 from ipywidgets import widget_serialization, Output
 from ._frontend import module_name, module_version
 from .form import InteractiveForm
@@ -102,15 +102,20 @@ class UIBuilder(BaseWidget, NBTool):
     collapse = Bool(sync=True)
     events = Dict(sync=True)
     buttons = Dict(sync=True)
+    license = Dict(sync=True)
     display_header = Bool(True, sync=True)
     display_footer = Bool(True, sync=True)
     run_label = Unicode('Run', sync=True)
     busy = Bool(False, sync=True)
     form = Instance(InteractiveForm, (None, [])).tag(sync=True, **widget_serialization)
     output = Instance(Output, ()).tag(sync=True, **widget_serialization)
-    function_or_method = None
 
-    def __init__(self, function_or_method, upload_callback=None, **kwargs):
+    # Declare other properties
+    function_or_method = None
+    upload_callback = None
+    license_callback = None
+
+    def __init__(self, function_or_method, **kwargs):
         # Apply defaults based on function docstring/annotations
         self._apply_defaults(function_or_method)
 
@@ -126,7 +131,7 @@ class UIBuilder(BaseWidget, NBTool):
         if not self.parameters: self.parameters = self.parameters
 
         # Create the form and output child widgets
-        self.form = InteractiveForm(function_or_method, self.parameters, parent=self, upload_callback=upload_callback)
+        self.form = InteractiveForm(function_or_method, self.parameters, parent=self, upload_callback=self.upload_callback)
         self.output = self.form.out
 
         # Display the output underneath the UI Builder widget
@@ -159,6 +164,12 @@ class UIBuilder(BaseWidget, NBTool):
 
         # Merge the default parameter values with the custom overrides
         self._parameters = self._param_customs(defaults, value)
+
+    @observe('license')
+    def execute_license_callback(self, change):
+        new_model = change["new"]  # Get the new license model being saved
+        # If a callback is defined and the license['callback'] is True, make the callback
+        if 'callback' in new_model and new_model['callback'] and self.license_callback: self.license_callback()
 
     @staticmethod
     def _param_defaults(sig):

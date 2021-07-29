@@ -47,6 +47,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             collapse: true,
             events: {},
             buttons: {},
+            license: {},
             display_header: true,
             display_footer: true,
             busy: false,
@@ -117,6 +118,9 @@ export class UIBuilderView extends BaseWidgetView {
         // Attach custom buttons
         this.activate_custom_buttons();
 
+        // Display the license, if any
+        this.display_license();
+
         // Add the interactive form widget
         this.attach_child_widget('.nbtools-form', 'form');
 
@@ -154,6 +158,29 @@ export class UIBuilderView extends BaseWidgetView {
     output_var_displayed() {
         const output_var = this.model.get('_parameters')['output_var'];
         return !!(output_var && output_var['hide'] == false);
+    }
+
+    /**
+     * Displays a EULA to the user, who must agree before continuing.
+     *
+     * License should be a dict with the following keys:
+     *      text: The text of the license
+     *      title: The name of the license (optional)
+     *      callback: Whether the license has been agreed to (boolean)
+     */
+    display_license() {
+        const license = this.model.get('license');  // Get the license model
+        if (!license || !license['text']) return;   // If there is no license, skip
+
+        this.widget_dialog({title: license['title'] ||
+                'You must agree below to the following end-user license agreement',
+            body: license['text'],
+            button_label: 'Agree',
+            callback: () => {
+                license['callback'] = true;         // Set to true to trigger callback function
+                this.model.set('license', license);
+                this.model.save();
+            }});
     }
 
     activate_custom_buttons() {

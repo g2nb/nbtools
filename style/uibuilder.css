@@ -78,11 +78,8 @@
 .nbtools-input > div.widget-label:last-child {
     height: auto;
     min-height: 5px;
-}
-
-.nbtools-input > div.widget-label:last-child {
-    height: auto;
-    min-height: 5px;
+    max-width: 100%;
+    overflow: hidden !important;
 }
 
 .nbtools-input.missing {
@@ -213,11 +210,23 @@
 }
 
 .nbtools-dialog > .nbtools-panel {
+    height: auto;
     width: 50%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
+}
+
+.nbtools-dialog > .nbtools-panel > .nbtools-body {
+    height: calc(100% - 60px);
+}
+
+.nbtools-dialog > .nbtools-panel > .nbtools-body > p {
+    height: calc(100% - 30px);
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .nbtools-panel-cancel {

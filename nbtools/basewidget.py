@@ -34,8 +34,10 @@ class BaseWidget(DOMWidget):
         super(BaseWidget, self).__init__(**kwargs)
 
         # Assign keyword parameters to this object
+        recognized_keys = dir(self.__class__)
+        warnings.warn(RuntimeWarning(f'{recognized_keys}'))
         for key, value in kwargs.items():
-            if key not in self.keys and f'_{key}' not in self.keys:
+            if key not in recognized_keys and f'_{key}' not in recognized_keys:
                 warnings.warn(RuntimeWarning(f'Keyword parameter {key} not recognized'))
             setattr(self, key, value)
 
