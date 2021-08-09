@@ -273,7 +273,7 @@ export class UIBuilderView extends BaseWidgetView {
             const hidden = !!group['hidden'];  // Is the group collapsed by default?
 
             // Create and add the header
-            const header = this._create_group_header(group['name']);
+            const header = this._create_group_header(group['name'], hidden);
             const body = this._create_group_body(header, group['description'], hidden);
             form.prepend(body);
             form.prepend(header);
@@ -287,7 +287,7 @@ export class UIBuilderView extends BaseWidgetView {
         });
     }
 
-    _create_group_header(name: string|null) {
+    _create_group_header(name: string|null, hidden: boolean) {
         // Create the expand / collapse button
         const controls = document.createElement('controls');
         const button = document.createElement('button');
@@ -306,6 +306,9 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Apply the color
         header.style.backgroundColor = this.model.get('color');
+
+        // Hide the header is no name is given and not collapsed
+        if (!name && !hidden) header.style.display = 'none';
 
         // Return the container
         return header;
