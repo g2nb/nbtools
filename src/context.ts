@@ -303,14 +303,11 @@ class LabContext extends Context {
      */
     execute_code(notebook:any, code:string):void {
         const current = notebook as NotebookPanel;
-        if (current && current.context && current.context.sessionContext)
-            current.context.sessionContext.kernelChanged.connect(() => {
-                if (!current.context.sessionContext.session ||
-                    !current.context.sessionContext.session.kernel) return;  // Protect against null kernels
+        if (!current.context.sessionContext.session ||
+            !current.context.sessionContext.session.kernel) return;  // Protect against null kernels
 
-                // Import the default tools
-                current.context.sessionContext.session.kernel.requestExecute({code: code});
-            });
+        // Import the default tools
+        current.context.sessionContext.session.kernel.requestExecute({code: code});
     }
 
     /**
