@@ -18,6 +18,8 @@ export class BaseWidgetModel extends DOMWidgetModel {
     defaults() {
         return {
             ...super.defaults(),
+            _id: '',
+            origin: '',
             name: '',
             subtitle: '',
             description: '',

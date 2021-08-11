@@ -38,8 +38,6 @@ export class UIBuilderModel extends BaseWidgetModel {
             _view_module_version: UIBuilderModel.view_module_version,
             name: 'Python Function',
             description: '',
-            _id: '',
-            origin: '',
             _parameters: [],
             parameter_groups: [],
             function_import: '',

@@ -93,8 +93,6 @@ class UIBuilder(BaseWidget, NBTool):
 
     # Declare the Traitlet values for the widget
     output_var = Unicode(sync=True)
-    _id = Unicode(sync=True)
-    origin = Unicode(sync=True)
     _parameters = List(sync=True)
     parameter_groups = List(sync=True)
     function_import = Unicode(sync=True)  # Deprecated
