@@ -8,8 +8,7 @@
 ###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks
-# Built 02-06-2021
-FROM jupyter/scipy-notebook:016833b15ceb
+FROM jupyter/scipy-notebook:2021-08-16
 
 MAINTAINER Thorin Tabor <tmtabor@cloud.ucsd.edu>
 EXPOSE 8888
@@ -30,12 +29,12 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.0.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
+RUN conda install -c conda-forge jupyterlab=3.1.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
         mamba_gator jupyterlab-tour jupyterlab-spellchecker && \
     conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend jupyterlab-git==0.30.0b2 py4cytoscape ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape
+    pip install plotnine bioblend jupyterlab-git py4cytoscape ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape
 
 #############################################
 ##  $NB_USER                               ##

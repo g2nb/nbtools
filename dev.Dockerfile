@@ -9,8 +9,7 @@
 ###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks
-# Built 02-06-2021
-FROM jupyter/scipy-notebook:016833b15ceb
+FROM jupyter/scipy-notebook:2021-08-16
 
 MAINTAINER Thorin Tabor <tmtabor@cloud.ucsd.edu>
 EXPOSE 8888
@@ -31,8 +30,8 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.0.7 voila && \
-    pip install plotnine bioblend plotly jupyterlab-git==0.30.0b2
+RUN conda install -c conda-forge jupyterlab=3.1.7 voila && \
+    pip install plotnine bioblend plotly jupyterlab-git
 
 #############################################
 ##  $NB_USER                               ##
