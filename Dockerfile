@@ -59,9 +59,9 @@ RUN jupyter labextension install plotlywidget --no-build && \
 #    pip install --pre genepattern-notebook==21.4b1 && \
 #    pip install --pre igv-jupyter && \
 #    pip install --pre nbtools==21.2.0b1 --force-reinstall
-RUN pip install --pre nbtools==21.2.0b1 && \
-    pip install --pre genepattern-notebook==21.4b1 && \
-    pip install --pre igv-jupyter
+RUN pip install --pre nbtools && \
+    pip install --pre genepattern-notebook && \
+    pip install igv-jupyter
 
 RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
     cd genepattern-theme-extension && \
