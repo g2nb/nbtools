@@ -102,6 +102,7 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Attach the extra menu options
         this.attach_menu_options();
+        this.model.on('change:extra_menu_items', this.attach_menu_options, this);
 
         // Allow menus to overflow the container
         this.float_menus();
@@ -310,12 +311,15 @@ export class BaseWidgetView extends DOMWidgetView {
     }
 
     attach_menu_options() {
-        const menu_items = this.model.get('extra_menu_items');
+        // Clear any existing menu
+        const menu = this.element.querySelector('.nbtools-menu') as HTMLUListElement;
+        menu.querySelectorAll('.nbtools-menu-extra').forEach((e) => e.remove());
 
+        const menu_items = this.model.get('extra_menu_items');
         Object.keys(menu_items).forEach((name) => {
             const item = menu_items[name] as any;
             const callback = this.create_menu_callback(item);
-            this.add_menu_item(name,  callback);
+            this.add_menu_item(name,  callback, 'nbtools-menu-extra');
         });
     }
 
