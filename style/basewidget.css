@@ -19,6 +19,11 @@
     padding-right: 10px;
 }
 
+.nbtools-logo-hidden {
+    visibility: hidden;
+    width: 0;
+}
+
 .nbtools-title {
     margin: 0;
     line-height: 25px;

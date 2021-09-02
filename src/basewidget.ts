@@ -155,6 +155,7 @@ export class BaseWidgetView extends DOMWidgetView {
     set_logo() {
         // Get custom logo
         let logo = this.model.get('logo');
+        const logo_element = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
 
         // Fall back to default logo if no custom logo is set
         if (!logo) {
@@ -163,8 +164,11 @@ export class BaseWidgetView extends DOMWidgetView {
             this.model.save();
         }
 
-        // Display the logo on the widget
-        const logo_element = this.element.querySelector("img.nbtools-logo") as HTMLImageElement;
+        // Special case for "None" logo
+        if (logo.toLowerCase() === "none") logo_element.classList.add('nbtools-logo-hidden');
+        else logo_element.classList.remove('nbtools-logo-hidden');
+
+        // Set the logo
         logo_element.src = logo;
     }
 
