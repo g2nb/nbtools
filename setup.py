@@ -6,7 +6,7 @@ from jupyter_packaging import (
     install_npm,
     ensure_targets,
     combine_commands,
-    skip_if_exists
+    skip_if_exists,
 )
 import setuptools
 
@@ -43,7 +43,7 @@ data_files_spec = [
 
 cmdclass = create_cmdclass("jsdeps",
     package_data_spec=package_data_spec,
-    data_files_spec=data_files_spec
+    data_files_spec=data_files_spec,
 )
 
 js_command = combine_commands(
