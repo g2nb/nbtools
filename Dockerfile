@@ -29,10 +29,10 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.1.7 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
+RUN conda install -c conda-forge jupyterlab=3.1 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
-        mamba_gator jupyterlab-tour jupyterlab-spellchecker && \
+        mamba_gator jupyterlab-tour jupyterlab-spellchecker jupyter-archive && \
     conda install plotly openpyxl sphinx && \
     pip install plotnine bioblend jupyterlab-git py4cytoscape ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape
 
@@ -44,28 +44,37 @@ RUN conda install -c conda-forge jupyterlab=3.1.7 voila beautifulsoup4 blas boke
 RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install jupyterlab-plotly --no-build && \
     jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
-#    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
-    jupyter labextension install @aquirdturtle/collapsible_headings  --no-build && \
-#    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
-#    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
+    jupyter labextension install @aquirdturtle/collapsible_headings  && \
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
 
 #############################################
 ##  $NB_USER                               ##
-##      Build and install nbtools          ##
+##      Install nbtools                    ##
 #############################################
 
-#RUN pip install ccalnoir cuzcatlan ndex2 hca qgrid ipycytoscape beakerx #  && \
-#    pip install --pre genepattern-notebook==21.4b1 && \
-#    pip install --pre igv-jupyter && \
-#    pip install --pre nbtools==21.2.0b1 --force-reinstall
-RUN pip install --pre nbtools && \
-    pip install --pre genepattern-notebook && \
-    pip install igv-jupyter
+RUN pip install nbtools==21.9.0b1
+
+#############################################
+##  $NB_USER                               ##
+##      Install genepattern                ##
+#############################################
+
+RUN pip install genepattern-notebook==21.9.0b1
+
+#############################################
+##  $NB_USER                               ##
+##      Install nbtools igv-jupyter        ##
+#############################################
+
+RUN pip install igv-jupyter
+
+#############################################
+##  $NB_USER                               ##
+##      Install genepattern theme          ##
+#############################################
 
 RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
     cd genepattern-theme-extension && \
-    npm install && \
     jupyter labextension install . && \
     jupyter lab build
 
@@ -74,7 +83,7 @@ RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && 
 ##      Set default configuration          ##
 #############################################
 
-RUN printf '{ "@jupyterlab/apputils-extension:themes": { "theme": "GenePattern" } }' >> /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN printf '{ "@jupyterlab/apputils-extension:themes": { "theme": "GenePattern" }, "@jupyter-widgets/jupyterlab-manager:plugin": { "saveState": true } }' >> /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##

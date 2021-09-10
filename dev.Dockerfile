@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y npm
 USER $NB_USER
 
 RUN conda install -c conda-forge jupyterlab=3.1.7 voila && \
-    pip install plotnine bioblend plotly jupyterlab-git
+    pip install plotnine bioblend plotly jupyterlab-git jupyter-archive
 
 #############################################
 ##  $NB_USER                               ##
@@ -58,11 +58,17 @@ RUN cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/o
 ##      Clone and install genepattern      ##
 #############################################
 
-# Install genepattern-notebook for lab
 RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
     cd genepattern-notebook && \
     git checkout lab && \
     pip install .
+
+#############################################
+##  $NB_USER                               ##
+##      Install nbtools igv-jupyter        ##
+#############################################
+
+RUN pip install igv-jupyter
 
 #############################################
 ##  $NB_USER                               ##
@@ -71,10 +77,7 @@ RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
 
 RUN jupyter labextension install plotlywidget --no-build && \
     jupyter labextension install jupyterlab-plotly --no-build && \
-#    jupyter labextension install jupyterlab-chart-editor --no-build && \  # JupyterLab 3 not yet supported
     jupyter labextension install @aquirdturtle/collapsible_headings && \
-#    jupyter labextension install jupyter-scribe --no-build && \  # JupyterLab 3 not yet supported
-#    jupyter labextension install jupyterlab-tabular-data-editor --no-build && \  # JupyterLab 3 not yet supported
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
 
 #############################################
