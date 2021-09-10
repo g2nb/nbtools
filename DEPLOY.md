@@ -1,7 +1,7 @@
 # First Time
 
-1. Make sure you have twine installed:
-> pip install twine
+1. Make sure you have twine and build installed:
+> pip install twine build
 2. Make sure you have added your [PyPI credentials](https://docs.python.org/3.3/distutils/packageindex.html#pypirc) to `~/.pypirc`
 3. Make sure you have anaconda-client installed:
 > conda install anaconda-client
@@ -10,27 +10,36 @@
 
 # How to Deploy to PyPi Test
 
-1. Make sure setup.py and nbtools.__version__ are updated.
-2. Navigate to the correct directory:
+1. Make sure that the version number is updated in `package.json`.
+2. Navigate to the directory where the repository was checked out:
 > cd nbtools
-3. Upload the files by running:
-> python setup.py sdist bdist_wheel; twine upload -r pypitest dist/\*.tar.gz; twine upload -r pypitest dist/\*.whl
-4. If the upload fails go to [https://testpypi.python.org/pypi](https://testpypi.python.org/pypi) and manually upload dist/nbtools-*.tar.gz.
-5. Test the deploy by uninstalling and reinstalling the package: 
-> sudo pip uninstall nbtools;
-> sudo pip install -i https://testpypi.python.org/pypi nbtools
+3. Remove any residual build artifacts from the last time nbtools was built. This step is not necessary the first time the package is built.
+> rm dist/\*.tar.gz; rm dist/\*.whl
+4. Build the sdist and wheel artifacts.
+> python -m build .
+5. Upload the files by running:
+> twine upload -r pypitest dist/\*.tar.gz; twine upload -r pypitest dist/\*.whl
+6. If the upload fails go to [https://testpypi.python.org/pypi](https://testpypi.python.org/pypi) and manually upload dist/nbtools-*.tar.gz.
+7. Test the deploy by uninstalling and reinstalling the package: 
+> pip uninstall nbtools;
+> pip install -i https://test.pypi.org/simple/ nbtools
 
 # How to Deploy to Production PyPi
 
 1. First deploy to test and ensure everything is working correctly (see above).
-2. Navigate to the correct directory:
+2. Make sure that the version number is updated in `package.json`.
+3. Navigate to the directory where the repository was checked out:
 > cd nbtools
-3. Upload the files by running:
-> python setup.py sdist bdist_wheel; twine upload dist/\*.tar.gz; twine upload dist/\*.whl
-4. If the upload fails go to [https://pypi.python.org/pypi](https://pypi.python.org/pypi) and manually upload dist/nbtools-*.tar.gz.
-5. Test the deploy by uninstalling and reinstalling the package: 
-> sudo pip uninstall nbtools;
-> sudo pip install nbtools
+4. Remove any residual build artifacts from the last time nbtools was built. This step is not necessary the first time the package is built.
+> rm dist/\*.tar.gz; rm dist/\*.whl
+5. Build the sdist and wheel artifacts.
+> python -m build .
+6. Upload the files by running:
+> twine upload dist/\*.tar.gz; twine upload dist/\*.whl
+7. If the upload fails go to [https://testpypi.python.org/pypi](https://testpypi.python.org/pypi) and manually upload dist/nbtools-*.tar.gz.
+8. Test the deploy by uninstalling and reinstalling the package: 
+> pip uninstall nbtools;
+> pip install nbtools
 
 # How to Deploy to Conda
 
