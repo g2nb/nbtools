@@ -2,6 +2,7 @@ include LICENSE.txt
 include README.md
 include pyproject.toml
 include jupyter-config/nbtools.json
+include schema/plugin.json
 
 include package.json
 include install.json

@@ -1,14 +1,9 @@
 import json
+import logging
+import setuptools
+import sys
 from pathlib import Path
 
-from jupyter_packaging import (
-    create_cmdclass,
-    install_npm,
-    ensure_targets,
-    combine_commands,
-    skip_if_exists,
-)
-import setuptools
 
 HERE = Path(__file__).parent.resolve()
 
@@ -41,21 +36,10 @@ data_files_spec = [
     ("etc/jupyter/nbconfig/notebook.d", config_path, "nbtools.json"),
 ]
 
-cmdclass = create_cmdclass("jsdeps",
-    package_data_spec=package_data_spec,
-    data_files_spec=data_files_spec,
-)
-
-js_command = combine_commands(
-    install_npm(HERE, build_cmd="build:all", npm=["jlpm"]),
-    ensure_targets(jstargets),
-)
-
-is_repo = (HERE / ".git").exists()
-if is_repo:
-    cmdclass["jsdeps"] = js_command
-else:
-    cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
+ensured_targets = [
+    str(lab_path / "package.json"),
+    str(lab_path / "static/style.js")
+]
 
 long_description = (HERE / "README.md").read_text()
 
@@ -72,7 +56,6 @@ setup_args = dict(
     license=pkg_json["license"],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab~=3.1",
@@ -97,6 +80,22 @@ setup_args = dict(
     ],
 )
 
+try:  # Import here and wrap in try block in case jupyter_packaging isn't installed on dev machine
+    from jupyter_packaging import (
+        wrap_installers,
+        npm_builder,
+        get_data_files
+    )
+    post_develop = npm_builder(
+        build_cmd="install:extension", source_dir="src", build_dir=lab_path
+    )
+    setup_args["cmdclass"] = wrap_installers(post_develop=post_develop, ensured_targets=ensured_targets)
+    setup_args["data_files"] = get_data_files(data_files_spec)
+except ImportError as e:
+    logging.basicConfig(format="%(levelname)s: %(message)s")
+    logging.warning("Build tool `jupyter-packaging` is missing. Install it with pip or conda.")
+    if not ("--name" in sys.argv or "--version" in sys.argv):
+        raise e
 
 if __name__ == "__main__":
     setuptools.setup(**setup_args)

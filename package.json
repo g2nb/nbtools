@@ -45,7 +45,7 @@
     "clean:nbextension": "rimraf nbtools/nbextension/static/index.js",
     "eslint": "eslint . --ext .ts,.tsx --fix",
     "eslint:check": "eslint . --ext .ts,.tsx",
-    "install:extension": "jupyter labextension develop --overwrite .",
+    "install:extension": "jlpm run build",
     "prepack": "jlpm run build:lib",
     "prepare": "jlpm run clean && jlpm run build:all",
     "test": "jlpm run test:firefox",

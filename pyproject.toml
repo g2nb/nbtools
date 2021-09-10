@@ -1,3 +1,17 @@
 [build-system]
 requires = ["ipywidgets>=7.0.0", "jupyter_packaging~=0.10.0,<2", "jupyterlab~=3.1", "setuptools>=58.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+build-backend = "jupyter_packaging.build_api"
+
+[tool.jupyter-packaging.options]
+skip-if-exists = ["nbtools/labextension/static/style.js"]
+ensured-targets = ["nbtools/labextension/static/style.js", "nbtools/labextension/package.json"]
+
+[tool.jupyter-packaging.builder]
+factory = "jupyter_packaging.npm_builder"
+
+[tool.jupyter-packaging.build-args]
+build_cmd = "build:all"
+npm = ["jlpm"]
+
+[tool.check-manifest]
+ignore = ["nbtools/labextension/**", "yarn.lock", ".*", "package-lock.json"]
