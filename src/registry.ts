@@ -37,9 +37,9 @@ export class ToolRegistry {
     }
 
     import_default_tools() {
-         ContextManager.context().kernel_changed(this.current, () => {
-                ContextManager.context().execute_code(this.current, 'from nbtools import import_defaults\nimport_defaults()');
-         });
+        ContextManager.context().kernel_changed(this.current, () => {
+            ContextManager.context().execute_code(this.current, 'from nbtools import import_defaults\nimport_defaults()');
+        });
     }
 
     /**

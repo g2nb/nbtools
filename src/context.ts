@@ -567,7 +567,12 @@ class EmbedContext extends Context {
      * @param current
      * @param callback
      */
-    kernel_changed(current:any, callback:Function):void {}
+    kernel_changed(current:any, callback:Function):void {
+        // FIXME: Global Jupyter variable may not be accessible in newer version of voila
+        (window as any).Jupyter.notebook.events.on('kernel_ready.Kernel', () => {
+            callback((window as any).Jupyter.notebook);
+        });
+    }
 
     /**
      * Send the provided code to the kernel
@@ -576,6 +581,7 @@ class EmbedContext extends Context {
      * @param code
      */
     execute_code(notebook:any, code:string):void {
+        // FIXME: Global Jupyter variable may not be accessible in newer version of voila
         (window as any).Jupyter.notebook.kernel.execute(code)
     }
 
@@ -587,6 +593,7 @@ class EmbedContext extends Context {
      * @param callback
      */
     create_comm(current:any, name:string, callback:Function):any {
+        // FIXME: Global Jupyter variable may not be accessible in newer version of voila
         let comm = (window as any).Jupyter.notebook.kernel.comm_manager.new_comm(name);
         comm.on_msg(callback);
         return comm;
