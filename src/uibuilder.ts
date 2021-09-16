@@ -129,6 +129,9 @@ export class UIBuilderView extends BaseWidgetView {
 
             // Create parameter groups
             this._init_parameter_groups();
+
+            // Attach the Advanced Options gear option, if necessary
+            if (this.has_advanced()) this.add_menu_item('Advanced Options', () => this.toggle_advanced());
         });
     }
 
@@ -268,11 +271,12 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Iterate over each group, create headers and add parameters
         groups.reverse().forEach((group: any) => {
-            const hidden = !!group['hidden'];  // Is the group collapsed by default?
+            const hidden = !!group['hidden'];       // Is the group collapsed by default?
+            const advanced = !!group['advanced'];   // Toggle on with advanced optionbs call?
 
             // Create and add the header
-            const header = this._create_group_header(group['name'], hidden);
-            const body = this._create_group_body(header, group['description'], hidden);
+            const header = this._create_group_header(group['name'], hidden, advanced);
+            const body = this._create_group_body(header, group['description'], hidden, advanced);
             form.prepend(body);
             form.prepend(header);
 
@@ -285,7 +289,7 @@ export class UIBuilderView extends BaseWidgetView {
         });
     }
 
-    _create_group_header(name: string|null, hidden: boolean) {
+    _create_group_header(name: string|null, hidden: boolean, advanced: boolean) {
         // Create the expand / collapse button
         const controls = document.createElement('controls');
         const button = document.createElement('button');
@@ -299,23 +303,25 @@ export class UIBuilderView extends BaseWidgetView {
         // Create the header
         const header = document.createElement('div');
         header.classList.add('nbtools-header', 'nbtools-group-header');
+        if (advanced) header.classList.add('nbtools-advanced');
         header.append(name || '');
         header.append(controls);
 
         // Apply the color
         header.style.backgroundColor = this.model.get('color');
 
-        // Hide the header is no name is given and not collapsed
+        // Hide the header if no name is given and not collapsed
         if (!name && !hidden) header.style.display = 'none';
 
         // Return the container
         return header;
     }
 
-    _create_group_body(header:HTMLElement, description:string|null, hidden?: boolean) {
+    _create_group_body(header:HTMLElement, description:string|null, hidden?: boolean, advanced?: boolean) {
         // Create the container
         const box = document.createElement('div');
         box.classList.add('nbtools-group');
+        if (advanced) box.classList.add('nbtools-advanced');
 
         // Create the description
         if (description) {
@@ -708,6 +714,18 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Save the model
         model.save_changes();
+    }
+
+    has_advanced() {
+        return !!this.element.querySelector('.nbtools-advanced')
+    }
+
+    toggle_advanced() {
+        (this.element.querySelectorAll('.nbtools-advanced') as NodeListOf<HTMLElement>).forEach((e) => {
+            const hidden = e.style.display === "" || e.style.display === "none";
+            if (hidden) e.style.display = "block";
+            else        e.style.display = "none";
+        });
     }
 
     reset_parameters() {
