@@ -25,7 +25,7 @@
 .nbtools-run {
     z-index: 1;
     background-color: var(--jp-layout-color4);
-    color: var(--jp-ui-inverse-font-color0);
+    color: #FFFFFF;
     border: 1px solid var(--jp-border-color1);
     padding: 6px 12px;
     font-size: 0.9em;
@@ -44,6 +44,7 @@
     padding: 6px 12px;
     font-size: 0.9em;
     cursor: pointer;
+    color: #FFFFFF;
 }
 
 .nbtools-buttons > button:hover,
@@ -98,6 +99,14 @@
     outline: currentcolor none medium !important;
     height: var(--jp-widgets-inline-height);
     line-height: var(--jp-widgets-inline-height);
+}
+
+.nbtools .widget-dropdown > select {
+  width: 100%;
+}
+
+.nbtools .widget-upload {
+  margin-right: 2px;
 }
 
 .nbtools-fileinput .widget-vbox,

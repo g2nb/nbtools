@@ -10,7 +10,7 @@
 
 .nbtools .nbtools-header {
     background-color: var(--jp-layout-color4);
-    color: var(--jp-ui-inverse-font-color0);
+    color: #FFFFFF;
     padding: 7px;
 }
 
@@ -166,7 +166,7 @@ div.nbtools-panel-button {
 button.nbtools-connect,
 button.nbtools-panel-button {
     background-color: var(--jp-layout-color4);
-    color: var(--jp-ui-inverse-font-color0);
+    color: #FFFFFF;
     border: 1px solid var(--jp-border-color1);
     padding: 6px 12px;
     font-size: 0.9em;
