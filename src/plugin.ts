@@ -25,7 +25,7 @@ const NAMESPACE = 'nbtools';
  */
 const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = ({
     id: EXTENSION_ID,
-    // provides: IToolRegistry,
+    provides: IToolRegistry,
     requires: [IJupyterWidgetRegistry],
     optional: [IMainMenu, ILayoutRestorer, ILabShell, INotebookTracker],
     activate: activate_widget_extension,

@@ -2,10 +2,13 @@ import { Widget } from "@lumino/widgets";
 import { NotebookPanel } from "@jupyterlab/notebook";
 import { send_notification } from "./utils";
 import { ContextManager } from "./context";
+import { Token } from "@lumino/coreutils";
 
-export interface IToolRegistry extends ToolRegistry {}
+export const IToolRegistry = new Token<IToolRegistry>("nbtools");
 
-export class ToolRegistry {
+export interface IToolRegistry {}
+
+export class ToolRegistry implements ToolRegistry {
     public current:Widget|null = null;              // Reference to the currently selected notebook or other widget
     private _update_callbacks:Array<Function> = []; // Functions to call when an update happens
     kernel_tool_cache:any = {};                     // Keep a cache of kernels to registered tools
