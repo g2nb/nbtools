@@ -187,6 +187,7 @@ export class UIOutputView extends BaseWidgetView {
         const template_vars = {
             'widget_name': widget_name,
             'file_name': file_name,
+            'href': href,
             'type': type
         };
         Object.keys(menu_items).forEach((name) => {

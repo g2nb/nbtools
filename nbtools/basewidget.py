@@ -1,6 +1,7 @@
 from ipywidgets import DOMWidget
 from traitlets import Bool, Unicode, Dict
 from ._frontend import module_name, module_version
+import json
 import warnings
 
 
@@ -29,8 +30,15 @@ class BaseWidget(DOMWidget):
         """Handle messages sent from the client-side"""
         if content.get('event', '') == 'method':  # Handle method call events
             method_name = content.get('method', '')
-            if method_name and hasattr(self, method_name):
+            params = content.get('params', None)
+            if method_name and hasattr(self, method_name) and not params:
                 getattr(self, method_name)()
+            elif method_name and hasattr(self, method_name) and params:
+                try:
+                    kwargs = json.loads(params)
+                    getattr(self, method_name)(**kwargs)
+                except json.JSONDecodeError:
+                    pass
 
     def __init__(self, **kwargs):
         super(BaseWidget, self).__init__(**kwargs)

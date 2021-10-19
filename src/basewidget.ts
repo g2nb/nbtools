@@ -307,7 +307,10 @@ export class BaseWidgetView extends DOMWidgetView {
 
         // Create callback for method event type
         else if (item['action'] === 'method') return () => {
-            this.send({ event: 'method', method: process_template(item['code'], template_vars) });
+            if (!item['params'])
+                this.send({ event: 'method', method: process_template(item['code'], template_vars) });
+            else
+                this.send({ event: 'method', method: process_template(item['code'], template_vars), params: process_template(item['params'], template_vars) });
         };
 
         // Create callback for custom event type
