@@ -101,7 +101,8 @@
     line-height: var(--jp-widgets-inline-height);
 }
 
-.nbtools .widget-dropdown > select {
+.nbtools .widget-dropdown > select,
+.nbtools .widget-dropdown > input {
   width: 100%;
 }
 
@@ -135,6 +136,7 @@
 .nbtools-dropdown {
     position: relative;
     display: inline-block;
+    width: 100%;
 }
 
 .nbtools-dropdown::before{
