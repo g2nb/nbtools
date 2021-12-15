@@ -372,10 +372,7 @@ define("nbtools/file", ["base/js/namespace",
             // Transform File objects to strings
             const displays = this._valuesToDisplay(files);
 
-            if (this._needRepoWarning(displays)) {
-                this._displayFileWarning("Files uploaded directly to the Notebook Repository workspace are not accessible to GenePattern jobs. Please remove the file and upload it using the Upload button on this widget.");
-            }
-            else if (this._needTypeWarning(displays)) {
+            if (this._needTypeWarning(displays)) {
                 this._displayFileWarning("File may not be an acceptable format. This input expects " + this._kindsListString() + ".");
             }
             else { this._hideWarning(); }
