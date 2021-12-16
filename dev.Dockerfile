@@ -54,7 +54,7 @@ RUN jupyter labextension install plotlywidget --no-build && \
 
 RUN git clone https://github.com/genepattern/nbtools.git && \
     cd nbtools && \
-    git checkout lab
+    git checkout lab # latest
 
 #############################################
 ##  $NB_USER                               ##
@@ -103,6 +103,23 @@ RUN pip install igv-jupyter
 RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
     cd genepattern-theme-extension && \
     jupyter labextension install . && \
+    jupyter lab build
+
+#############################################
+##  $NB_USER                               ##
+##      Install GalaxyLab                  ##
+#############################################
+
+RUN npm install -g yarn && \
+    npm install -g yalc && \
+    git clone https://github.com/jaidevjoshi83/galaxylab.git && \
+    # The next line is a workaround for a bug where yalc doesn't play nicely with docker
+    cd galaxylab &&  mkdir js/.yalc && mkdir js/.yalc/\@genepattern && cp -r ../nbtools js/.yalc/\@genepattern/ && \
+    pip install -e . && \
+    jupyter nbextension install --py --symlink --overwrite --sys-prefix galaxylab && \
+    jupyter nbextension enable --py --sys-prefix galaxylab && cd .. && \
+    git clone -b  build_function https://github.com/jaidevjoshi83/bioblend.git && \
+    cd bioblend && pip install . && cd .. && \
     jupyter lab build
 
 #############################################
