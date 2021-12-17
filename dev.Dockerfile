@@ -115,7 +115,7 @@ RUN npm install -g yarn && \
     git clone https://github.com/jaidevjoshi83/galaxylab.git && \
     # The next line is a workaround for a bug where yalc doesn't play nicely with docker
     cd galaxylab &&  mkdir js/.yalc && mkdir js/.yalc/\@genepattern && cp -r ../nbtools js/.yalc/\@genepattern/ && \
-    pip install -e . && \
+    pip install . && \
     jupyter nbextension install --py --symlink --overwrite --sys-prefix galaxylab && \
     jupyter nbextension enable --py --sys-prefix galaxylab && cd .. && \
     git clone -b  build_function https://github.com/jaidevjoshi83/bioblend.git && \
