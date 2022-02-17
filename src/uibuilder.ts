@@ -272,7 +272,7 @@ export class UIBuilderView extends BaseWidgetView {
         // Iterate over each group, create headers and add parameters
         groups.reverse().forEach((group: any) => {
             const hidden = !!group['hidden'];       // Is the group collapsed by default?
-            const advanced = !!group['advanced'];   // Toggle on with advanced optionbs call?
+            const advanced = !!group['advanced'];   // Toggle on with advanced options call?
 
             // Create and add the header
             const header = this._create_group_header(group['name'], hidden, advanced);
@@ -722,9 +722,9 @@ export class UIBuilderView extends BaseWidgetView {
 
     toggle_advanced() {
         (this.element.querySelectorAll('.nbtools-advanced') as NodeListOf<HTMLElement>).forEach((e) => {
-            const hidden = e.style.display === "" || e.style.display === "none";
-            if (hidden) e.style.display = "block";
-            else        e.style.display = "none";
+            const hidden = !e.classList.contains('nbtools-advanced-show');
+            if (hidden) e.classList.add('nbtools-advanced-show');
+            else        e.classList.remove('nbtools-advanced-show');
         });
     }
 

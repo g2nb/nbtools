@@ -185,6 +185,10 @@
     display: none;
 }
 
+.nbtools-advanced.nbtools-advanced-show {
+    display: block;
+}
+
 .nbtools-busy {
     position: absolute;
     right: 0;
