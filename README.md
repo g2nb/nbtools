@@ -52,8 +52,8 @@ cd nbtools
 # Install the nbtools JupyterLab prototype
 pip install -e .
 jupyter labextension develop . --overwrite
-jupyter nbextension install --py nbtools --symlink
-jupyter nbextension enable --py nbtools --symlink
+jupyter nbextension install --py nbtools --symlink --sys-prefix
+jupyter nbextension enable --py nbtools --sys-prefix
 ```
 
 

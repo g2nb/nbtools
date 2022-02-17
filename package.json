@@ -76,7 +76,7 @@
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
     "backbone": "^1.2.3",
-    "css-loader": "^5.0.2",
+    "css-loader": "^5.2.7",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.1.4",
