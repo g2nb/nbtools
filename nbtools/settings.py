@@ -3,6 +3,7 @@ import json
 import logging
 import jupyter_core.paths
 from IPython import get_ipython
+from .tool_manager import ToolManager
 
 
 def load_settings():
@@ -30,6 +31,7 @@ def load_settings():
 
 
 def import_defaults():
+    ToolManager.instance()  # Lazily initialize, if not already done
     settings = load_settings()
     for module in settings['load']:
         if module == 'nbtools':  # Special case so that nbtools import detection works
