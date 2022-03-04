@@ -559,36 +559,46 @@ export class UIBuilderView extends BaseWidgetView {
             this._attach_kinds(attach_point);
             this._attach_name(attach_point);
             attach_point.addEventListener("click", (event:Event) => {
-                const target = event.target as HTMLElement;                                     // Get click target
-                const element = target.closest('.nbtools-menu-attached') || target;    // Get parent widget
-                const view = (element as any).widget;                                           // Get widget view
-                const sendto = !element.classList.contains('nbtools-nosendto');                 // Send if sendto enabled
+                // Get all compatible outputs and build display -> value map
+                const display_value_map = this.build_display_map(attach_point);
+                if (display_value_map === null) return;  // No view found, return
 
-                if (view) {
-                    const model = view.model;  // Get the model from the view
+                // Update and attach the menu
+                const target = attach_point.querySelector('input, select');
+                this.attach_combobox_menu(target, display_value_map);
 
-                    // Get the list of compatible kinds
-                    const kinds = model.get('kinds') || ['text'];
-
-                    // Get all compatible outputs and build display -> value map
-                    const display_value_map = {};
-                    this._add_default_choices(display_value_map, model);
-                    if (sendto) this._add_output_files(display_value_map, target, kinds);
-                    if (sendto) this._add_markdown_files(display_value_map, target, kinds);
-                    if (sendto) this._add_markdown_text(display_value_map, target, kinds);
-
-                    // Update and attach the menu
-                    this.attach_combobox_menu(target, display_value_map);
-
-                    // Attach the chevron to the input... or not
-                    if (Object.keys(display_value_map).length > 0) attach_point.classList.add('nbtools-dropdown');
-                    else attach_point.classList.remove('nbtools-dropdown');
-                }
+                // Attach the chevron to the input... or not
+                this.update_chevron(attach_point, display_value_map);
             });
 
             // Initial menu attachment
-            // attach_point.dispatchEvent(new Event('click'));
+            this.update_chevron(attach_point);
         });
+    }
+
+    build_display_map(attach_point:any):any {
+        const view = attach_point.widget;                                           // Get widget view or abort
+        if (!view) return null;
+
+        const model = attach_point.widget.model;                                    // Get the model from the view
+        const sendto = !attach_point.classList.contains('nbtools-nosendto');        // Send if sendto enabled
+        const kinds = model.get('kinds') || ['text'];                               // Get the list of compatible kinds
+
+        // Build the map
+        const display_value_map = {};
+        this._add_default_choices(display_value_map, model);
+        if (sendto) this._add_output_files(display_value_map, attach_point, kinds);
+        if (sendto) this._add_markdown_files(display_value_map, attach_point, kinds);
+        if (sendto) this._add_markdown_text(display_value_map, attach_point, kinds);
+
+        return display_value_map;
+    }
+
+    update_chevron(attach_point:any, display_value_map:any=null) {
+        if (!display_value_map) display_value_map = this.build_display_map(attach_point)
+
+        if (Object.keys(display_value_map).length > 0) attach_point.classList.add('nbtools-dropdown');
+        else attach_point.classList.remove('nbtools-dropdown');
     }
 
     toggle_file_menu(link:HTMLElement, display_value_map:any) {
