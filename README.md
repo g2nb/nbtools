@@ -1,4 +1,4 @@
-[![Binder](https://mybinder.org/v2/gh/genepattern/nbtools/master?urlpath=notebooks/doc/UI%20Builder%20Tutorial.ipynb)
+[![Binder](http://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/g2nb/nbtools/master?urlpath=notebooks/doc/UI%20Builder%20Tutorial.ipynb)
 
 # nbtools
 **nbtools** is a package for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. The package provides:
@@ -8,10 +8,10 @@
 * Flexible theming and APIs to extend the nbtools functionality.
 * A WYSIWYG editor for markdown cells (provided as part of the accompanying `juptyter-wyswyg` package).
 
-**nbtools** was developed as part of the [GenePattern Notebook](http://genepattern-notebook.org) environment. This environment also serves as an example of how nbtools can be extended and applied to a specific domain: in its case, bioinformatics.
+**nbtools** was developed as part of the [g2nb project](https://github.com/g2nb). This project also serves as an example of how nbtools can be extended and applied to a specific domain: in its case, bioinformatics.
 
 ### **Looking for JupyterLab support?**
-**JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/genepattern/nbtools/tree/lab)**
+**JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/g2nb/nbtools/tree/lab)**
 
 ## Installation
 
@@ -21,7 +21,7 @@
 
 or
 
-> conda install -c genepattern nbtools
+> conda install -c g2nb nbtools
 
 If using Jupyter Notebook version <= 5.2, you will need to execute additional commands to install and enable the nbextension. This is not necessary in Jupyter 5.3+.
 
