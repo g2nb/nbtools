@@ -72,7 +72,7 @@ export function extract_file_name(path:string) {
  * @returns {any}
  */
 export function extract_file_type(path:string) {
-    return path.split('.').pop();
+    return path.split('.').pop().trim();
 }
 
 /**

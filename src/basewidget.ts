@@ -5,6 +5,7 @@ import { DOMWidgetModel, DOMWidgetView, ISerializers, reject, WidgetView } from 
 import { MODULE_NAME, MODULE_VERSION } from "./version";
 import { Toolbox } from "./toolbox";
 
+// noinspection JSAnnotator
 export class BaseWidgetModel extends DOMWidgetModel {
     static model_name = 'BaseWidgetModel';
     static model_module = MODULE_NAME;
@@ -34,6 +35,7 @@ export class BaseWidgetModel extends DOMWidgetModel {
 }
 
 
+// noinspection JSAnnotator
 export class BaseWidgetView extends DOMWidgetView {
     dom_class = '';
     element:HTMLElement = document.createElement('div');

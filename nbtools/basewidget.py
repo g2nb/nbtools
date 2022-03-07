@@ -15,7 +15,7 @@ class BaseWidget(DOMWidget):
     _view_module_version = Unicode(module_version).tag(sync=True)
 
     _id = Unicode(sync=True)
-    origin = Unicode(sync=True)
+    origin = Unicode('Notebook').tag(sync=True)
     name = Unicode('').tag(sync=True)
     subtitle = Unicode('').tag(sync=True)
     description = Unicode('').tag(sync=True)

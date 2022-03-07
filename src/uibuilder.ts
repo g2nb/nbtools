@@ -10,7 +10,9 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import { ISerializers, ManagerBase, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { element_rendered, toggle } from "./utils";
+import { ContextManager } from "./context";
 
+// noinspection JSAnnotator
 export class UIBuilderModel extends BaseWidgetModel {
     static model_name = 'UIBuilderModel';
     static model_module = MODULE_NAME;
@@ -40,6 +42,7 @@ export class UIBuilderModel extends BaseWidgetModel {
             description: '',
             _parameters: [],
             parameter_groups: [],
+            accept_origins: [],
             function_import: '',
             register_tool: true,
             collapse: true,
@@ -56,6 +59,7 @@ export class UIBuilderModel extends BaseWidgetModel {
     }
 }
 
+// noinspection JSAnnotator
 export class UIBuilderView extends BaseWidgetView {
     dom_class = 'nbtools-uibuilder';
     traitlets = [...super.basics(), 'origin', '_parameters', 'function_import', 'register_tool', 'collapse',
@@ -528,8 +532,26 @@ export class UIBuilderView extends BaseWidgetView {
      * @private
      */
     _add_output_files(display_value_map:any, target:HTMLElement, kinds:any) {
-        this._add_notebook_files(display_value_map, target, kinds,
-            '.nbtools-file', 'Output Files');
+        const origins:string[] = this.supported_origins();
+        const compatible_outputs = ContextManager.data_registry.get_data({kinds:kinds, origins:origins});
+        if (Object.keys(compatible_outputs).length > 0) {
+            for (let origin of Object.keys(compatible_outputs)) display_value_map[origin] = compatible_outputs[origin];
+        }
+    }
+
+    supported_origins(): string[] {
+        // Get the list of supported origins for data
+        let this_origin = this.model.get('origin');
+        let accept_origins = this.model.get('accept_origins');
+
+        // If supported origins is empty or undefined, accept same origins and "Notebook" by default
+        if (accept_origins === null || accept_origins.length < 1) {
+            accept_origins = [this_origin];
+            if (this_origin !== 'Notebook') accept_origins.push('Notebook');
+        }
+
+        // Otherwise, return the list
+        return accept_origins;
     }
 
     _attach_kinds(attach_point:any) {
@@ -549,6 +571,11 @@ export class UIBuilderView extends BaseWidgetView {
         attach_point.setAttribute('data-name', name);
     }
 
+    _attach_accept_origins(attach_point:any) {
+        const origins = this.supported_origins();
+        attach_point.setAttribute('data-origins', origins.join(', '));
+    }
+
     /**
      * Attach sent to / come from menu support to the UI Builder widget
      *
@@ -558,6 +585,7 @@ export class UIBuilderView extends BaseWidgetView {
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
             this._attach_kinds(attach_point);
             this._attach_name(attach_point);
+            this._attach_accept_origins(attach_point);
             attach_point.addEventListener("click", (event:Event) => {
                 // Get all compatible outputs and build display -> value map
                 const display_value_map = this.build_display_map(attach_point);

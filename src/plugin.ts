@@ -12,6 +12,7 @@ import { pulse_red } from "./utils";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
+import { DataRegistry, IDataRegistry } from "./dataregistry";
 
 
 const documentation = 'nbtools:documentation';
@@ -23,14 +24,14 @@ const NAMESPACE = 'nbtools';
 /**
  * The nbtools plugin.
  */
-const nbtools_plugin: IPlugin<Application<Widget>, IToolRegistry> = ({
+const nbtools_plugin: IPlugin<Application<Widget>, [IToolRegistry, IDataRegistry]> = ({
     id: EXTENSION_ID,
-    provides: IToolRegistry,
+    provides: [IToolRegistry, IDataRegistry],
     requires: [IJupyterWidgetRegistry],
     optional: [IMainMenu, ILayoutRestorer, ILabShell, INotebookTracker],
     activate: activate_widget_extension,
     autoStart: true
-} as unknown) as IPlugin<Application<Widget>, IToolRegistry>;
+} as unknown) as IPlugin<Application<Widget>, [IToolRegistry, IDataRegistry]>;
 
 export default nbtools_plugin;
 
@@ -43,13 +44,14 @@ function activate_widget_extension(app: Application<Widget>,
                                    mainmenu: IMainMenu|null,
                                    restorer: ILayoutRestorer|null,
                                    shell: ILabShell|null,
-                                   notebook_tracker: INotebookTracker|null): IToolRegistry {
+                                   notebook_tracker: INotebookTracker|null): [IToolRegistry, IDataRegistry] {
 
     // Initialize the ContextManager
     init_context(app as JupyterFrontEnd, notebook_tracker);
 
-    // Create the tool registry
+    // Create the tool and data registries
     const tool_registry = new ToolRegistry();
+    const data_registry = new DataRegistry();
 
     // Add items to the help menu
     add_documentation_link(app as JupyterFrontEnd, mainmenu);
@@ -68,14 +70,14 @@ function activate_widget_extension(app: Application<Widget>,
     });
 
     // Return the tool registry so that it is provided to other extensions
-    return tool_registry;
+    return [tool_registry, data_registry];
 }
 
 function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {
     ContextManager.jupyter_app = app;
     ContextManager.notebook_tracker = notebook_tracker;
     ContextManager.context();
-    //(window as any).ContextManager = ContextManager;  // Left in for development purposes
+    (window as any).ContextManager = ContextManager;  // Left in for development purposes
 }
 
 function add_keyboard_shortcuts(app:JupyterFrontEnd, tool_registry:ToolRegistry) {

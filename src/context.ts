@@ -3,12 +3,14 @@ import { INotebookTracker, NotebookPanel } from "@jupyterlab/notebook";
 import { CodeCell } from "@jupyterlab/cells";
 import { JupyterFrontEnd } from "@jupyterlab/application";
 import { ToolRegistry } from "./registry";
+import { DataRegistry } from "./dataregistry";
 
 export class ContextManager {
     static _context:Context;
     static jupyter_app:JupyterFrontEnd;
     static notebook_tracker:INotebookTracker|null;
     static tool_registry:ToolRegistry;
+    static data_registry:DataRegistry;
 
     static context():Context {
         if (!ContextManager._context) {

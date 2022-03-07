@@ -11,8 +11,9 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, is_absolute_path, is_url } from './utils';
 import { ContextManager } from "./context";
+import { Data } from "./dataregistry";
 
-
+// noinspection JSAnnotator
 export class UIOutputModel extends BaseWidgetModel {
     static model_name = 'UIOutputModel';
     static model_module = MODULE_NAME;
@@ -50,6 +51,7 @@ export class UIOutputModel extends BaseWidgetModel {
     }
 }
 
+// noinspection JSAnnotator
 export class UIOutputView extends BaseWidgetView {
     dom_class = 'nbtools-uioutput';
     traitlets = [...super.basics(), 'status', 'files', 'text', 'visualization'];
@@ -69,6 +71,7 @@ export class UIOutputView extends BaseWidgetView {
         <pre class="nbtools-text" data-traitlet="text"></pre>
         <div class="nbtools-visualization" data-traitlet="visualization"></div>
         <div class="nbtools-appendix"></div>`;
+    file_cache:Data[] = [];
 
     render() {
         super.render();
@@ -77,7 +80,30 @@ export class UIOutputView extends BaseWidgetView {
         this.attach_child_widget('.nbtools-appendix', 'appendix');
     }
 
+    remove() {
+        super.remove();
+
+        // Clean up data files from the cache
+        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
+    }
+
+    sync_file_cache() {
+        // Unregister old files associated with this widget
+        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
+
+        // Create the data objects and add them to the file cache
+        this.file_cache = []
+        const origin = this.model.get('origin');
+        for (let f of this.model.get('files')) this.file_cache.push(new Data(origin, f));
+
+        // Register the files currently associated with this widget
+        for (let f of this.file_cache) ContextManager.data_registry.register({data: f});
+    }
+
     render_files(files:string[], widget:UIOutputView) {
+        // Sync the file cache with what is displayed
+        widget.sync_file_cache();
+
         let to_return = '';
         files.forEach(path => {
             const name = extract_file_name(path);
@@ -166,9 +192,10 @@ export class UIOutputView extends BaseWidgetView {
         const href = link.getAttribute('href') as string;
         const file_name = link.textContent ? link.textContent.trim() as string : href;
         const widget_name = this.model.get('name');
+        const origin = this.model.get('origin') || '';
 
         // Add the send to options
-        this.get_input_list(type).forEach(input => {
+        this.get_input_list(type, origin).forEach(input => {
             this.add_menu_item(input['name'] + ' -> ' + input['param'], () => {
                 const form_input = input['element'].querySelector('input') as HTMLFormElement;
                 form_input.value = href;
@@ -227,7 +254,7 @@ export class UIOutputView extends BaseWidgetView {
         document.addEventListener('click', hide_next_click)
     }
 
-    get_input_list(type:string) {
+    get_input_list(type:string, origin:string) {
         // Get the notebook's parent node
         const notebook = this.el.closest('.jp-Notebook') as HTMLElement;
 
@@ -239,6 +266,14 @@ export class UIOutputView extends BaseWidgetView {
         parameters.forEach((input:HTMLElement) => {
             // Ignore hidden parameters
             if (input.offsetWidth === 0 && input.offsetHeight === 0) return;
+
+            // Ignore parameters with sendto=False
+            if (input.classList.contains('nbtools-nosendto')) return;
+
+            // Ignore if this origin does not match the supported origins
+            const origins_str = input.getAttribute('data-origins') || '';
+            const origins_list = origins_str.split(', ') as any;
+            if (!origins_list.includes(origin) && origins_str !== '') return;
 
             // Ignore incompatible inputs
             const kinds = input.getAttribute('data-type') || '';
