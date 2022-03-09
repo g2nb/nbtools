@@ -20,15 +20,13 @@
 
 .nbtools-outline::after {
     content: ' ';
-    color: white;
-    background-color: var(--jp-brand-color1);
     position: absolute;
     top: 4px;
     right: 4px;
     height: 30px;
     width: 10px;
     padding: 0 10px;
-    background-image: var(--jp-icon-search-white);
+    background-image: var(--jp-icon-search);
     background-size: 20px;
     background-repeat: no-repeat;
     background-position: center;
