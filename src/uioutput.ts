@@ -195,7 +195,9 @@ export class UIOutputView extends BaseWidgetView {
         const origin = this.model.get('origin') || '';
 
         // Add the send to options
+        let send_to_empty = true;
         this.get_input_list(type, origin).forEach(input => {
+            send_to_empty = false;
             this.add_menu_item(input['name'] + ' -> ' + input['param'], () => {
                 const form_input = input['element'].querySelector('input') as HTMLFormElement;
                 form_input.value = href;
@@ -206,8 +208,8 @@ export class UIOutputView extends BaseWidgetView {
         });
 
         // Add send to header
-        this.add_menu_item('Send to...', () => {},
-            'nbtools-menu-header', menu);
+        if (!send_to_empty)
+            this.add_menu_item('Send to...', () => {}, 'nbtools-menu-header', menu);
 
         // Add the extra menu items
         const menu_items = this.model.get('extra_file_menu_items');
