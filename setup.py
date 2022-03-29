@@ -26,7 +26,7 @@ package_data_spec = {
     name: ["*"],
 }
 
-labext_name = "@genepattern/nbtools"
+labext_name = "@g2nb/nbtools"
 
 data_files_spec = [
     ('share/jupyter/nbextensions/nbtools', str(nb_path), '**'),
