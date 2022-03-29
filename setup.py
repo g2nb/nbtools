@@ -60,6 +60,7 @@ setup_args = dict(
     install_requires=[
         "jupyterlab~=3.1",
         "ipywidgets>=7.0.0",
+        "jupyter-packaging>=0.12.0",
     ],
     zip_safe=False,
     include_package_data=True,
