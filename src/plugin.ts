@@ -17,7 +17,7 @@ import { DataRegistry, IDataRegistry } from "./dataregistry";
 
 const documentation = 'nbtools:documentation';
 const module_exports = { ...base_exports, ...uioutput_exports, ...uibuilder_exports };
-const EXTENSION_ID = '@genepattern/nbtools:plugin';
+const EXTENSION_ID = '@g2nb/nbtools:plugin';
 const NAMESPACE = 'nbtools';
 
 
@@ -122,7 +122,7 @@ function add_documentation_link(app:JupyterFrontEnd, mainmenu:IMainMenu|null) {
         caption: 'Open documentation for nbtools',
         isEnabled: () => !!app.shell,
         execute: () => {
-            const url = 'https://github.com/genepattern/nbtools#nbtools';
+            const url = 'https://github.com/g2nb/nbtools#nbtools';
             let element = document.createElement('a');
             element.href = url;
             element.target = '_blank';

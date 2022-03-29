@@ -1,6 +1,6 @@
 {
   "@jupyterlab/apputils-extension:themes": {
-    "theme": "GenePattern"
+    "theme": "g2nb"
   },
   "@jupyter-widgets/jupyterlab-manager:plugin": {
     "saveState": true

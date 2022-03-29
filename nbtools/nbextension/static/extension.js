@@ -18,7 +18,7 @@ define(function () {
     window['requirejs'].config({
         map: {
             '*': {
-                '@genepattern/nbtools': 'nbextensions/nbtools/index',
+                '@g2nb/nbtools': 'nbextensions/nbtools/index',
             },
         }
     });

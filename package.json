@@ -1,6 +1,6 @@
 {
-  "name": "@genepattern/nbtools",
-  "version": "21.9.0-beta.1",
+  "name": "@g2nb/nbtools",
+  "version": "22.3.0-beta.1",
   "description": "Framework for creating user-friendly Jupyter notebooks, accessible to both programming and non-programming users alike.",
   "keywords": [
     "jupyter",
@@ -15,9 +15,9 @@
     "dist/*.{js,css}",
     "style/index.js"
   ],
-  "homepage": "https://github.com/genepattern/nbtools",
+  "homepage": "https://github.com/g2nb/nbtools",
   "bugs": {
-    "url": "https://github.com/genepattern/nbtools/issues"
+    "url": "https://github.com/g2nb/nbtools/issues"
   },
   "license": "BSD-3-Clause",
   "author": {
@@ -29,7 +29,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/genepattern/nbtools"
+    "url": "https://github.com/g2nb/nbtools"
   },
   "scripts": {
     "build": "jlpm run build:lib && jlpm run build:labextension:dev",

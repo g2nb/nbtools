@@ -34,7 +34,7 @@ RUN conda install -c conda-forge jupyterlab=3.3 voila beautifulsoup4 blas bokeh 
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
         jupyter-archive jupyterlab-git && \
     conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape
+    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud
 
 #############################################
 ##  $NB_USER                               ##
@@ -103,7 +103,7 @@ RUN npm install -g yarn && \
     npm install -g yalc && \
     git clone https://github.com/jaidevjoshi83/galaxylab.git && \
     # The next line is a workaround for a bug where yalc doesn't play nicely with docker
-    cd galaxylab &&  mkdir js/.yalc && mkdir js/.yalc/\@genepattern && cp -r ../nbtools js/.yalc/\@genepattern/ && \
+    cd galaxylab &&  mkdir js/.yalc && mkdir js/.yalc/\@g2nb && cp -r ../nbtools js/.yalc/\@g2nb/ && \
     pip install . && \
     jupyter nbextension install --py --symlink --overwrite --sys-prefix galaxylab && \
     jupyter nbextension enable --py --sys-prefix galaxylab && cd .. && \
@@ -112,14 +112,14 @@ RUN npm install -g yarn && \
 
 #############################################
 ##  $NB_USER                               ##
-##      Install genepattern theme          ##
+##      Install g2nb theme          ##
 #############################################
 
-RUN git clone https://github.com/genepattern/genepattern-theme-extension.git && \
-    cd genepattern-theme-extension && \
+RUN git clone https://github.com/g2nb/jupyterlab-theme.git && \
+    cd jupyterlab-them && \
     jupyter labextension install . && \
     jupyter lab build
-RUN cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##

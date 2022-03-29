@@ -27,7 +27,7 @@ as well as a simple interface a tool can implement to provide its metadata and r
 > The following is metadata the tool defines and which may be used to render a description of the tool
 
 * **origin: string**
-    * Identifier for the origin of the tool (local execution, specific GenePattern server, GenomeSpace, etc.)
+    * Identifier for the origin of the tool (local execution, specific GenePattern server, Galaxy, etc.)
 * **id: string**
     * identifier unique within an origin (example: LSID)
 * **name: string**

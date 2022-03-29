@@ -1,13 +1,13 @@
 # nbtools for JupyterLab
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/genepattern/nbtools/lab?urlpath=lab)
-[![Build Status](https://travis-ci.org/genepattern/nbtools.svg?branch=lab)](https://travis-ci.org/genepattern/nbtools)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/g2nb/nbtools/lab?urlpath=lab)
+[![Build Status](https://travis-ci.org/g2nb/nbtools.svg?branch=lab)](https://travis-ci.org/genepattern/nbtools)
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://gpnotebook-website-docs.readthedocs.io/en/latest/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/genepattern/genepattern-notebook.svg)](https://hub.docker.com/r/genepattern/lab/)
-[![Join the chat at https://gitter.im/genepattern](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-<!--- ![Github Actions Status](https://github.com/genepattern/nbtools/workflows/Build/badge.svg) -->
+[![Join the chat at https://gitter.im/g2nb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<!--- ![Github Actions Status](https://github.com/g2nb/nbtools/workflows/Build/badge.svg) -->
 
-**nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [GenePattern Notebook environment](https://notebook.genepattern.org). The package provides:
+**nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [g2nb project](https://notebook.genepattern.org). The package provides:
 
 * A decorator which can transform any Python function into an interactive user interface.
 * A toolbox interface for encapsulating and adding new computational steps to a notebook.
@@ -24,8 +24,8 @@
 A Docker image with nbtools and the full JupyterLab stack is available through DockerHub.
 
 ```bash
-docker pull genepattern/lab
-docker run --rm -p 8888:8888 genepattern/lab
+docker pull g2nb/lab
+docker run --rm -p 8888:8888 g2nb/lab
 ```
 
 ## Installation
@@ -46,7 +46,7 @@ jupyter nbextension enable --py widgetsnbextension
 jupyter labextension install @jupyter-widgets/jupyterlab-manager
 
 # Clone the nbtools repository
-git clone https://github.com/genepattern/nbtools.git
+git clone https://github.com/g2nb/nbtools.git
 cd nbtools
 
 # Install the nbtools JupyterLab prototype

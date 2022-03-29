@@ -12,7 +12,7 @@ be installed through either PIP or conda.
 
 > pip install jupyter-wysiwyg
 
-> conda install -c genepattern jupyter-wysiwyg
+> conda install -c g2nb jupyter-wysiwyg
 
 To enable the nbextension in Jupyter Notebook 5.2 and earlier you will need to run the following command lines. In Jupyter Notebook 5.3 and later, this is
 automatic and will not be necessary.
