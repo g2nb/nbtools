@@ -1,2 +1,2 @@
 pip install --pre nbtools
-cp ./nbtools/examples/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json  # Enable automatically saving widget state
+cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json  # Enable automatically saving widget state
