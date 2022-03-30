@@ -33,7 +33,7 @@ module.exports = [
       path: path.resolve(__dirname, 'nbtools', 'nbextension', 'static'),
       libraryTarget: 'amd',
       // TODO: Replace after release to unpkg.org
-      publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
+      publicPath: '' // 'https://unpkg.com/@g2nb/nbtools@' + version + '/dist/'
     },
     module: {
       rules: rules
@@ -65,9 +65,9 @@ module.exports = [
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist'),
         libraryTarget: 'amd',
-        library: "@genepattern/nbtools",
+        library: "@g2nb/nbtools",
         // TODO: Replace after release to unpkg.org
-        publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
+        publicPath: '' // 'https://unpkg.com/@g2nb/nbtools@' + version + '/dist/'
     },
     devtool: 'source-map',
     module: {
@@ -94,10 +94,10 @@ module.exports = [
     output: {
       filename: 'embed-bundle.js',
       path: path.resolve(__dirname, 'docs', 'source', '_static'),
-      library: "@genepattern/nbtools",
+      library: "@g2nb/nbtools",
       libraryTarget: 'amd',
       // TODO: Replace after release to unpkg.org
-      publicPath: '' // 'https://unpkg.com/@genepattern/nbtools@' + version + '/dist/'
+      publicPath: '' // 'https://unpkg.com/@g2nb/nbtools@' + version + '/dist/'
     },
     module: {
       rules: rules
