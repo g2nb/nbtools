@@ -78,8 +78,8 @@ RUN jupyter labextension install @g2nb/jupyter-wysiwyg --no-build
 ##      Install g2nb theme                 ##
 #############################################
 
-RUN jupyter labextension install @g2nb/jupyterlab-theme && \
-    RUN cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+RUN jupyter labextension install @g2nb/jupyterlab-theme
+COPY ./config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##
