@@ -50,7 +50,7 @@ RUN jupyter labextension install jupyterlab-plotly --no-build && \
 ##      Install nbtools                    ##
 #############################################
 
-RUN pip install nbtools==22.3.0b1
+RUN pip install nbtools==22.3.0b2
 
 #############################################
 ##  $NB_USER                               ##
