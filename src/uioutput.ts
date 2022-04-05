@@ -176,7 +176,7 @@ export class UIOutputView extends BaseWidgetView {
     }
 
     initialize_file_menus(widget:UIOutputView) {
-        const files = widget.el.querySelectorAll('.nbtools-file') as HTMLElement[];
+        const files = widget.el.querySelectorAll('.nbtools-file') as NodeListOf<HTMLElement>;
 
         files.forEach((link:HTMLElement) => {
             link.addEventListener("click", function() {
