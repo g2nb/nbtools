@@ -189,7 +189,7 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     activate_custom_buttons() {
-        this.el.querySelectorAll('.nbtools-buttons').forEach((box:HTMLElement) => {
+        (this.el.querySelectorAll('.nbtools-buttons') as HTMLElement[]).forEach((box:HTMLElement) => {
             const buttons = this.model.get('buttons');
             Object.keys(buttons).forEach((label) => {
                 const button = new DOMParser().parseFromString(`<button>${label}</button>`, "text/html")
@@ -206,16 +206,16 @@ export class UIBuilderView extends BaseWidgetView {
      * Attach the click event to each Run button
      */
     activate_run_buttons() {
-        this.el.querySelectorAll('.nbtools-run').forEach((button:HTMLElement) =>
+        (this.el.querySelectorAll('.nbtools-run') as HTMLElement[]).forEach((button:HTMLElement) =>
             button.addEventListener('click', () => {
                 // Validate required parameters and return if not valid
                 if(!this.validate()) return;
 
                 // Execute the interact instance
-                this.el.querySelector('.widget-interact > .jupyter-button').click();
+                (this.el.querySelector('.widget-interact > .jupyter-button') as HTMLElement).click();
 
                 // Collapse the widget, if collapse=True
-                if (this.model.get('collapse')) this.el.querySelector('.nbtools-collapse').click();
+                if (this.model.get('collapse')) (this.el.querySelector('.nbtools-collapse') as HTMLElement).click();
             })
         )
     }
@@ -227,8 +227,8 @@ export class UIBuilderView extends BaseWidgetView {
     validate() {
         let valid = true;
 
-        const form = this.el.querySelector('.nbtools-form');
-        form.querySelectorAll('.nbtools-input').forEach((param:HTMLElement) => {
+        const form = this.el.querySelector('.nbtools-form') as HTMLElement;
+        form.querySelectorAll<HTMLElement>('.nbtools-input').forEach((param:HTMLElement) => {
             if (!param.classList.contains('required')) return;  // Ignore optional parameters
             const input = param.querySelector('input, select') as HTMLFormElement;
             if (input.value.trim() === '') {                    // If empty
@@ -270,7 +270,7 @@ export class UIBuilderView extends BaseWidgetView {
         if (!groups || !groups.length) return; // No groups are defined, skip this step
 
         // Get the UI Builder form container
-        const form = this.el.querySelector('.nbtools-form > .widget-interact');
+        const form = this.el.querySelector('.nbtools-form > .widget-interact') as HTMLElement;
         if (!form) return; // If no container is found, skip this step
 
         // Iterate over each group, create headers and add parameters
@@ -393,7 +393,7 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Handle parameter IDs and parameter events
         const json_parameters = this.model.get('_parameters');
-        const dom_parameters = this.el.querySelectorAll('.nbtools-input');
+        const dom_parameters = this.el.querySelectorAll('.nbtools-input') as HTMLElement[];
         for (let i = 0; i < json_parameters.length; i++) {
             const param_spec = json_parameters[i];
             const param_el = dom_parameters[i];
@@ -412,7 +412,7 @@ export class UIBuilderView extends BaseWidgetView {
             // Resize footer, if necessary
             if (param_spec.name === 'output_var' && param_spec.description) {
                 // noinspection JSConstantReassignment
-                this.el.querySelector('.nbtools-footer').style.height = '50px';
+                (this.el.querySelector('.nbtools-footer') as HTMLElement).style.height = '50px';
             }
         }
 
@@ -424,10 +424,10 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     _submit_keypress() {
-        this.el.querySelectorAll('.nbtools-form input, .nbtools-form select').forEach((element:HTMLElement) => {
+        (this.el.querySelectorAll('.nbtools-form input, .nbtools-form select') as HTMLElement[]).forEach((element:HTMLElement) => {
             element.addEventListener("keydown", (event:KeyboardEvent) => {
                 if (event.keyCode === 13) {
-                    this.el.querySelector('.nbtools-run').click();
+                    (this.el.querySelector('.nbtools-run') as HTMLElement).click();
                 }
             });
         });

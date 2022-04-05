@@ -340,7 +340,7 @@ export class BaseWidgetView extends DOMWidgetView {
                 this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea-child'),
                 this.el.closest('.lm-Widget.lm-Panel.jp-OutputArea-output'),
                 this.el.closest('.lm-Widget.jp-OutputArea.jp-Cell-outputArea')
-            ];
+            ] as HTMLElement[];
 
             elements.forEach((e:HTMLElement) => {
                 if (e) e.style.overflow = 'visible';
@@ -366,7 +366,7 @@ export class BaseWidgetView extends DOMWidgetView {
             view.children_views.update(model.get('children')).then((children:DOMWidgetView[]) => {
                 children.forEach((child) => {
                     BaseWidgetView._initialize_display(child.model, child);
-                    child.el.widget = child;
+                    (child.el as any).widget = child;
                 });
             });
         }
