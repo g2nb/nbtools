@@ -189,7 +189,7 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     activate_custom_buttons() {
-        (this.el.querySelectorAll('.nbtools-buttons') as HTMLElement[]).forEach((box:HTMLElement) => {
+        (this.el.querySelectorAll('.nbtools-buttons') as NodeListOf<HTMLElement>).forEach((box:HTMLElement) => {
             const buttons = this.model.get('buttons');
             Object.keys(buttons).forEach((label) => {
                 const button = new DOMParser().parseFromString(`<button>${label}</button>`, "text/html")
@@ -206,7 +206,7 @@ export class UIBuilderView extends BaseWidgetView {
      * Attach the click event to each Run button
      */
     activate_run_buttons() {
-        (this.el.querySelectorAll('.nbtools-run') as HTMLElement[]).forEach((button:HTMLElement) =>
+        (this.el.querySelectorAll('.nbtools-run') as NodeListOf<HTMLElement>).forEach((button:HTMLElement) =>
             button.addEventListener('click', () => {
                 // Validate required parameters and return if not valid
                 if(!this.validate()) return;
@@ -393,7 +393,7 @@ export class UIBuilderView extends BaseWidgetView {
 
         // Handle parameter IDs and parameter events
         const json_parameters = this.model.get('_parameters');
-        const dom_parameters = this.el.querySelectorAll('.nbtools-input') as HTMLElement[];
+        const dom_parameters = this.el.querySelectorAll('.nbtools-input') as NodeListOf<HTMLElement>;
         for (let i = 0; i < json_parameters.length; i++) {
             const param_spec = json_parameters[i];
             const param_el = dom_parameters[i];
@@ -424,7 +424,7 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     _submit_keypress() {
-        (this.el.querySelectorAll('.nbtools-form input, .nbtools-form select') as HTMLElement[]).forEach((element:HTMLElement) => {
+        (this.el.querySelectorAll('.nbtools-form input, .nbtools-form select') as NodeListOf<HTMLElement>).forEach((element:HTMLElement) => {
             element.addEventListener("keydown", (event:KeyboardEvent) => {
                 if (event.keyCode === 13) {
                     (this.el.querySelector('.nbtools-run') as HTMLElement).click();
