@@ -116,7 +116,7 @@ RUN npm install -g yarn && \
 #############################################
 
 RUN git clone https://github.com/g2nb/jupyterlab-theme.git && \
-    cd jupyterlab-them && \
+    cd jupyterlab-theme && \
     jupyter labextension install . && \
     jupyter lab build
 RUN cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
