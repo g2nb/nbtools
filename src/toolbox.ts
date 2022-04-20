@@ -15,6 +15,9 @@ export class ToolBrowser extends Widget {
 }
 
 export class Toolbox extends Widget {
+    last_update = 0;
+    update_waiting = false;
+
     constructor() {
         super();
         this.addClass('nbtools-toolbox');
@@ -22,11 +25,28 @@ export class Toolbox extends Widget {
 
         // Update the toolbox when the tool registry changes
         ContextManager.tool_registry.on_update(() => {
-            this.fill_toolbox();
+            // If the last update was more than 10 seconds ago, update the toolbox
+            if (this.update_stale()) this.fill_toolbox();
+            else this.queue_update();  // Otherwise, queue an update if not already waiting for one
         });
 
         // Fill the toolbox with the registered tools
         this.fill_toolbox();
+    }
+
+    update_stale() {
+        return this.last_update + (3 * 1000) < Date.now();
+    }
+
+    queue_update() {
+        // If no update is waiting, queue an update
+        if (!this.update_waiting) {
+            setTimeout(() => {          // When an update happens
+                this.fill_toolbox();            // Fill the toolbox
+                this.update_waiting = false;    // And mark as no update queued
+            }, Math.abs(this.last_update + (3 * 1000) - Date.now()));  // Queue for 3 seconds since last update
+            this.update_waiting = true;                                    // And mark as queued
+        }
     }
 
     static add_tool_cell(tool:any) {
@@ -59,6 +79,8 @@ export class Toolbox extends Widget {
     }
 
     fill_toolbox() {
+        this.last_update = Date.now();
+
         // First empty the toolbox
         this.empty_toolbox();
 
