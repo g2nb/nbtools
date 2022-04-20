@@ -11,7 +11,7 @@
 **nbtools** was developed as part of the [g2nb project](https://github.com/g2nb). This project also serves as an example of how nbtools can be extended and applied to a specific domain: in its case, bioinformatics.
 
 ### **Looking for JupyterLab support?**
-**JupyterLab support in is currently in beta. You can find it in its own branch. [Just click here!](https://github.com/g2nb/nbtools/tree/lab)**
+**JupyterLab support is available. You can find it in its own branch. [Just click here!](https://github.com/g2nb/nbtools/tree/lab)**
 
 ## Installation
 
