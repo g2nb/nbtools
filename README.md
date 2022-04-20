@@ -12,7 +12,10 @@
 * A decorator which can transform any Python function into an interactive user interface.
 * A toolbox interface for encapsulating and adding new computational steps to a notebook.
 * Flexible theming and APIs to extend the nbtools functionality.
-* A WYSIWYG editor for markdown cells (provided as part of the accompanying `juptyter-wyswyg` package and coming soon to JupyterLab).
+
+### **Looking for classic Jupyter Notebook support?**
+**Jupyter Notebook support is available, albeit not in active development. You can find it in its own branch. [Just click here!](https://github.com/g2nb/nbtools/tree/notebook)**
+
 
 ## Requirements
 
