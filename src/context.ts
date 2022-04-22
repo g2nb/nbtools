@@ -232,7 +232,7 @@ class LabContext extends Context {
      * Path to the default GenePattern logo
      */
     default_logo():string {
-        return  require("../style/logo.png").default;
+        return  require("../style/g2nb_logo.png").default;
     }
 
     /**
@@ -398,7 +398,7 @@ class NotebookContext extends Context {
      * Path to the default GenePattern logo
      */
     default_logo():string {
-        return  this.base_path() + require("../style/logo.png").default;
+        return  this.base_path() + require("../style/g2nb_logo.png").default;
     }
 
     /**
@@ -529,7 +529,7 @@ class EmbedContext extends Context {
      * Path to the default GenePattern logo
      */
     default_logo():string {
-        return  this.base_path() + require("../style/logo.png").default;
+        return  this.base_path() + require("../style/g2nb_logo.png").default;
     }
 
     /**
