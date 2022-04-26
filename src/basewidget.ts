@@ -262,10 +262,7 @@ export class BaseWidgetView extends DOMWidgetView {
 
     toggle_collapse() {
         const body = this.element.querySelector(".nbtools-body") as HTMLElement;
-        const collapsed = body.style.display === "none";
-
-        // Hide or show widget body
-        toggle(body);
+        const collapsed = body.style.display === "none" || body.style.height == "0px";
 
         // Toggle the collapse button
         const button = this.element.querySelector(".nbtools-collapse > span") as HTMLElement;
@@ -277,6 +274,9 @@ export class BaseWidgetView extends DOMWidgetView {
             button.classList.remove('fa-minus');
             button.classList.add('fa-plus');
         }
+
+        // Hide or show widget body
+        toggle(body);
     }
 
     toggle_menu() {
