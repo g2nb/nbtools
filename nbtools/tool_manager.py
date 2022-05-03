@@ -1,8 +1,7 @@
 from IPython import get_ipython
 from IPython.display import display
+from ipykernel.comm import Comm
 from ipywidgets import Output
-from threading import Timer, Thread
-from time import time
 from .event_manager import EventManager
 from .uioutput import UIOutput
 
@@ -18,10 +17,8 @@ class ToolManager(object):
         return ToolManager._instance
 
     def __init__(self):
-        self.tools = {}             # Initialize the tools map
-        self.comm = None            # The comm to communicate with the client
-        self.last_update = 0        # The last time the client was updated
-        self.update_queued = False  # Waiting for an update?
+        self.tools = {}   # Initialize the tools map
+        self.comm = None  # The comm to communicate with the client
 
         # Create the nbtools comm target
         def comm_target(comm, open_msg):
@@ -41,7 +38,6 @@ class ToolManager(object):
         get_ipython().kernel.comm_manager.register_target(ToolManager.COMM_NAME, comm_target)
 
     def send_update(self):
-        self.last_update = time()
         self.send('update', {
             'import': 'nbtools' in get_ipython().user_global_ns,
             'tools': list(map(lambda t: t.json_safe(), self._list()))
@@ -75,22 +71,6 @@ class ToolManager(object):
             for t in o.values():
                 to_return.append(t)
         return to_return
-
-    def update_stale(self):
-        return self.last_update + 3 < time()
-
-    def queue_update(self):
-        def postponed_update():
-            """Function to call once after a 3-second cool-off period"""
-            self.send_update()
-            self.update_queued = False
-
-        # If no update is waiting, queue an update
-        if not self.update_queued:
-            wait = abs(self.last_update - time())
-            timeout = Timer(3, postponed_update)
-            self.update_queued = True
-            timeout.start()
 
     @classmethod
     def list(cls):
