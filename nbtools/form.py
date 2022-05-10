@@ -4,6 +4,7 @@ from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
     FileUpload, HBox, Combobox as BaseCombobox, SelectMultiple, VBox
+from ipyuploads import Upload
 from traitlets import List, Dict
 from .parsing_manager import ParsingManager
 
@@ -189,7 +190,8 @@ class FileFormInput(BaseFormInput):
             # Set child widgets
             self.spec = spec
             self._value = ''
-            self.upload = FileUpload(accept=self.accepted_kinds(spec), multiple=False)
+            self.upload = Upload(accept=self.accepted_kinds(spec), multiple=False)
+            self.old_change = None
 
             # Set up the file list
             self.file_list = VBox()
@@ -217,9 +219,7 @@ class FileFormInput(BaseFormInput):
         def default_upload_callback(values):
             """By default, upload files to the current directory"""
             for k in values:
-                with open(k, 'wb') as f:
-                    f.write(values[k]['content'])
-                    return os.path.realpath(f.name)
+                return os.path.realpath(k)
 
         @property
         def value(self):
@@ -281,7 +281,7 @@ class FileFormInput(BaseFormInput):
             for i in range(len(values), len(self.file_list.children)): self.file_list.children[i].value = ''
 
         def change_file(self, change):
-            if isinstance(change['owner'].value, dict) and change['name'] == 'data':
+            if isinstance(change['owner'], Upload) and change['name'] == 'value':
                 if self.parent: self.parent.busy = True
                 path = self.upload_callback(change['owner'].value)
                 if self.parent: self.parent.busy = False
@@ -290,8 +290,10 @@ class FileFormInput(BaseFormInput):
                     if values_length == self.maximum():  # Handle uploads when the max values has been reached
                         self.file_list.children[values_length-1].value = path
                         self._set_file_list_values(self._file_list_values())
-                    else:  # Otherwise append the uploaded value to the current list
+                    else:  # Otherwise, append the uploaded value to the current list
                         self._set_file_list_values(self._file_list_values(append=path))
+            if isinstance(change['owner'], Upload) and change['name'] == 'busy' and change['new']:
+                self.parent.busy = True
 
         def change_url(self, change):
             if change['name'] == 'value':

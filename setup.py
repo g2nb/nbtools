@@ -58,8 +58,9 @@ setup_args = dict(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     install_requires=[
-        "jupyterlab~=3.1",
-        "ipywidgets>=7.0.0",
+        "jupyterlab~=3.2",
+        "ipywidgets>=7.5.0",
+        "ipyuploads",
         "jupyter-packaging>=0.12.0",
     ],
     zip_safe=False,
