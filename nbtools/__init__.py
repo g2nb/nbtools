@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+from .capsules import write_capsules_file
 from .tool_manager import ToolManager, NBTool, tool
 from .event_manager import EventManager
 from .nbextension import _jupyter_nbextension_paths

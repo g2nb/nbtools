@@ -8,7 +8,7 @@ from .tool_manager import ToolManager
 
 def load_settings():
     """Attempt to load the nbtools settings files, fall back to default if not available"""
-    load = []
+    load = ["nbtools", "capsules"]
     for p in jupyter_core.paths.jupyter_path():                                         # Get Jupyter data paths
         nbtools_path = os.path.join(p, 'nbtools')
         if os.path.exists(nbtools_path) and os.path.isdir(nbtools_path):                # Check for nbtools config
@@ -24,10 +24,8 @@ def load_settings():
                 except json.JSONDecodeError as e:
                     logging.debug(f'unable to parse nbtools setting file: {e}')
 
-    # If packages were read, return the list to load
-    if len(load): return {"load": list(set(load))}
-    # If it couldn't be loaded, return the default settings
-    else: return {"load": ["nbtools"]}
+    # Return the list to load
+    return {"load": list(set(load))}
 
 
 def import_defaults():
