@@ -1,6 +1,8 @@
 import builtins
 import re
 import urllib
+import requests
+import threading
 
 
 def open(path_or_url):
@@ -27,3 +29,17 @@ def open(path_or_url):
 def python_safe(raw_name):
     """Make a string safe to use in a Python namespace"""
     return re.sub('[^0-9a-zA-Z]', '_', raw_name)
+
+
+def usage_tracker(event_token, description='', endpoint='https://workspace.g2nb.org/services/usage/'):
+    """We maintain a basic counter of how many times our tools are used; this helps us secure funding.
+       No identifying information is sent."""
+
+    # Call the usage tracker endpoint, don't break aything if there is any kind of error at all
+    def make_request_async():
+        try: requests.get(f'{endpoint}{event_token}/', data=description)
+        except: pass
+
+    # Ping the usage tracker in its own thread, so as not to make the user wait
+    usage_thread = threading.Thread(target=make_request_async)
+    usage_thread.start()
