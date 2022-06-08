@@ -34,7 +34,7 @@ RUN conda install -c conda-forge jupyterlab=3.3 voila beautifulsoup4 blas bokeh 
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
         jupyter-archive jupyterlab-git && \
     conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud
+    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
 
 #############################################
 ##  $NB_USER                               ##

@@ -29,12 +29,13 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.3 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
+RUN conda install -c conda-forge jupyterlab=3.4 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
         jupyter-archive jupyterlab-git && \
     conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud
+    npm install -g yarn && \
+    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
 
 #############################################
 ##  $NB_USER                               ##
@@ -44,6 +45,14 @@ RUN conda install -c conda-forge jupyterlab=3.3 voila beautifulsoup4 blas bokeh 
 RUN jupyter labextension install jupyterlab-plotly --no-build && \
     jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
+
+#############################################
+##  $NB_USER                               ##
+##      Clone & install ipyuploads repo    ##
+#############################################
+
+RUN git clone https://github.com/g2nb/ipyuploads.git && \
+    cd ipyuploads && pip install .
 
 #############################################
 ##  $NB_USER                               ##
@@ -99,16 +108,12 @@ RUN git clone https://github.com/g2nb/igv-jupyter.git && \
 ##      Install GalaxyLab                  ##
 #############################################
 
-RUN npm install -g yarn && \
-    npm install -g yalc && \
-    git clone https://github.com/jaidevjoshi83/galaxylab.git && \
-    # The next line is a workaround for a bug where yalc doesn't play nicely with docker
-    cd galaxylab &&  mkdir js/.yalc && mkdir js/.yalc/\@g2nb && cp -r ../nbtools js/.yalc/\@g2nb/ && \
-    pip install . && \
-    jupyter nbextension install --py --symlink --overwrite --sys-prefix galaxylab && \
-    jupyter nbextension enable --py --sys-prefix galaxylab && cd .. && \
-    git clone -b  build_function https://github.com/jaidevjoshi83/bioblend.git && \
-    cd bioblend && pip install .
+RUN git clone -b  build_function https://github.com/jaidevjoshi83/bioblend.git && \
+    cd bioblend && pip install . && \
+    git clone https://github.com/jaidevjoshi83/GiN.git && \
+    cd GiN && npm install @g2nb/nbtools && pip install . && \
+    jupyter nbextension install --py --symlink --overwrite --sys-prefix GiN && \
+    jupyter nbextension enable --py --sys-prefix GiN
 
 #############################################
 ##  $NB_USER                               ##
