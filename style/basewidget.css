@@ -7,6 +7,7 @@
     border-radius: 2px;
     background: var(--jp-layout-color0);
     font-size: 10pt;
+    z-index: 10;
 }
 
 .nbtools .nbtools-header {
