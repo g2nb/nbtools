@@ -1,7 +1,7 @@
 .nbtools-uibuilder .nbtools-description {
     min-height: 18px;
     padding-right: 60px;
-    width: calc(100% - 50px);
+    width: calc(100% + 20px);
 }
 
 .nbtools-error {
@@ -41,7 +41,7 @@
     z-index: 1;
     background-color: var(--jp-layout-color3);
     border: 1px solid var(--jp-border-color1);
-    padding: 6px 12px;
+    padding: 4px 12px;
     font-size: 0.9em;
     cursor: pointer;
     color: #FFFFFF;
@@ -85,6 +85,11 @@
 
 .nbtools-input.missing {
     border: red solid 2px;
+}
+
+.nbtools-input .widget-upload {
+    width: 100%;
+    top: 2px;
 }
 
 .nbtools-passwordinput input[type=password] {
@@ -131,6 +136,7 @@
     background-color: var(--jp-layout-color2);
     padding: 10px;
     min-height: 18px;
+    box-sizing: content-box;
 }
 
 .nbtools-dropdown {
