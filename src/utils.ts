@@ -117,9 +117,10 @@ export function show(elem:HTMLElement) {
 /**
  * Hide an element
  *
- * @param {HTMLElement} elem
+ * @param elem
+ * @param min_height
  */
-export function hide(elem:HTMLElement) {
+export function hide(elem:HTMLElement, min_height='0') {
     elem.classList.add('nbtools-toggle');
 
 	// Give the element a height to change from
@@ -127,7 +128,7 @@ export function hide(elem:HTMLElement) {
 
 	// Set the height back to 0
 	setTimeout(function () {
-		elem.style.height = '0';
+		elem.style.height = min_height;
 	}, 10);
 
 	// When the transition is complete, hide it
@@ -140,12 +141,13 @@ export function hide(elem:HTMLElement) {
 /**
  * Toggle element visibility
  *
- * @param {HTMLElement} elem
+ * @param elem
+ * @param min_height
  */
-export function toggle(elem:HTMLElement) {
+export function toggle(elem:HTMLElement, min_height='0') {
 	// If the element is visible, hide it
 	if (!elem.classList.contains('nbtools-hidden')) {
-		hide(elem);
+		hide(elem, min_height);
 		return;
 	}
 

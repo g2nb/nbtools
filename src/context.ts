@@ -160,8 +160,8 @@ class LabContext extends Context {
 
             // Set display to toggle if not specified
             if (!!display) show(input_block);
-            else if (display === false) hide(input_block);
-            else toggle(input_block);
+            else if (display === false) hide(input_block,'30px');
+            else toggle(input_block,'30px');
         }, 100);
     }
 
