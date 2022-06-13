@@ -117,14 +117,14 @@ RUN git clone -b  build_function https://github.com/jaidevjoshi83/bioblend.git &
 
 #############################################
 ##  $NB_USER                               ##
-##      Install g2nb theme          ##
+##      Install g2nb theme                 ##
 #############################################
 
 RUN git clone https://github.com/g2nb/jupyterlab-theme.git && \
     cd jupyterlab-theme && \
     jupyter labextension install . && \
-    jupyter lab build
-RUN cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
+    jupyter lab build && \
+    cd .. && cp ./nbtools/config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
 ##  $NB_USER                               ##
