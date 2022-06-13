@@ -3,10 +3,11 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    FileUpload, HBox, Combobox as BaseCombobox, SelectMultiple, VBox
+    HBox, Combobox as BaseCombobox, SelectMultiple, VBox
 from ipyuploads import Upload
 from traitlets import List, Dict
 from .parsing_manager import ParsingManager
+from .utils import usage_tracker
 
 
 class Combobox(BaseCombobox):
@@ -430,6 +431,9 @@ class InteractiveForm(interactive):
 
         # Display the loading UI
         if self.parent: self.parent.busy = True
+
+        # Increment the usage counter
+        usage_tracker('tool_run', description=f'{self.parent.origin}|{self.parent.id}|{self.parent.name}')
 
         # Call the function
         super(InteractiveForm, self).update(*args)
