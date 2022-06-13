@@ -23,7 +23,7 @@
 }
 
 .nbtools-run {
-    z-index: 11;
+    z-index: 1;
     background-color: var(--jp-layout-color4);
     color: #FFFFFF;
     border: 1px solid var(--jp-border-color1);
@@ -34,11 +34,11 @@
 
 .nbtools-buttons {
     position: absolute;
-    z-index: 11;
+    z-index: 1;
 }
 
 .nbtools-buttons > button {
-    z-index: 11;
+    z-index: 1;
     background-color: var(--jp-layout-color3);
     border: 1px solid var(--jp-border-color1);
     padding: 4px 12px;
@@ -123,7 +123,7 @@
 .widget-interact > .nbtools-input:last-child {
     position: relative;
     top: 13px;
-    z-index: 11;
+    z-index: 1;
     height: 0;
     overflow: visible;
 }
@@ -166,7 +166,7 @@
     max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
-    z-index: 17;
+    z-index: 7;
 }
 
 .nbtools-group-header {
@@ -202,7 +202,7 @@
     top: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.1);
-    z-index: 13;
+    z-index: 3;
     font-size: 100px;
     overflow: hidden;
     display: none;
@@ -231,7 +231,7 @@
     left: 0;
     right: 0;
     background-color: var(--jp-ui-inverse-font-color3);
-    z-index: 12;
+    z-index: 2;
 }
 
 .nbtools-dialog > .nbtools-panel {
