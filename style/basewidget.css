@@ -76,7 +76,7 @@
     padding: 5px 0 5px 0;
     list-style-type: none;
     cursor: pointer;
-    z-index: 4;
+    z-index: 14;
     white-space: nowrap;
 }
 
@@ -134,7 +134,7 @@
     left: 0;
     right: 0;
     background-color: var(--jp-ui-inverse-font-color3);
-    z-index: 2;
+    z-index: 12;
 }
 
 .jupyter-widgets-disconnected > .nbtools-disconnected {
