@@ -1,4 +1,5 @@
 .nbtools {
+    margin-top: 20px;
     margin-bottom: 0;
     width: 100%;
     max-width: 100%;
@@ -7,7 +8,6 @@
     border-radius: 2px;
     background: var(--jp-layout-color0);
     font-size: 10pt;
-    z-index: 10;
 }
 
 /* Fixes CSS issues in JupyterLab 3.4 */
@@ -81,7 +81,7 @@
     padding: 5px 0 5px 0;
     list-style-type: none;
     cursor: pointer;
-    z-index: 14;
+    z-index: 4;
     white-space: nowrap;
 }
 
@@ -118,7 +118,9 @@
 .nbtools-toggle.nbtools-hidden {
 	display: none;
 	height: 0;
+    min-height: 0;
 	opacity: 0;
+    overflow: hidden;
 }
 
 .nbtools div.widget-box,
@@ -139,7 +141,7 @@
     left: 0;
     right: 0;
     background-color: var(--jp-ui-inverse-font-color3);
-    z-index: 12;
+    z-index: 2;
 }
 
 .jupyter-widgets-disconnected > .nbtools-disconnected {
