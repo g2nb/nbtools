@@ -122,6 +122,10 @@
     overflow: hidden;
 }
 
+div.jp-Cell-inputWrapper.nbtools-hidden ~ div.jp-Cell-outputWrapper {
+  margin-top: 30px;
+}
+
 .nbtools div.widget-box,
 .nbtools div.widget-gridbox {
     overflow: visible !important;
