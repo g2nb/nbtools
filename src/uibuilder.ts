@@ -550,6 +550,9 @@ export class UIBuilderView extends BaseWidgetView {
             if (this_origin !== 'Notebook') accept_origins.push('Notebook');
         }
 
+        // Unless... if this origin is empty or undefined, accept all origins
+        if (this_origin === null || this_origin.length < 1) accept_origins = [];
+
         // Otherwise, return the list
         return accept_origins;
     }

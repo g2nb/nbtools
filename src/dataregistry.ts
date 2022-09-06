@@ -95,7 +95,7 @@ export class DataRegistry implements IDataRegistry {
 
     /**
      * Get all data that matches one of the specified kinds or origins
-     * If kinds or origins is null, accept all kinds or origins, respectively
+     * If kinds or origins is null or empty, accept all kinds or origins, respectively
      *
      * @param kinds
      * @param origins
@@ -111,10 +111,10 @@ export class DataRegistry implements IDataRegistry {
         // Compile map of data with a matching origin and kind
         const matching:any = {};
         for (let origin of Object.keys(cache)) {
-            if (origins === null || origins.includes(origin)) {
+            if (origins === null || origins.length === 0 || origins.includes(origin)) {
                 const hits:any = {};
                 for (let data of Object.values(cache[origin]) as any) {
-                    if (kinds === null || kinds.includes(data.kind))
+                    if (kinds === null || kinds.length === 0 || kinds.includes(data.kind))
                     hits[data.label] = data.uri;
                 }
                 if (Object.keys(hits).length > 0) matching[origin] = hits
