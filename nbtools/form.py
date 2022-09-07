@@ -66,7 +66,7 @@ class BaseFormInput(GridBox, ValueWidget):
         self.label.description = spec['label']
 
         # Set the default value
-        self.input.value = self.__class__.type_safe(spec['default'], self.input_class)
+        self.input.value = self.__class__.type_safe(spec['default'], spec['type'])
 
         # Set the description
         self.description.value = spec['description']
@@ -77,7 +77,7 @@ class BaseFormInput(GridBox, ValueWidget):
 
     @staticmethod
     def type_safe(val, input_class):
-        # Handle casting to numbers, default to 0 on an error
+        # # Handle casting to numbers, default to 0 on an error
         if input_class == IntText:
             try: return int(val)
             except (ValueError, TypeError): return 0
@@ -113,14 +113,23 @@ class PasswordFormInput(BaseFormInput):
     input_class = Password
 
 
-class IntegerFormInput(BaseFormInput):
+class NumberFormInput(BaseFormInput):
     dom_class = 'nbtools-numberinput'
-    input_class = IntText
+    input_class = Text
 
+    @staticmethod
+    def type_safe(val, input_class):
+        """Override parent class' method to handle non-lists and blanks"""
+        base_val = BaseFormInput.type_safe(val, input_class)             # Call base class
+        if InteractiveForm.is_integer(base_val): return str(base_val)
+        elif InteractiveForm.is_float(base_val): return str(base_val)
+        else: return base_val
 
-class FloatFormInput(BaseFormInput):
-    dom_class = 'nbtools-numberinput'
-    input_class = FloatText
+    @property
+    def value(self):
+        if InteractiveForm.is_integer(self.input.value): return int(self.input.value)
+        elif InteractiveForm.is_float(self.input.value): return float(self.input.value)
+        else: return self.input.value
 
 
 class SelectFormInput(BaseFormInput):
@@ -172,7 +181,7 @@ class MultiselectFormInput(BaseFormInput):
     @staticmethod
     def type_safe(val, input_class):
         """Override parent class' method to handle non-lists and blanks"""
-        base_val = BaseFormInput.type_safe(val, input_class)  # Call base class
+        base_val = BaseFormInput.type_safe(val, input_class)           # Call base class
 
         if not base_val and isinstance(base_val, str): return []       # Handle empty values
         if not isinstance(base_val, (list, tuple)): return [base_val]  # Ensure val is a list
@@ -403,10 +412,8 @@ class InteractiveForm(interactive):
             return MultiselectFormInput(spec, value=default_value)
         elif param_type == 'choice':
             return SelectFormInput(spec, value=default_value)
-        elif param_type == 'number' and self.is_integer(default_value):
-            return IntegerFormInput(spec, value=default_value)
-        elif param_type == 'number' and self.is_float(default_value):
-            return FloatFormInput(spec, value=default_value)
+        elif param_type == 'number':
+            return NumberFormInput(spec, value=default_value)
         elif param_type == 'number' and (default_value is None or default_value == ''):
             return TextFormInput(spec, value='')
         elif param_type == 'file':
@@ -418,9 +425,9 @@ class InteractiveForm(interactive):
         elif isinstance(default_value, bool):
             return SelectFormInput(spec, value=default_value)
         elif isinstance(default_value, Integral):
-            return IntegerFormInput(spec, value=default_value)
+            return NumberFormInput(spec, value=default_value)
         elif isinstance(default_value, Real):
-            return FloatFormInput(spec, value=default_value)
+            return NumberFormInput(spec, value=default_value)
         elif hasattr(default_value, 'read'):
             return FileFormInput(spec, value=default_value, parent=self.parent, upload_callback=self.upload_callback)
         else:
