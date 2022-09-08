@@ -58,10 +58,8 @@ class ToolManager(object):
         # Protect against uninitialized comms
         if self.comm is None: return
 
-        self.comm.send({
-            "func": message_type,
-            "payload": payload
-        })
+        # Make a call to the comm in its own thread so that it doesn't block cell execution
+        Thread(target=lambda: self.comm.send({ "func": message_type, "payload": payload })).start()
 
     def _list(self):
         """
