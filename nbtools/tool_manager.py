@@ -184,7 +184,7 @@ class NBTool:
     description = None
     tags = None
     version = None
-    load = lambda self: self
+    load = lambda self, **kwargs: self
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
@@ -201,6 +201,8 @@ class NBTool:
         }
 
 
-def tool(id, origin):
+def tool(id, origin, **kwargs):
     nbtool = ToolManager.tool(id=id, origin=origin)
-    if nbtool: return nbtool.load()
+    if nbtool:  # Call load() passing kwargs only if kwargs are accepted
+        try: return nbtool.load(**kwargs)
+        except TypeError: return nbtool.load()
