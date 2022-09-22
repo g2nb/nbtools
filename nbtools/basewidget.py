@@ -1,5 +1,5 @@
 from ipywidgets import DOMWidget
-from traitlets import Bool, Unicode, Dict
+from traitlets import Bool, Unicode, Dict, Int
 from ._frontend import module_name, module_version
 import json
 import warnings
@@ -13,6 +13,7 @@ class BaseWidget(DOMWidget):
     _view_name = Unicode('BaseWidgetView').tag(sync=True)
     _view_module = Unicode(module_name).tag(sync=True)
     _view_module_version = Unicode(module_version).tag(sync=True)
+    _view_count = Int(0).tag(sync=True)
 
     _id = Unicode(sync=True)
     origin = Unicode('Notebook').tag(sync=True)
