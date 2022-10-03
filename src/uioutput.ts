@@ -9,7 +9,7 @@ import '../style/uioutput.css'
 import { ISerializers, ManagerBase, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
-import { extract_file_name, extract_file_type, is_absolute_path, is_url } from './utils';
+import { extract_file_name, extract_file_type, get_absolute_url, is_absolute_path, is_url } from './utils';
 import { ContextManager } from "./context";
 import { Data } from "./dataregistry";
 
@@ -231,6 +231,7 @@ export class UIOutputView extends BaseWidgetView {
         });
 
         // Add download and new tab options
+        this.add_menu_item('Copy Link', () => navigator.clipboard.writeText(get_absolute_url(link.getAttribute('href'))), '', menu);
         this.add_menu_item('Download', () => window.open(link.getAttribute('href') + '?download=1'), '', menu);
         this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string), '', menu);
     }

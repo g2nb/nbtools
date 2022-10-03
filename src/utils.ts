@@ -54,6 +54,11 @@ export function is_url(path_or_url:string) {
     return url_exp.test(path_or_url);
 }
 
+export function get_absolute_url(url:string) {
+    try { return new URL(url).href; }
+    catch (e) { return new URL(url, document.baseURI).href; }
+}
+
 /**
  * Extracts a file name from a URL
  *
