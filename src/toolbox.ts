@@ -4,22 +4,29 @@ import { ContextManager } from "./context";
 import { NotebookActions, NotebookPanel } from "@jupyterlab/notebook";
 
 export class ToolBrowser extends Widget {
+    public search:SearchBox|null = null;
+    public toolbox:Toolbox|null = null;
+
     constructor() {
         super();
         this.addClass('nbtools-browser');
         this.layout = new PanelLayout();
+        this.search = new SearchBox();
+        this.toolbox = new Toolbox(this.search);
 
-        (this.layout as PanelLayout).addWidget(new SearchBox());
-        (this.layout as PanelLayout).addWidget(new Toolbox());
+        (this.layout as PanelLayout).addWidget(this.search);
+        (this.layout as PanelLayout).addWidget(this.toolbox);
     }
 }
 
 export class Toolbox extends Widget {
     last_update = 0;
     update_waiting = false;
+    search:SearchBox;
 
-    constructor() {
+    constructor(associated_search:SearchBox) {
         super();
+        this.search = associated_search;
         this.addClass('nbtools-toolbox');
         this.addClass('nbtools-wrapper');
 
@@ -103,6 +110,9 @@ export class Toolbox extends Widget {
                 this.add_tool(origin_box, tool);
             })
         });
+
+        // Apply search filter after refresh
+        this.search.filter(this.search.node.querySelector('input.nbtools-search') as HTMLInputElement);
     }
 
     organize_tools(tool_list:Array<any>):any {
@@ -215,7 +225,8 @@ export class SearchBox extends Widget {
         this.value = search_box.value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
         // Get the toolbox
-        const toolbox = document.querySelector('#nbtools-browser > .nbtools-toolbox') as HTMLElement;
+        const toolbox = document.querySelector('#nbtools-browser > .nbtools-toolbox') as HTMLElement|null;
+        if (!toolbox) return; // Do nothing if the toolbox is null
 
         // Show any tool that matches and hide anything else
         toolbox.querySelectorAll('li.nbtools-tool').forEach((tool:any) => {
