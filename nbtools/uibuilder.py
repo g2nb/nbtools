@@ -136,6 +136,9 @@ class UIBuilder(BaseWidget, NBTool):
         # Display the output underneath the UI Builder widget
         self.on_displayed(lambda widget: display(widget.output))
 
+        # Insert a copy of this UI Builder when added as a tool
+        self.load = lambda **kwargs: UIBuilder(self.function_or_method, **kwargs)
+
     def _apply_defaults(self, function_or_method):
         # Set the name based on the function name
         self.name = function_or_method.__qualname__
