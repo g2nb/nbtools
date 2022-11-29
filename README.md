@@ -57,9 +57,20 @@ jupyter nbextension install --py nbtools --symlink --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
 ```
 
+If installing from GitHub, before nbtools will load in your JupyterLab environment, you'll also need to build its 
+labextension (see Development below). 
+
 ## Development
 
-To develop with nbtools, you will need to first install npm or yarn, as well as install nbtools' dependencies.
+To develop with nbtools, you will need to first install npm or yarn, as well as install nbtools' dependencies. One way 
+to do this is through conda. An example is given below. Run these commands within the top-level directory of the repository.
+
+```bash
+conda install npm.  # Install npm
+npm install         # Install package requirements
+npm run build       # Build the package
+jupyter lab build   # Build JupyterLab with the extension installed
+```
 
 You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in 
 the extension's source and automatically rebuild the extension. To develop, run each of the following commands in a 
