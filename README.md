@@ -7,7 +7,7 @@
 [![Join the chat at https://gitter.im/g2nb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 <!--- ![Github Actions Status](https://github.com/g2nb/nbtools/workflows/Build/badge.svg) -->
 
-**nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [g2nb project](https://notebook.genepattern.org). The package provides:
+**nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [g2nb project](https://g2nb.org). The package provides:
 
 * A decorator which can transform any Python function into an interactive user interface.
 * A toolbox interface for encapsulating and adding new computational steps to a notebook.
@@ -20,7 +20,7 @@
 ## Requirements
 
 * JupyterLab >= 3.0
-* ipywidgets >= 7.0.0
+* ipywidgets >= 7.5.0
 
 ## Docker
 
@@ -33,12 +33,10 @@ docker run --rm -p 8888:8888 g2nb/lab
 
 ## Installation
 
-JupyterLab support is in beta. For now you will need to either install the specific prerelease version from pip or 
-create a development install from GitHub:
+At the moment you may install a prerelease version from pip or create a development install from GitHub:
 
 ```bash
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
-pip install nbtools==21.2b1
+pip install --pre nbtools
 ```
 
 ***OR***
@@ -59,8 +57,20 @@ jupyter nbextension install --py nbtools --symlink --sys-prefix
 jupyter nbextension enable --py nbtools --sys-prefix
 ```
 
+If installing from GitHub, before nbtools will load in your JupyterLab environment, you'll also need to build its 
+labextension (see Development below). 
 
 ## Development
+
+To develop with nbtools, you will need to first install npm or yarn, as well as install nbtools' dependencies. One way 
+to do this is through conda. An example is given below. Run these commands within the top-level directory of the repository.
+
+```bash
+conda install npm.  # Install npm
+npm install         # Install package requirements
+npm run build       # Build the package
+jupyter lab build   # Build JupyterLab with the extension installed
+```
 
 You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in 
 the extension's source and automatically rebuild the extension. To develop, run each of the following commands in a 
