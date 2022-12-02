@@ -167,6 +167,6 @@ COPY GPNBAntiCryptominer/wget_and_curl/encrypted_patterns.zip /tmp/..drgf/patter
 RUN chmod a+x /usr/bin/wget && \
     mkdir -p /tmp/.wg && \
     chmod a+rw /tmp/.wg && \
-    chmod -R a+rw /tmp/..drgf/patterns \
+    chmod -R a+rw /tmp/..drgf/patterns
 
 USER $NB_USER
