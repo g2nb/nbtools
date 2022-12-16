@@ -488,7 +488,7 @@ export class UIBuilderView extends BaseWidgetView {
             }
 
             // Include if matching kind
-            if (UIBuilderView.matching_kind(kinds, href)) compatible_outputs[label] = href;
+            if (UIBuilderView.matching_kind(kinds, kind)) compatible_outputs[label] = href;
             // Include if kinds blank and not text
             else if (kinds.length === 0 && kind !== 'text') compatible_outputs[label] = href;
         });
@@ -585,12 +585,14 @@ export class UIBuilderView extends BaseWidgetView {
      * @private
      */
     _attach_menus() {
+        debugger;
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
             this._attach_kinds(attach_point);
             this._attach_name(attach_point);
             this._attach_accept_origins(attach_point);
             attach_point.addEventListener("click", (event:Event) => {
                 // Get all compatible outputs and build display -> value map
+                debugger;
                 const display_value_map = this.build_display_map(attach_point);
                 if (display_value_map === null) return;  // No view found, return
 
@@ -699,10 +701,10 @@ export class UIBuilderView extends BaseWidgetView {
         return url.split(/\#|\?/)[0].split('.').pop().trim();
     }
 
-    static matching_kind(kinds:Array<string>, url:string) {
+    static matching_kind(kinds:Array<string>, kind:string) {
         let match = false;
-        kinds.forEach((kind) => {
-            if (url.trim().endsWith(kind)) match = true;
+        kinds.forEach((k) => {
+            if (k.trim().endsWith(kind.trim())) match = true;
         });
         return match;
     }
