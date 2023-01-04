@@ -163,9 +163,14 @@ export class UIOutputView extends BaseWidgetView {
     }
 
     attach_menu_options() {
-        // Attach the Open Visualizer gear option
-        const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer());
-        visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+        // Determine if "Pop Out" has already been attached
+        const menu_exists = !!this.element.querySelector('.nbtools-menu-popout');
+
+        // Attach the Pop Out Visualizer gear option if needed
+        if (!menu_exists) {
+            const visualizer_option = this.add_menu_item('Pop Out Visualizer', () => this.open_visualizer(), 'nbtools-menu-popout');
+            visualizer_option.style.display = this.model.get('visualization').trim() ? 'block' : 'none';
+        }
 
         // Call the base widget's attach_menu_options()
         super.attach_menu_options();
