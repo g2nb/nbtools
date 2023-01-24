@@ -585,14 +585,12 @@ export class UIBuilderView extends BaseWidgetView {
      * @private
      */
     _attach_menus() {
-        debugger;
         this.el.querySelectorAll('.nbtools-menu-attached').forEach((attach_point:any) => {
             this._attach_kinds(attach_point);
             this._attach_name(attach_point);
             this._attach_accept_origins(attach_point);
             attach_point.addEventListener("click", (event:Event) => {
                 // Get all compatible outputs and build display -> value map
-                debugger;
                 const display_value_map = this.build_display_map(attach_point);
                 if (display_value_map === null) return;  // No view found, return
 
