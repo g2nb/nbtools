@@ -24,61 +24,20 @@ RUN apt-get update && apt-get install -y npm
 
 #############################################
 ##  $NB_USER                               ##
-##      Install python libraries           ##
+##      Install libraries & config         ##
 #############################################
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.3 voila beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
+RUN conda install -c conda-forge jupyterlab=3.4 beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
         jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
         requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
-        jupyter-archive jupyterlab-git && \
-    conda install plotly openpyxl sphinx && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
+        jupyter-archive jupyterlab-git plotly openpyxl sphinx && \
+    npm install -g yarn && \
+    pip install plotnine bioblend ndex2 qgrid firecloud globus-jupyterlab \
 
-#############################################
-##  $NB_USER                               ##
-##      Install other labextensions        ##
-#############################################
+RUN pip install g2nb && jupyter labextension install @g2nb/jupyterlab-theme  # No GiN installed because no pip target
 
-RUN jupyter labextension install jupyterlab-plotly --no-build && \
-    jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
-    printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
-
-#############################################
-##  $NB_USER                               ##
-##      Install nbtools                    ##
-#############################################
-
-RUN pip install nbtools==22.3.0b2
-
-#############################################
-##  $NB_USER                               ##
-##      Install genepattern                ##
-#############################################
-
-RUN pip install genepattern-notebook==22.3.0b1
-
-#############################################
-##  $NB_USER                               ##
-##      Install igv-jupyter                ##
-#############################################
-
-RUN pip install igv-jupyter
-
-#############################################
-##  $NB_USER                               ##
-##      Install jupyter-wysiwyg            ##
-#############################################
-
-RUN jupyter labextension install @g2nb/jupyter-wysiwyg --no-build
-
-#############################################
-##  $NB_USER                               ##
-##      Install g2nb theme                 ##
-#############################################
-
-RUN jupyter labextension install @g2nb/jupyterlab-theme
 COPY ./config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
 #############################################
