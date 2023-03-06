@@ -14,8 +14,6 @@ import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
 import { DataRegistry, IDataRegistry } from "./dataregistry";
 
-
-const documentation = 'nbtools:documentation';
 const module_exports = { ...base_exports, ...uioutput_exports, ...uibuilder_exports };
 const EXTENSION_ID = '@g2nb/nbtools:plugin';
 const NAMESPACE = 'nbtools';
@@ -54,7 +52,7 @@ function activate_widget_extension(app: Application<Widget>,
     const data_registry = new DataRegistry();
 
     // Add items to the help menu
-    add_documentation_link(app as JupyterFrontEnd, mainmenu);
+    add_help_links(app as JupyterFrontEnd, mainmenu);
 
     // Add keyboard shortcuts
     add_keyboard_shortcuts(app as JupyterFrontEnd, tool_registry);
@@ -113,12 +111,32 @@ function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
 }
 
 /**
- * Add the nbtools documentation link to the help menu
+ * Add the nbtools documentation and feedback links to the help menu
  *
  * @param {Application<Widget>} app
  * @param {IMainMenu} mainmenu
  */
-function add_documentation_link(app:JupyterFrontEnd, mainmenu:IMainMenu|null) {
+function add_help_links(app:JupyterFrontEnd, mainmenu:IMainMenu|null) {
+    const feedback = 'nbtools:feedback';
+    const documentation = 'nbtools:documentation';
+
+    // Add feedback command to the command palette
+    app.commands.addCommand(feedback, {
+        label: 'g2nb Help Forum',
+        caption: 'Open the g2nb help forum',
+        isEnabled: () => !!app.shell,
+        execute: () => {
+            const url = 'https://community.mesirovlab.org/c/g2nb/';
+            let element = document.createElement('a');
+            element.href = url;
+            element.target = '_blank';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            return void 0;
+        }
+    });
+
     // Add documentation command to the command palette
     app.commands.addCommand(documentation, {
         label: 'nbtools Documentation',
@@ -137,5 +155,5 @@ function add_documentation_link(app:JupyterFrontEnd, mainmenu:IMainMenu|null) {
     });
 
     // Add documentation link to the help menu
-    if (mainmenu) mainmenu.helpMenu.addGroup([{command: documentation}], 2);
+    if (mainmenu) mainmenu.helpMenu.addGroup([{command: feedback}, {command: documentation}], 2);
 }

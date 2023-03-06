@@ -186,7 +186,7 @@ export function pulse_red(element:HTMLElement, count:number=0, count_up:boolean=
  * @param description
  * @param endpoint
  */
-export function usage_tracker(event_token, description='', endpoint='https://workspace.g2nb.org/services/usage/') {
+export function usage_tracker(event_token:string, description='', endpoint='https://workspace.g2nb.org/services/usage/') {
     fetch(`${endpoint}${event_token}/`, {
         method: "POST",
         body: description
