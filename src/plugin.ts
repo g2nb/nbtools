@@ -8,7 +8,7 @@ import * as uibuilder_exports from './uibuilder';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser, Toolbox } from "./toolbox";
 import { IToolRegistry, ToolRegistry } from "./registry";
-import { pulse_red } from "./utils";
+import { pulse_red, usage_tracker } from "./utils";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContextManager } from "./context";
@@ -68,6 +68,9 @@ function activate_widget_extension(app: Application<Widget>,
         version: MODULE_VERSION,
         exports: module_exports,
     });
+
+    // Register the plugin as loaded
+    usage_tracker('labextension_load', location.protocol + '//' + location.host + location.pathname);
 
     // Return the tool registry so that it is provided to other extensions
     return [tool_registry, data_registry];

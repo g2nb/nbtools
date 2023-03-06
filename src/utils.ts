@@ -177,3 +177,18 @@ export function pulse_red(element:HTMLElement, count:number=0, count_up:boolean=
         else element.style.border = `none`;
     }, 25);
 }
+
+/**
+ * We maintain a basic counter of how many times our tools are used; this helps us secure funding.
+ * No identifying information is sent.
+ *
+ * @param event_token
+ * @param description
+ * @param endpoint
+ */
+export function usage_tracker(event_token, description='', endpoint='https://workspace.g2nb.org/services/usage/') {
+    fetch(`${endpoint}${event_token}/`, {
+        method: "POST",
+        body: description
+    }).then(r => r.text()).then(b => console.log(`usage response: ${b}`));
+}
