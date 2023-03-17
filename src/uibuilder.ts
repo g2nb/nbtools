@@ -7,7 +7,7 @@
  */
 import '../style/uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { ISerializers, ManagerBase, unpack_models } from "@jupyter-widgets/base";
+import { ISerializers, IWidgetManager, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { element_rendered, toggle } from "./utils";
 import { ContextManager } from "./context";
@@ -24,8 +24,8 @@ export class UIBuilderModel extends BaseWidgetModel {
     static serializers: ISerializers = {
         ...BaseWidgetModel.serializers,
         form: {
-            deserialize: (value: any, manager: ManagerBase<any>|undefined) =>
-                unpack_models(value, manager as ManagerBase<any>)
+            deserialize: (value: any, manager: IWidgetManager|undefined) =>
+                unpack_models(value, manager as IWidgetManager)
         }
     };
 
@@ -40,9 +40,9 @@ export class UIBuilderModel extends BaseWidgetModel {
             _view_module_version: UIBuilderModel.view_module_version,
             name: 'Python Function',
             description: '',
-            _parameters: [],
-            parameter_groups: [],
-            accept_origins: [],
+            _parameters: [] as any,
+            parameter_groups: [] as any,
+            accept_origins: [] as any,
             function_import: '',
             register_tool: true,
             collapse: true,
@@ -53,8 +53,8 @@ export class UIBuilderModel extends BaseWidgetModel {
             display_footer: true,
             busy: false,
             run_label: 'Run',
-            form: undefined,
-            output: undefined
+            form: undefined as any,
+            output: undefined as any
         };
     }
 }

@@ -6,7 +6,7 @@
  * Copyright 2020 Regents of the University of California and the Broad Institute
  */
 import '../style/uioutput.css'
-import { ISerializers, ManagerBase, unpack_models } from '@jupyter-widgets/base';
+import { ISerializers, IWidgetManager, unpack_models } from '@jupyter-widgets/base';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, get_absolute_url, is_absolute_path, is_url } from './utils';
@@ -25,8 +25,8 @@ export class UIOutputModel extends BaseWidgetModel {
     static serializers: ISerializers = {
         ...BaseWidgetModel.serializers,
         appendix: {
-            deserialize: (value: any, manager: ManagerBase<any>|undefined) =>
-                unpack_models(value, manager as ManagerBase<any>)
+            deserialize: (value: any, manager: IWidgetManager|undefined) =>
+                unpack_models(value, manager as IWidgetManager)
         }
     };
 
@@ -42,10 +42,10 @@ export class UIOutputModel extends BaseWidgetModel {
             name: 'Python Results',
             description: '',
             status: '',
-            files: [],
+            files: [] as any,
             text: '',
             visualization: '',
-            appendix: undefined,
+            appendix: undefined as any,
             extra_file_menu_items: {}
         };
     }

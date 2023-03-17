@@ -110,7 +110,7 @@ export class BaseWidgetView extends DOMWidgetView {
         this.float_menus();
 
         // Initialize the widget
-        this.initialize(<WidgetView.InitializeParameters>{ options: {} });
+        this.initialize(<WidgetView.IInitializeParameters>{ options: {} });
 
         // Call any post render events
         this.post_render();
