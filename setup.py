@@ -59,7 +59,7 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab~=3.2",
-        "ipywidgets>=7.5.0,<8.0",
+        "ipywidgets>=8,<9",
         "ipyuploads",
         "jupyter-packaging~=0.12.0",
     ],
