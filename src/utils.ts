@@ -100,6 +100,8 @@ export function element_rendered(el:HTMLElement) {
  * @param {HTMLElement} elem
  */
 export function show(elem:HTMLElement) {
+    if (!elem) return; // Protect against null elements
+
 	// Get the natural height of the element
 	const getHeight = function () {
 		elem.style.display = 'block'; // Make it visible
@@ -126,6 +128,7 @@ export function show(elem:HTMLElement) {
  * @param min_height
  */
 export function hide(elem:HTMLElement, min_height='0') {
+    if (!elem) return; // Protect against null elements
     elem.classList.add('nbtools-toggle');
 
 	// Give the element a height to change from

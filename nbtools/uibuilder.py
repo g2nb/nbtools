@@ -4,7 +4,7 @@ import warnings
 
 from IPython.core.display import display
 from traitlets import Unicode, List, Bool, Dict, Instance, observe
-from ipywidgets import widget_serialization, Output
+from ipywidgets import widget_serialization, Output, VBox
 from ._frontend import module_name, module_version
 from .form import InteractiveForm
 from .basewidget import BaseWidget
@@ -35,7 +35,7 @@ class build_ui:
             self.func = args[0]                                 # Set the function
             self.__widget__ = UIBuilder(self.func)              # Set the widget
             self.func.__dict__["__widget__"] = self.__widget__  # Ensure function has access to widget
-            if self.__widget__.register_tool:
+            if self.__widget__.form.register_tool:
                 ToolManager.instance().register(self.__widget__)
 
             # Display if defined directly in a notebook
@@ -57,7 +57,7 @@ class build_ui:
             self.__widget__ = UIBuilder(self.func, **self.kwargs)                # Set the widget
             self.func.__dict__["__widget__"] = self.__widget__                   # Ensure function has access to widget
             self.func._ipython_display_ = self._ipython_display_                 # Render widget when function returned
-            if self.__widget__.register_tool:
+            if self.__widget__.form.register_tool:
                 ToolManager.instance().register(self.__widget__)
 
             if self.func.__module__ == "__main__":  # Don't automatically display if loaded from library
@@ -79,10 +79,47 @@ class build_ui:
         display(self.__widget__)
 
 
-class UIBuilder(BaseWidget, NBTool):
-    """
-    Widget used to render Python output in a UI
-    """
+class UIBuilder(VBox, NBTool):
+    """Widget used to render Python output in a UI"""
+    origin = None
+    id = None
+    name = None
+    description = None
+
+    def __init__(self, function_or_method, **kwargs):
+        # Set the function and defaults
+        self.function_or_method = function_or_method
+        self._apply_defaults(function_or_method)
+
+        # Create the child widgets
+        self.form = UIBuilderBase(function_or_method, **kwargs)
+        self.output = self.form.output
+
+        # Call the super constructor
+        VBox.__init__(self, [self.form, self.output])
+
+        # Insert a copy of this UI Builder when added as a tool
+        self.load = lambda **override_kwargs: UIBuilder(self.function_or_method, **{**kwargs, **override_kwargs})
+
+    def _apply_defaults(self, function_or_method):
+        # Set the name based on the function name
+        self.name = function_or_method.__qualname__
+        self.id = function_or_method.__qualname__
+
+        # Set the description based on the docstring
+        self.description = inspect.getdoc(function_or_method) or ''
+
+        # Set the origin based on the package name or "Notebook"
+        self.origin = 'Notebook' if function_or_method.__module__ == '__main__' else function_or_method.__module__
+
+    def id(self):
+        """Return the function name regardless of custom display name"""
+        return self.function_or_method.__qualname__
+
+
+class UIBuilderBase(BaseWidget):
+    """Widget that renders a function as a UI form"""
+
     _model_name = Unicode('UIBuilderModel').tag(sync=True)
     _model_module = Unicode(module_name).tag(sync=True)
     _model_module_version = Unicode(module_version).tag(sync=True)
@@ -133,9 +170,6 @@ class UIBuilder(BaseWidget, NBTool):
         self.form = InteractiveForm(function_or_method, self.parameters, parent=self, upload_callback=self.upload_callback)
         self.output = self.form.out
 
-        # Display the output underneath the UI Builder widget
-        self.on_displayed(lambda widget: display(widget.output))
-
         # Insert a copy of this UI Builder when added as a tool
         self.load = lambda **override_kwargs: UIBuilder(self.function_or_method, **{ **kwargs, **override_kwargs})
 
@@ -183,13 +217,13 @@ class UIBuilder(BaseWidget, NBTool):
                 "name": param.name,
                 "label": param.name,
                 "optional": param.default != inspect.Signature.empty,
-                "default": UIBuilder._safe_default(param.default),
-                "value": UIBuilder._safe_default(param.default),
+                "default": UIBuilderBase._safe_default(param.default),
+                "value": UIBuilderBase._safe_default(param.default),
                 "description": param.annotation if param.annotation != inspect.Signature.empty else '',
                 "hide": False,
-                "type": UIBuilder._guess_type(param.default),
+                "type": UIBuilderBase._guess_type(param.default),
                 "kinds": None,
-                "choices": UIBuilder._choice_defaults(param),
+                "choices": UIBuilderBase._choice_defaults(param),
                 "id": None,
                 "events": None
             })
