@@ -36,7 +36,7 @@ dependencies = [
     "ipywidgets>=8,<9",
     "jupyterlab>=3.4",
 ]
-version = "23.3.1"
+version = "23.3.2"
 
 [project.license]
 file = "LICENSE.txt"
@@ -95,7 +95,7 @@ npm = [
 github_url = "https://github.com/g2nb/nbtools"
 
 [tool.tbump.version]
-current = "23.3.1"
+current = "23.3.2"
 regex = '''
   (?P<major>\d+)
   \.
