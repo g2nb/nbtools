@@ -29,12 +29,9 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.4 beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
-        jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
-        requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
-        jupyter-archive jupyterlab-git plotly openpyxl sphinx && \
-    npm install -g yarn && \
-    pip install plotnine bioblend ndex2 qgrid firecloud globus-jupyterlab \
+RUN conda config --add channels bioconda && conda config --add channels conda-forge && \
+    conda install -c conda-forge vincent jupyter-archive jupyterlab-git plotly sphinx yarn plotnine bioblend firecloud && \
+    pip install ndex2 globus-jupyterlab
 
 RUN pip install g2nb && jupyter labextension install @g2nb/jupyterlab-theme  # No GiN installed because no pip target
 

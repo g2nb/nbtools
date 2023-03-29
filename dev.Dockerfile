@@ -35,7 +35,7 @@ RUN conda install -c conda-forge jupyterlab=3.4 beautifulsoup4 blas bokeh cloudp
         jupyter-archive jupyterlab-git && \
     conda install plotly openpyxl sphinx && \
     npm install -g yarn && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
+    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab==1.0.0b10
 # CUT (FOR NOW): conda install... voila
 
 #############################################
@@ -60,6 +60,7 @@ RUN git clone https://github.com/g2nb/ipyuploads.git && \
 ##      Clone the nbtools repo             ##
 #############################################
 
+RUN echo '23.03, Load time tracking'
 RUN git clone https://github.com/g2nb/nbtools.git
 
 #############################################
@@ -87,11 +88,12 @@ RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
 ##      Clone and install jupyter-wysiwyg  ##
 #############################################
 
-RUN git clone https://github.com/g2nb/jupyter-wysiwyg.git && \
-    cd jupyter-wysiwyg && \
-    git checkout jupyterlab && \
-    pip install . && \
-    jupyter labextension install .
+#RUN git clone https://github.com/g2nb/jupyter-wysiwyg.git && \
+#    cd jupyter-wysiwyg && \
+#    git checkout jupyterlab && \
+#    pip install . && \
+#    jupyter labextension install .
+RUN pip install jupyter-wysiwyg==22.12.0b1
 
 #############################################
 ##  $NB_USER                               ##
@@ -109,7 +111,7 @@ RUN git clone https://github.com/g2nb/igv-jupyter.git && \
 
 RUN git clone -b build_function https://github.com/jaidevjoshi83/bioblend.git && \
     cd bioblend && pip install . && \
-    git clone -b FormRestor https://github.com/jaidevjoshi83/GiN.git && \
+    git clone https://github.com/jaidevjoshi83/GiN.git && \
     cd GiN && npm install @g2nb/nbtools && pip install . && \
     jupyter nbextension install --py --symlink --overwrite --sys-prefix GiN && \
     jupyter nbextension enable --py --sys-prefix GiN
@@ -128,6 +130,19 @@ RUN git clone https://github.com/idekerlab/cy-jupyterlab.git && \
 RUN git clone https://github.com/g2nb/cywidget.git && \
     cd cywidget && \
     pip install .
+
+#############################################
+##  $NB_USER                               ##
+##      Install FastaWidget                ##
+#############################################
+
+#RUN git clone https://github.com/jupyterlab/jupyter-renderers.git && \
+#    cd jupyter-renderers/packages/fasta-extension && \
+#    jlpm install && jlpm build && jupyter labextension install .
+#
+#RUN git clone https://github.com/g2nb/fastawidget.git && \
+#    cd fastawidget && \
+#    pip install .
 
 #############################################
 ##  $NB_USER                               ##
