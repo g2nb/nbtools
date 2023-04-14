@@ -90,6 +90,7 @@ class UIBuilder(VBox, NBTool):
         # Set the function and defaults
         self.function_or_method = function_or_method
         self._apply_defaults(function_or_method)
+        self._apply_overrides(**kwargs)
 
         # Create the child widgets
         self.form = UIBuilderBase(function_or_method, **kwargs)
@@ -111,6 +112,11 @@ class UIBuilder(VBox, NBTool):
 
         # Set the origin based on the package name or "Notebook"
         self.origin = 'Notebook' if function_or_method.__module__ == '__main__' else function_or_method.__module__
+
+    def _apply_overrides(self, **kwargs):
+        # Assign keyword parameters to this object
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def id(self):
         """Return the function name regardless of custom display name"""
