@@ -8,7 +8,7 @@
 ###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks
-FROM jupyter/scipy-notebook:2022-02-17 AS lab
+FROM jupyter/scipy-notebook:2023-04-10 AS lab
 
 MAINTAINER Thorin Tabor <tmtabor@cloud.ucsd.edu>
 EXPOSE 8888
@@ -29,13 +29,12 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda install -c conda-forge jupyterlab=3.4 beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 \
-        jedi jinja2 libblas libcurl matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl \
-        requests scikit-image scikit-learn scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent \
-        jupyter-archive jupyterlab-git && \
-    conda install plotly openpyxl sphinx && \
-    npm install -g yarn && \
-    pip install plotnine bioblend py4cytoscape ccalnoir cuzcatlan ndex2 qgrid ipycytoscape firecloud globus-jupyterlab==1.0.0b10
+RUN conda install -c conda-forge beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 jedi jinja2 libblas libcurl \
+        matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl requests scikit-image scikit-learn \
+        scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent jupyter-archive jupyterlab-git && \
+        conda install plotly openpyxl sphinx && \
+        npm install -g yarn && \
+        pip install plotnine bioblend py4cytoscape ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
 # CUT (FOR NOW): conda install... voila
 
 #############################################
@@ -44,7 +43,6 @@ RUN conda install -c conda-forge jupyterlab=3.4 beautifulsoup4 blas bokeh cloudp
 #############################################
 
 RUN jupyter labextension install jupyterlab-plotly --no-build && \
-    jupyter labextension install @j123npm/qgrid2@1.1.4 --no-build && \
     printf '\nc.VoilaConfiguration.enable_nbextensions = True' >> /etc/jupyter/jupyter_notebook_config.py
 
 #############################################
@@ -60,7 +58,7 @@ RUN git clone https://github.com/g2nb/ipyuploads.git && \
 ##      Clone the nbtools repo             ##
 #############################################
 
-RUN echo '23.03, Load time tracking'
+RUN echo '23.04, jupyterlab 3.6 and ipywidgets 8, nbtools fixes'
 RUN git clone https://github.com/g2nb/nbtools.git
 
 #############################################
@@ -68,10 +66,7 @@ RUN git clone https://github.com/g2nb/nbtools.git
 ##      Build and install nbtools          ##
 #############################################
 
-RUN cd nbtools && pip install . && \
-    jupyter labextension install . && \
-    jupyter nbextension install --py nbtools --sys-prefix && \
-    jupyter nbextension enable --py nbtools --sys-prefix
+RUN cd nbtools && pip install .
 
 #############################################
 ##  $NB_USER                               ##
@@ -80,7 +75,6 @@ RUN cd nbtools && pip install . && \
 
 RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
     cd genepattern-notebook && \
-    git checkout lab && \
     pip install .
 
 #############################################
@@ -88,12 +82,9 @@ RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
 ##      Clone and install jupyter-wysiwyg  ##
 #############################################
 
-#RUN git clone https://github.com/g2nb/jupyter-wysiwyg.git && \
-#    cd jupyter-wysiwyg && \
-#    git checkout jupyterlab && \
-#    pip install . && \
-#    jupyter labextension install .
-RUN pip install jupyter-wysiwyg==22.12.0b1
+RUN git clone https://github.com/g2nb/jupyter-wysiwyg.git && \
+    cd jupyter-wysiwyg && \
+    pip install .
 
 #############################################
 ##  $NB_USER                               ##
