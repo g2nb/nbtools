@@ -7,7 +7,7 @@
  */
 import '../style/uibuilder.css'
 import { MODULE_NAME, MODULE_VERSION } from './version';
-import { ISerializers, IWidgetManager, unpack_models } from "@jupyter-widgets/base";
+import { ISerializers, unpack_models } from "@jupyter-widgets/base";
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { element_rendered, toggle } from "./utils";
 import { ContextManager } from "./context";
@@ -23,10 +23,7 @@ export class UIBuilderModel extends BaseWidgetModel {
 
     static serializers: ISerializers = {
         ...BaseWidgetModel.serializers,
-        form: {
-            deserialize: (value: any, manager: IWidgetManager|undefined) =>
-                unpack_models(value, manager as IWidgetManager)
-        }
+        form: { deserialize: unpack_models }
     };
 
     defaults() {

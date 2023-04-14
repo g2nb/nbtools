@@ -33,7 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "ipyuploads",
-    "ipywidgets>=8,<9",
+    "ipywidgets>7,<9",
     "jupyterlab>=3.4",
 ]
 version = "23.3.2"
