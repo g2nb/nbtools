@@ -58,21 +58,13 @@ RUN git clone https://github.com/g2nb/ipyuploads.git && \
 ##      Clone the nbtools repo             ##
 #############################################
 
-RUN git clone https://github.com/g2nb/nbtools.git
-
-#############################################
-##  $NB_USER                               ##
-##      Build and install nbtools          ##
-#############################################
-
-RUN cd nbtools && pip install .
+RUN git clone https://github.com/g2nb/nbtools.git && cd nbtools && pip install .
 
 #############################################
 ##  $NB_USER                               ##
 ##      Clone and install genepattern      ##
 #############################################
 
-RUN echo '23.04, jupyterlab 3.6 and ipywidgets 8, nbtools & GPNB fixes'
 RUN git clone https://github.com/genepattern/genepattern-notebook.git && \
     cd genepattern-notebook && \
     pip install .
