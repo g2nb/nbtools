@@ -103,8 +103,8 @@ class UIBuilder(VBox, NBTool):
         self.load = lambda **override_kwargs: UIBuilder(self.function_or_method, **{**kwargs, **override_kwargs})
 
         # Create properties to pass through to UIBuilderBase
-        self.create_properties([x for x in self.form.__dict__['_trait_values'].keys() if not x.startswith('_') and
-                                x != 'keys' and x != 'form'])
+        exclude = ['keys', 'form', 'layout', 'tabbable', 'tooltip', 'comm']
+        self.create_properties([x for x in self.form.__dict__['_trait_values'].keys() if not x.startswith('_') and x not in exclude])
 
     def _apply_defaults(self, function_or_method):
         # Set the name based on the function name
@@ -129,11 +129,13 @@ class UIBuilder(VBox, NBTool):
     def _get_property(self, name):
         prop = getattr(self, f"_{name}", None)
         if prop is not None: return prop
-        else: return getattr(self.form, name, None)
+        else:
+            if hasattr(self, 'form'): return getattr(self.form, name, None)
+            else: return None
 
     def _set_property(self, name, value):
         setattr(self, f"_{name}", value)
-        setattr(self.form, name, value)
+        if hasattr(self, 'form'): setattr(self.form, name, value)
 
     def _create_property(self, name):
         setattr(self.__class__, name, property(lambda self: self._get_property(name),
