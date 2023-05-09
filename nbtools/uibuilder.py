@@ -102,6 +102,10 @@ class UIBuilder(VBox, NBTool):
         # Insert a copy of this UI Builder when added as a tool
         self.load = lambda **override_kwargs: UIBuilder(self.function_or_method, **{**kwargs, **override_kwargs})
 
+        # Create properties to pass through to UIBuilderBase
+        self.create_properties([x for x in self.form.__dict__['_trait_values'].keys() if not x.startswith('_') and
+                                x != 'keys' and x != 'form'])
+
     def _apply_defaults(self, function_or_method):
         # Set the name based on the function name
         self.name = function_or_method.__qualname__
@@ -121,6 +125,22 @@ class UIBuilder(VBox, NBTool):
     def id(self):
         """Return the function name regardless of custom display name"""
         return self.function_or_method.__qualname__
+
+    def _get_property(self, name):
+        prop = getattr(self, f"_{name}", None)
+        if prop is not None: return prop
+        else: return getattr(self.form, name, None)
+
+    def _set_property(self, name, value):
+        setattr(self, f"_{name}", value)
+        setattr(self.form, name, value)
+
+    def _create_property(self, name):
+        setattr(self.__class__, name, property(lambda self: self._get_property(name),
+                                               lambda self, value: self._set_property(name, value)))
+
+    def create_properties(self, property_names):
+        for name in property_names: self._create_property(name)
 
 
 class UIBuilderBase(BaseWidget):
