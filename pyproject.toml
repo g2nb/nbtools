@@ -2,7 +2,7 @@
 requires = [
     "hatchling",
     "ipywidgets>7,<9",
-    "jupyterlab>=3.4",
+    "jupyterlab>=3.4,<4",
 ]
 build-backend = "hatchling.build"
 
@@ -34,7 +34,7 @@ classifiers = [
 dependencies = [
     "ipyuploads",
     "ipywidgets>7,<9",
-    "jupyterlab>=3.4",
+    "jupyterlab>=3.4,<4",
 ]
 version = "23.5.0"
 
