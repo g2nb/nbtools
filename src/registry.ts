@@ -36,6 +36,16 @@ export class ToolRegistry implements ToolRegistry {
 
             // Load the default tools
             this.import_default_tools();
+
+            // Ensure rendering of tool cells
+            this.ensure_rendering();
+        });
+    }
+
+    ensure_rendering() {
+        ContextManager.context().kernel_ready(this.current, () => {
+            if (!this.current) return;                              // Return if no notebook is selected
+            ContextManager.context().run_tool_cells();
         });
     }
 

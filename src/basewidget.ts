@@ -144,6 +144,9 @@ export class BaseWidgetView extends DOMWidgetView {
         // Apply the body
         (this.element.querySelector('div.nbtools-body') as HTMLElement).innerHTML = this.body;
 
+        // Add the metadata flag
+        this.update_metadata();
+
         // Attach the disconnected cover
         this.element.appendChild(new DOMParser().parseFromString(this.disconnected, "text/html")
             .querySelector('body > :first-child') as HTMLElement);
@@ -205,6 +208,23 @@ export class BaseWidgetView extends DOMWidgetView {
             // Run all cells with disconnected nbtools widgets
             ContextManager.context().run_tool_cells();
         });
+    }
+
+    /**
+     * Update the cell metadata with the nbtools flag
+     */
+    update_metadata() {
+        if (!ContextManager.notebook_tracker) return;
+        if (!ContextManager.notebook_tracker.currentWidget) return;
+
+        const cells = ContextManager.notebook_tracker.currentWidget.content.widgets;
+        for (let i = 0; i < cells.length; i++) {
+            const execution_area:HTMLElement = cells[i].node.querySelector('.lm-Widget.p-Widget.jp-InputPrompt.jp-InputArea-prompt');
+            if (execution_area.innerText.includes('[*]')) {
+                ContextManager.context().make_tool_cell(cells[i]);
+                return;
+            }
+        }
     }
 
     disconnected_sync_fix() {

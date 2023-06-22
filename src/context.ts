@@ -72,6 +72,14 @@ abstract class Context {
     abstract run_tool_cells():void;
 
     /**
+     * Sets whether this is a nbtools widget cell
+     *
+     * @param cell
+     * @param is_widget_cell
+     */
+    abstract make_tool_cell(cell: any, is_widget_cell?:boolean):void
+
+    /**
      * Returns a path to the active notebook, relative to the top directory
      */
     abstract notebook_path():string
@@ -223,6 +231,10 @@ class LabContext extends Context {
      * @returns boolean
      */
     is_tool_cell(cell:any):boolean {
+        // Check for nbtools metadata
+        if (cell.model.metadata.get('nbtools')) return true;
+
+        // Check for an existing disconnected nbtools widget
         const dom_node = cell.node || cell.element;
         if (!!dom_node) return !!dom_node.querySelector('.nbtools');
         else return false;
@@ -326,6 +338,17 @@ class LabContext extends Context {
         comm.open({});  // Open the comm
         return comm
     }
+
+    /**
+     * Sets whether this is a nbtools widget cell
+     *
+     * @param cell
+     * @param is_widget_cell
+     */
+    make_tool_cell(cell: any, is_widget_cell=true): void {
+        if (is_widget_cell) cell.model.metadata.set('nbtools', {'force_display': true});
+        else cell.model.metadata.clear();
+    }
 }
 
 /**
@@ -392,6 +415,18 @@ class NotebookContext extends Context {
         const dom_node = cell.node || cell.element;
         if (!!dom_node) return !!dom_node.find('.nbtools').length;
         else return false;
+    }
+
+    /**
+     * Sets whether this is a nbtools widget cell
+     *
+     * @param cell
+     * @param is_widget_cell
+     */
+    make_tool_cell(cell: any, is_widget_cell=true): void {
+        // TODO: Test in Jupyter Notebook
+        if (is_widget_cell) cell.metadata.set('nbtools', {'force_display': true});
+        else cell.metadata.clear();
     }
 
     /**
@@ -511,6 +546,18 @@ class EmbedContext extends Context {
         const body = document.querySelector('body');
         if (!body) return ''; // If there is no body, unable to get path
         return body.getAttribute('data-base-url') + 'nbextensions/nbtools/';
+    }
+
+    /**
+     * Sets whether this is a nbtools widget cell
+     *
+     * @param cell
+     * @param is_widget_cell
+     */
+    make_tool_cell(cell: any, is_widget_cell=true): void {
+        // TODO: Test in embedded context
+        if (is_widget_cell) cell.metadata.set('nbtools', {'force_display': true});
+        else cell.metadata.clear();
     }
 
     /**
