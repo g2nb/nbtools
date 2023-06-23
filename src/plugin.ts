@@ -1,6 +1,7 @@
 import { Application, IPlugin } from '@lumino/application';
 import { Widget } from '@lumino/widgets';
 import { IJupyterWidgetRegistry } from '@jupyter-widgets/base';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { MODULE_NAME, MODULE_VERSION } from './version';
 import * as base_exports from './basewidget';
 import * as uioutput_exports from './uioutput';
@@ -25,7 +26,7 @@ const NAMESPACE = 'nbtools';
 const nbtools_plugin: IPlugin<Application<Widget>, [IToolRegistry, IDataRegistry]> = ({
     id: EXTENSION_ID,
     provides: [IToolRegistry, IDataRegistry],
-    requires: [IJupyterWidgetRegistry],
+    requires: [IJupyterWidgetRegistry, ISettingRegistry],
     optional: [IMainMenu, ILayoutRestorer, ILabShell, INotebookTracker],
     activate: activate_widget_extension,
     autoStart: true
@@ -37,18 +38,22 @@ export default nbtools_plugin;
 /**
  * Activate the widget extension.
  */
-function activate_widget_extension(app: Application<Widget>,
+async function activate_widget_extension(app: Application<Widget>,
                                    widget_registry: IJupyterWidgetRegistry,
+                                   settings: ISettingRegistry,
                                    mainmenu: IMainMenu|null,
                                    restorer: ILayoutRestorer|null,
                                    shell: ILabShell|null,
-                                   notebook_tracker: INotebookTracker|null): [IToolRegistry, IDataRegistry] {
+                                   notebook_tracker: INotebookTracker|null): Promise<[IToolRegistry, IDataRegistry]> {
 
     // Initialize the ContextManager
     init_context(app as JupyterFrontEnd, notebook_tracker);
 
+    // Initialize settings
+    const setting_dict = await init_settings(settings);
+
     // Create the tool and data registries
-    const tool_registry = new ToolRegistry();
+    const tool_registry = new ToolRegistry(setting_dict);
     const data_registry = new DataRegistry();
 
     // Add items to the help menu
@@ -72,6 +77,13 @@ function activate_widget_extension(app: Application<Widget>,
 
     // Return the tool registry so that it is provided to other extensions
     return [tool_registry, data_registry];
+}
+
+async function init_settings(settings:ISettingRegistry) {
+    let setting = null;
+    try { setting = await settings.load(EXTENSION_ID); }
+    catch { console.log('Unable to load nbtools settings'); }
+    return { force_render: setting ? setting.get('force_render').composite as boolean : true };
 }
 
 function init_context(app:JupyterFrontEnd, notebook_tracker: INotebookTracker|null) {

@@ -17,7 +17,7 @@ export class ToolRegistry implements ToolRegistry {
     /**
      * Initialize the ToolRegistry and connect event handlers
      */
-    constructor() {
+    constructor(setting_dict:any) {
         // Lazily assign the tool registry to the context
         if (!ContextManager.tool_registry) ContextManager.tool_registry = this;
 
@@ -38,7 +38,7 @@ export class ToolRegistry implements ToolRegistry {
             this.import_default_tools();
 
             // Ensure rendering of tool cells
-            this.ensure_rendering();
+            if (setting_dict.force_render) this.ensure_rendering();
         });
     }
 
