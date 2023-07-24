@@ -8,7 +8,7 @@
 ###################################################################################
 
 # Pull the latest known good scipy notebook image from the official Jupyter stacks
-FROM jupyter/scipy-notebook:2022-02-17
+FROM jupyter/scipy-notebook:2023-04-10 AS lab
 
 MAINTAINER Thorin Tabor <tmtabor@cloud.ucsd.edu>
 EXPOSE 8888
@@ -29,11 +29,16 @@ RUN apt-get update && apt-get install -y npm
 
 USER $NB_USER
 
-RUN conda config --add channels bioconda && conda config --add channels conda-forge && \
-    conda install -c conda-forge vincent jupyter-archive jupyterlab-git plotly sphinx yarn plotnine bioblend firecloud && \
-    pip install ndex2 globus-jupyterlab
+RUN conda install -c conda-forge beautifulsoup4 blas bokeh cloudpickle dask dill h5py hdf5 jedi jinja2 libblas libcurl \
+        matplotlib nodejs numba numexpr numpy pandas patsy pickleshare pillow pycurl requests scikit-image scikit-learn \
+        scipy seaborn sqlalchemy sqlite statsmodels sympy traitlets vincent jupyter-archive jupyterlab-git && \
+        conda install plotly openpyxl sphinx && \
+        npm install -g yarn && \
+        pip install plotnine bioblend py4cytoscape ndex2 qgrid ipycytoscape firecloud globus-jupyterlab
 
-RUN pip install g2nb && jupyter labextension install @g2nb/jupyterlab-theme  # No GiN installed because no pip target
+RUN jupyter labextension install @g2nb/cy-jupyterlab && \
+    jupyter labextension install @g2nb/jupyterlab-theme && \
+    pip install g2nb
 
 COPY ./config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.json
 
@@ -44,3 +49,26 @@ COPY ./config/overrides.json /opt/conda/share/jupyter/lab/settings/overrides.jso
 
 ENV JUPYTER_ENABLE_LAB="true"
 ENV TERM xterm
+
+#############################################
+##  ROOT                                   ##
+##      Install security measures          ##
+#############################################
+
+FROM lab AS secure
+USER root
+
+RUN mv /usr/bin/wget /usr/bin/.drgf && \
+#    mv /usr/bin/curl /usr/bin/.cdfg && \
+    mkdir -p /tmp/..drgf/patterns
+
+COPY GPNBAntiCryptominer/wget_and_curl/wget /usr/bin/wget
+# COPY GPNBAntiCryptominer/wget_and_curl/curl /usr/bin/curl
+COPY GPNBAntiCryptominer/wget_and_curl/encrypted_patterns.zip /tmp/..drgf/patterns/
+
+RUN chmod a+x /usr/bin/wget && \
+    mkdir -p /tmp/.wg && \
+    chmod a+rw /tmp/.wg && \
+    chmod -R a+rw /tmp/..drgf/patterns
+
+USER $NB_USER

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
 # PARSE THE OPTS
+dfile='Dockerfile'
 while getopts v:p flag; do
     case "${flag}" in
         v) version=${OPTARG};;
         p) push='1';;
+        d) dfile='dev.Dockerfile';;
         *) echo "Option not recognized"; exit 1;;
     esac
 done
@@ -18,9 +20,9 @@ if ! [ "$version" ]; then
 fi
 
 # BUILD THE IMAGES
-docker build -t g2nb/lab:"$version" -f dev.Dockerfile --target=lab .
-docker build -t g2nb/lab:latest -f dev.Dockerfile --target=lab .
-docker build -t g2nb/lab:secure -f dev.Dockerfile --target=secure .
+docker build -t g2nb/lab:"$version" -f $dfile --target=lab .
+docker build -t g2nb/lab:latest -f $dfile --target=lab .
+docker build -t g2nb/lab:secure -f $dfile --target=secure .
 
 # IF PUSH FLAG SET, PUSH TO DOCKERHUB
 if [ "$push" ]; then
