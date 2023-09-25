@@ -38,7 +38,7 @@ export default nbtools_plugin;
 /**
  * Activate the widget extension.
  */
-async function activate_widget_extension(app: Application<Widget>,
+async function activate_widget_extension(app: JupyterFrontEnd,
                                    widget_registry: IJupyterWidgetRegistry,
                                    settings: ISettingRegistry,
                                    mainmenu: IMainMenu|null,
@@ -47,7 +47,7 @@ async function activate_widget_extension(app: Application<Widget>,
                                    notebook_tracker: INotebookTracker|null): Promise<[IToolRegistry, IDataRegistry]> {
 
     // Initialize the ContextManager
-    init_context(app as JupyterFrontEnd, notebook_tracker);
+    init_context(app, notebook_tracker);
 
     // Initialize settings
     const setting_dict = await init_settings(settings);

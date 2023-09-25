@@ -219,7 +219,7 @@ export class BaseWidgetView extends DOMWidgetView {
 
         const cells = ContextManager.notebook_tracker.currentWidget.content.widgets;
         for (let i = 0; i < cells.length; i++) {
-            const execution_area:HTMLElement = cells[i].node.querySelector('.lm-Widget.p-Widget.jp-InputPrompt.jp-InputArea-prompt');
+            const execution_area:HTMLElement = cells[i].node.querySelector('.lm-Widget.jp-InputPrompt.jp-InputArea-prompt');
             if (execution_area.innerText.includes('[*]')) {
                 ContextManager.context().make_tool_cell(cells[i]);
                 return;

@@ -1,22 +1,23 @@
 {
-    "title": "nbtools",
-    "description": "Settings for nbtools",
-    "type": "object",
-    "jupyter.lab.shortcuts": [
-        {
-            "command": "nbtools:insert-tool",
-            "keys": [
-                "G"
-            ],
-            "selector": ".jp-Notebook:focus"
-        }
-    ],
-    "properties": {
-        "force_render": {
-            "type": "boolean",
-            "title": "Ensure Widget Rendering",
-            "description": "If true, cells containing nbtools widgets will be executed when a notebook is opened, ensuring that they render appropriately.",
-            "default": true
-        }
+  "jupyter.lab.shortcuts": [
+    {
+      "command": "nbtools:insert-tool",
+      "keys": [
+        "G"
+      ],
+      "selector": ".jp-Notebook:focus"
     }
+  ],
+  "title": "@g2nb/nbtools",
+  "description": "Settings for nbtools",
+  "type": "object",
+  "properties": {
+    "force_render": {
+      "type": "boolean",
+      "title": "Ensure Widget Rendering",
+      "description": "If true, cells containing nbtools widgets will be executed when a notebook is opened, ensuring that they render appropriately.",
+      "default": true
+    }
+  },
+  "additionalProperties": false
 }

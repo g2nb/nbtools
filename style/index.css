@@ -1,4 +1,4 @@
-@import './basewidget.css';
-@import './uioutput.css';
-@import './uibuilder.css';
-@import './toolbox.css';
+@import url('./basewidget.css');
+@import url('./uioutput.css');
+@import url('./uibuilder.css');
+@import url('./toolbox.css');

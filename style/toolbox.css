@@ -6,6 +6,15 @@
     color: var(--jp-inverse-layout-color3);
 }
 
+.nbtools-icon.fa-th::before {
+  position: absolute;
+  left: 18px;
+}
+
+.nbtools-icon.fa-th > svg {
+    display: none;
+}
+
 .nbtools-wrapper {
     padding: 4px;
     background-color: var(--jp-layout-color1);

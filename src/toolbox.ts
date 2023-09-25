@@ -74,12 +74,12 @@ export class Toolbox extends Widget {
         if (!cell) return; // If no cell is selected, do nothing
 
         // If the currently selected cell isn't empty, insert a new one below and select it
-        const current_cell_code = cell.model.value.text.trim();
+        const current_cell_code = cell.model.sharedModel.getSource()?.trim();
         if (!!current_cell_code) NotebookActions.insertBelow(current.content);
 
         // Fill the cell with the tool's code
         cell = ContextManager.notebook_tracker.activeCell; // The active cell may just have been updated
-        if (cell) cell.model.value.text = code;
+        if (cell) cell.model.sharedModel.setSource(code);
 
         // Run the cell
         return NotebookActions.run(current.content, current.context.sessionContext);

@@ -7,7 +7,7 @@ const rules = [
   { test: /\.ts$/, loader: 'ts-loader' },
   { test: /\.js$/, loader: 'source-map-loader' },
   { test: /\.css$/i, use: ['style-loader', 'css-loader'] },
-  { test: /\.(png|svg|jpg)$/i, use: ['file-loader'] }
+  { test: /\.(png|svg|jpg)$/i, type: 'asset/resource' }
 ];
 
 // Packages that shouldn't be bundled but loaded at runtime

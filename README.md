@@ -5,7 +5,7 @@
 [![Documentation Status](https://img.shields.io/badge/docs-latest-brightgreen.svg?style=flat)](https://gpnotebook-website-docs.readthedocs.io/en/latest/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/genepattern/genepattern-notebook.svg)](https://hub.docker.com/r/genepattern/lab/)
 [![Join the chat at https://gitter.im/g2nb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/genepattern/genepattern-notebook?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-<!--- ![Github Actions Status](https://github.com/g2nb/nbtools/workflows/Build/badge.svg) -->
+[![Github Actions Status](https://github.com/g2nb/nbtools/workflows/Build/badge.svg)](https://github.com/g2nb/nbtools/actions/workflows/build.yml)
 
 **nbtools** is a framework for creating user-friendly Jupyter notebooks that are accessible to both programming and non-programming users. It is a core component of the [g2nb project](https://g2nb.org). The package provides:
 
@@ -16,11 +16,10 @@
 ### **Looking for classic Jupyter Notebook support?**
 **Jupyter Notebook support is available, albeit not in active development. You can find it in its own branch. [Just click here!](https://github.com/g2nb/nbtools/tree/notebook)**
 
-
 ## Requirements
 
-* JupyterLab >= 3.0
-* ipywidgets >= 7.5.0
+* JupyterLab >= 4.0.0
+* ipywidgets >= 8.0.0
 
 ## Docker
 
@@ -33,10 +32,10 @@ docker run --rm -p 8888:8888 g2nb/lab
 
 ## Installation
 
-At the moment you may install a prerelease version from pip or create a development install from GitHub:
+Run the following:
 
 ```bash
-pip install --pre nbtools
+pip install nbtools
 ```
 
 ***OR***
@@ -72,6 +71,21 @@ npm run build       # Build the package
 jupyter lab build   # Build JupyterLab with the extension installed
 ```
 
+Then install nbtools:
+
+```bash
+# Clone the repo to your local environment
+# Change directory to the nbtools directory
+# Install package in development mode
+pip install -e .
+# Link your development version of the extension with JupyterLab
+jupyter labextension develop . --overwrite
+# Server extension must be manually installed in develop mode
+jupyter server extension enable nbtools
+# Rebuild extension Typescript source after making changes
+jlpm build
+```
+
 You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in 
 the extension's source and automatically rebuild the extension. To develop, run each of the following commands in a 
 separate terminal. 
@@ -100,6 +114,10 @@ jupyter lab build --minimize=False
 ```bash
 pip uninstall nbtools
 ```
+
+### Packaging
+
+See [RELEASE](RELEASE.md)
 
 ## Getting Started
 

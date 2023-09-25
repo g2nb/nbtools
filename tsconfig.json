@@ -9,8 +9,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "outDir": "lib",
@@ -18,8 +18,8 @@
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": false,
-    "target": "es2017",
+    "target": "ES2018",
     "types": ["node"]
   },
-  "include": ["src/*"]
+  "include": ["src/*", "index.d.ts"]
 }

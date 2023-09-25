@@ -5,6 +5,9 @@ import { JupyterFrontEnd } from "@jupyterlab/application";
 import { ToolRegistry } from "./registry";
 import { DataRegistry } from "./dataregistry";
 
+import icon from "../style/icon.svg";
+import logo from "../style/g2nb_logo.png"
+
 export class ContextManager {
     static _context:Context;
     static jupyter_app:JupyterFrontEnd;
@@ -232,7 +235,7 @@ class LabContext extends Context {
      */
     is_tool_cell(cell:any):boolean {
         // Check for nbtools metadata
-        if (cell.model.metadata.get('nbtools')) return true;
+        if (cell.model.getMetadata('nbtools')) return true;
 
         // Check for an existing disconnected nbtools widget
         const dom_node = cell.node || cell.element;
@@ -244,14 +247,14 @@ class LabContext extends Context {
      * Path to the default GenePattern logo
      */
     default_logo():string {
-        return  require("../style/g2nb_logo.png").default;
+        return logo;
     }
 
     /**
      * Path to the default GenePattern icon
      */
     default_icon():string {
-        return  require("../style/icon.svg").default;
+        return icon;
     }
 
     /**
@@ -346,8 +349,8 @@ class LabContext extends Context {
      * @param is_widget_cell
      */
     make_tool_cell(cell: any, is_widget_cell=true): void {
-        if (is_widget_cell) cell.model.metadata.set('nbtools', {'force_display': true});
-        else cell.model.metadata.clear();
+        if (is_widget_cell) cell.model.setMetadata('nbtools', {'force_display': true});
+        else cell.model.deleteMetadata();
     }
 }
 
