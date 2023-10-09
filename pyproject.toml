@@ -34,9 +34,6 @@ dependencies = [
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
-[project.license]
-file = "LICENSE.txt"
-
 [project.urls]
 Homepage = "https://github.com/g2nb/nbtools"
 
