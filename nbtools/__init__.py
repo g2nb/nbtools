@@ -8,6 +8,7 @@ from .uioutput import UIOutput
 from .uibuilder import UIBuilder, build_ui
 from .settings import load_settings, import_defaults
 from .utils import open, python_safe
+from ._version import __version__
 from .handlers import setup_handlers
 
 
@@ -41,16 +42,3 @@ def _load_jupyter_server_extension(server_app):
     name = "nbtools"
     server_app.log.info(f"Registered {name} server extension")
 
-
-def _fetch_version():
-    for settings in HERE.rglob("package.json"):
-        try:
-            with settings.open() as f:
-                return json.load(f)["version"]
-        except FileNotFoundError:
-            pass
-
-    raise FileNotFoundError(f"Could not find package.json under dir {HERE!s}")
-
-
-__version__ = _fetch_version()
