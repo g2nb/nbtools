@@ -158,6 +158,7 @@
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
+    z-index: 1;
 }
 .nbtools-uibuilder .nbtools-file-menu {
     left: 0;
