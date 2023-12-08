@@ -8,6 +8,7 @@ import * as uioutput_exports from './uioutput';
 import * as uibuilder_exports from './uibuilder';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { ToolBrowser, Toolbox } from "./toolbox";
+import { DataBrowser } from "./databank";
 import { IToolRegistry, ToolRegistry } from "./registry";
 import { pulse_red, usage_tracker } from "./utils";
 import { ILabShell, ILayoutRestorer, JupyterFrontEnd } from "@jupyterlab/application";
@@ -65,6 +66,9 @@ async function activate_widget_extension(app: Application<Widget>,
     // Add the toolbox
     add_tool_browser(app as JupyterFrontEnd, restorer);
 
+    // Add the databank
+    add_data_browser(app as JupyterFrontEnd, restorer);
+
     // Register the nbtools widgets with the widget registry
     widget_registry.registerWidget({
         name: MODULE_NAME,
@@ -109,6 +113,17 @@ function add_keyboard_shortcuts(app:JupyterFrontEnd, tool_registry:ToolRegistry)
             else (document.querySelector('.nbtools-search') as HTMLElement).focus()
         },
     });
+}
+
+function add_data_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {
+    const data_browser = new DataBrowser();
+    data_browser.title.iconClass = 'nbtools-icon fas fa-database jp-SideBar-tabIcon';
+    data_browser.title.caption = 'Databank';
+    data_browser.id = 'nbtools-data-browser';
+
+    // Add the data browser widget to the application restorer
+    if (restorer) restorer.add(data_browser, NAMESPACE);
+    app.shell.add(data_browser, 'left', { rank: 103 });
 }
 
 function add_tool_browser(app:JupyterFrontEnd, restorer:ILayoutRestorer|null) {

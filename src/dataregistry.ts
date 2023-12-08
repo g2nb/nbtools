@@ -9,6 +9,7 @@ export interface IDataRegistry {}
 
 export class DataRegistry implements IDataRegistry {
     public current:Widget|null = null;              // Reference to the currently selected notebook or other widget
+    update_callbacks:Array<Function> = [];          // Callbacks to execute when the cache is updated
     kernel_data_cache:any = {};                     // Keep a cache of kernels to registered data
                                                     // { 'kernel_id': { 'origin': { 'identifier': data } } }
 
@@ -33,14 +34,16 @@ export class DataRegistry implements IDataRegistry {
      * Return whether registration was successful or not
      *
      * @param origin
-     * @param identifier
+     * @param uri
+     * @param label
      * @param kind
+     * @param group
      * @param data
      */
-    register({origin=null, uri=null, kind=null, data=null}:
-                 {origin?:string|null, uri?: string|null, kind?: string|null, data?:Data|null}): boolean {
-        // Use origin, identifier and kind to initialize data, if needed
-        if (!data) data = new Data(origin, uri, kind);
+    register({origin=null, uri=null, label=null, kind=null, group=null, data=null}:
+                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null}): boolean {
+        // Use origin, identifier, label and kind to initialize data, if needed
+        if (!data) data = new Data(origin, uri, label, kind, group);
 
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return false; // If no kernel, do nothing
@@ -53,8 +56,9 @@ export class DataRegistry implements IDataRegistry {
         let origin_data = cache[data.origin];
         if (!origin_data) origin_data = cache[data.origin] = {};
 
-        // Add to cache and return
+        // Add to cache, execute callbacks and return
         origin_data[data.uri] = data;
+        this.execute_callbacks();
         return true
     }
 
@@ -65,13 +69,12 @@ export class DataRegistry implements IDataRegistry {
      *
      * @param origin
      * @param identifier
-     * @param kind
      * @param data
      */
-    unregister({origin=null, uri=null, kind=null, data=null}:
-                 {origin?:string|null, uri?: string|null, kind?: string|null, data?:Data|null}): Data|null {
+    unregister({origin=null, uri=null, data=null}:
+                 {origin?:string|null, uri?: string|null, data?:Data|null}): Data|null {
         // Use origin, identifier and kind to initialize data, if needed
-        if (!data) data = new Data(origin, uri, kind);
+        if (!data) data = new Data(origin, uri);
 
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return null; // If no kernel, do nothing
@@ -88,10 +91,44 @@ export class DataRegistry implements IDataRegistry {
         const found = origin_data[data.uri];
         if (!found) return null;
 
-        // Remove from the registry and return
+        // Remove from the registry, execute callbacks and return
         delete origin_data[data.uri];
+        this.execute_callbacks();
         return found;
     }
+
+    /**
+     * Execute all registered update callbacks
+     */
+    execute_callbacks() {
+        for (const c of this.update_callbacks) c();
+    }
+
+    /**
+     * Attach a callback that gets executed every time the data in the registry is updated
+     *
+     * @param callback
+     */
+    on_update(callback:Function) {
+        this.update_callbacks.push(callback);
+    }
+
+    /**
+     * List all data currently in the registry
+     */
+    list() {
+        // If no kernel, return empty map
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return {};
+
+        // If unable to retrieve cache, return empty map
+        const cache = this.kernel_data_cache[kernel_id];
+        if (!cache) return {};
+
+        // FORMAT: { 'origin': { 'identifier': data } }
+        return cache;
+    }
+
 
     /**
      * Get all data that matches one of the specified kinds or origins
@@ -138,11 +175,13 @@ export class Data {
     public uri: string;
     public label: string;
     public kind: string;
+    public group: string;
 
-    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null) {
+    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null, group:string|null=null) {
         this.origin = origin;
         this.uri = uri;
         this.label = !!label ? label : extract_file_name(uri);
         this.kind = !!kind ? kind : extract_file_type(uri);
+        this.group = group;
     }
 }

@@ -74,7 +74,8 @@
     transform: translateY(var(--jp-border-width));
 }
 
-.nbtools-toolbox {
+.nbtools-toolbox,
+.nbtools-databank {
     overflow-y: auto;
     overflow-x: hidden;
     position: absolute;
