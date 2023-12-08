@@ -234,6 +234,9 @@ class LabContext extends Context {
         // Check for nbtools metadata
         if (cell.model.metadata.get('nbtools')) return true;
 
+        // For backwards compatibility with GPNB, check for genepattern metadata
+        if (cell.model.metadata.get('genepattern')) return true;
+
         // Check for an existing disconnected nbtools widget
         const dom_node = cell.node || cell.element;
         if (!!dom_node) return !!dom_node.querySelector('.nbtools');
