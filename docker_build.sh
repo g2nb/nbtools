@@ -2,7 +2,7 @@
 
 # PARSE THE OPTS
 dfile='Dockerfile'
-while getopts v:p flag; do
+while getopts v:dp flag; do
     case "${flag}" in
         v) version=${OPTARG};;
         p) push='1';;
