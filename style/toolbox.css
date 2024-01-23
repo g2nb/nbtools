@@ -157,3 +157,18 @@ ul.nbtools-origin {
     max-height: 3.5em;
     overflow: hidden;
 }
+
+.nbtools-tool > .nbtools-data {
+    padding: 0 12px 4px 0;
+    font-size: var(--jp-ui-font-size1);
+    color: var(--jp-ui-font-color2);
+    font-weight: 400;
+    max-height: 3.5em;
+    overflow: hidden;
+    display: block;
+}
+
+.nbtools-tool > .nbtools-data:hover {
+    cursor: pointer;
+    background-color: var(--jp-layout-color3);
+}

@@ -30,29 +30,6 @@ export class Databank extends Widget {
         this.addClass('nbtools-databank');
         this.addClass('nbtools-wrapper');
 
-        // TODO: Testing code for data - remove when no longer needed
-        ContextManager.context().notebook_focus(() => {
-            setTimeout(() => {
-                ContextManager.data_registry.register({
-                    origin: 'Testing',
-                    uri: 'all_aml_test.gct',
-                    group: 'Job #1234'
-                });
-
-                ContextManager.data_registry.register({
-                    origin: 'Testing',
-                    uri: 'all_aml_test.cls',
-                    group: 'Job #1234'
-                });
-
-                ContextManager.data_registry.register({
-                    origin: 'Testing',
-                    uri: 'full_data.gct',
-                    group: 'Job #4567'
-                });
-            }, 500);
-        });
-
         // Update the databank when the data registry changes
         ContextManager.data_registry.on_update(() => {
             // If the last update was more than 10 seconds ago, update the databank
@@ -101,7 +78,7 @@ export class Databank extends Widget {
             const origin_box = this.add_origin(origin);
             const groups = this.origin_groups(data[origin]);
             Object.keys(groups).forEach((key) => {
-                this.add_group(origin_box, groups[key]);
+                this.add_group(origin_box, key, groups[key]);
             })
         });
 
@@ -114,7 +91,7 @@ export class Databank extends Widget {
 
         // Organize data by group
         Object.keys(origin).forEach((uri) => {
-            const data = origin[uri];
+            const data = origin[uri][0];
             if (data.group in organized) organized[data.group].push(data);    // Add data to group
             else organized[data.group] = [data];                              // Lazily create group
         });
@@ -155,35 +132,42 @@ export class Databank extends Widget {
         return origin_wrapper;
     }
 
-    add_group(origin:HTMLElement, group:any) {
-        for (const data of group) {
-            this.add_data(origin, data);
-        }
-    }
-
-    add_data(origin:HTMLElement, data:any) {
+    add_group(origin:HTMLElement, group_name:String, group_data:any) {
         const list = origin.querySelector('ul');
-        const data_wrapper = document.createElement('li');
-        data_wrapper.classList.add('nbtools-tool');
-        data_wrapper.setAttribute('title', 'Click to add to notebook');
-        data_wrapper.innerHTML = `
+        if (!list) return;
+
+        const group_wrapper = document.createElement('li');
+        group_wrapper.classList.add('nbtools-tool');
+        group_wrapper.setAttribute('title', 'Click to add to notebook');
+        group_wrapper.innerHTML = `
             <div class="nbtools-add">+</div>
-            <div class="nbtools-header">${data.label}</div>
-            <div class="nbtools-description">${data.group}</div>`;
-        if (list) list.append(data_wrapper);
+            <div class="nbtools-header">${group_name}</div>`;
+        for (const data of group_data) this.add_data(group_wrapper, data);
+        list.append(group_wrapper);
 
         // Add the click event
-        data_wrapper.addEventListener("click", () => {
-            Databank.add_output_cell(data);
+        group_wrapper.addEventListener("click", () => {
+            Databank.add_output_cell(list.getAttribute('title'), group_name, group_data);
         });
     }
 
-    static add_output_cell(data:any) {
+    add_data(origin:HTMLElement, data:any) {
+        const data_wrapper = document.createElement('a');
+        data_wrapper.setAttribute('href', data.uri);
+        data_wrapper.setAttribute('onclick', 'return false;');
+        data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
+        data_wrapper.classList.add('nbtools-data');
+        data_wrapper.innerHTML = data.label;
+        origin.append(data_wrapper);
+    }
+
+    static add_output_cell(origin:String, group_name:String, group_data:any) {
         // Check to see if nbtools needs to be imported
         const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
 
         // Add and run a code cell with the generated tool code
-        Toolbox.add_code_cell(import_line + `nbtools.UIOutput(name='${data.group}', origin='${data.origin}', files=['${data.uri}'])`);
+        const files = group_data.map((d:any) => `'${d.uri}'`).join(", ");
+        Toolbox.add_code_cell(import_line + `nbtools.UIOutput(name='${group_name}', origin='${origin}', files=[${files}])`);
     }
 
     // TODO: Move to utils.ts and refactor so both this and toolbox.ts calls the function?

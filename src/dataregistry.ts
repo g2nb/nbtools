@@ -3,7 +3,7 @@ import { ContextManager } from "./context";
 import { Token } from "@lumino/coreutils";
 import {extract_file_name, extract_file_type} from "./utils";
 
-export const IDataRegistry = new Token<IDataRegistry>("nbtools.data");
+export const IDataRegistry = new Token<IDataRegistry>("nbtools:IDataRegistry")
 
 export interface IDataRegistry {}
 
@@ -27,6 +27,18 @@ export class DataRegistry implements IDataRegistry {
             // Otherwise, update the current notebook reference
             this.current = current_widget;
         });
+    }
+
+    /**
+     * Register all data objects in the provided list
+     *
+     * @param data_list
+     */
+    register_all(data_list:Array<any>): boolean {
+        let all_good = true;
+        for (const data of data_list)
+            all_good = this.register(data) && all_good;
+        return all_good;
     }
 
     /**
@@ -57,7 +69,8 @@ export class DataRegistry implements IDataRegistry {
         if (!origin_data) origin_data = cache[data.origin] = {};
 
         // Add to cache, execute callbacks and return
-        origin_data[data.uri] = data;
+        if (!origin_data[data.uri]) origin_data[data.uri] = [];
+        origin_data[data.uri].unshift(data);
         this.execute_callbacks();
         return true
     }
@@ -88,11 +101,12 @@ export class DataRegistry implements IDataRegistry {
         if (!origin_data) return null;
 
         // If unable to find identifier, return null;
-        const found = origin_data[data.uri];
-        if (!found) return null;
+        let found = origin_data[data.uri];
+        if (!found || !found.length) return null;
 
         // Remove from the registry, execute callbacks and return
-        delete origin_data[data.uri];
+        found = origin_data[data.uri].shift();
+        if (!origin_data[data.uri].length) delete origin_data[data.uri];
         this.execute_callbacks();
         return found;
     }
@@ -114,6 +128,28 @@ export class DataRegistry implements IDataRegistry {
     }
 
     /**
+     * Update the data cache for the current kernel
+     *
+     * @param message
+     */
+    update_data(message:any) {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return; // Do nothing if no kernel
+
+        // Parse the message
+        const data_list = message['data'];
+
+        // Update the cache
+        this.kernel_data_cache[kernel_id] = {};
+        for (const data of data_list) this.register(data);
+
+        // Make registered callbacks when data are updated
+        this.update_callbacks.forEach((callback) => {
+            callback(data_list);
+        });
+    }
+
+    /**
      * List all data currently in the registry
      */
     list() {
@@ -125,7 +161,7 @@ export class DataRegistry implements IDataRegistry {
         const cache = this.kernel_data_cache[kernel_id];
         if (!cache) return {};
 
-        // FORMAT: { 'origin': { 'identifier': data } }
+        // FORMAT: { 'origin': { 'identifier': [data] } }
         return cache;
     }
 
@@ -151,8 +187,8 @@ export class DataRegistry implements IDataRegistry {
             if (origins === null || origins.length === 0 || origins.includes(origin)) {
                 const hits:any = {};
                 for (let data of Object.values(cache[origin]) as any) {
-                    if (kinds === null || kinds.length === 0 || kinds.includes(data.kind))
-                    hits[data.label] = data.uri;
+                    if (kinds === null || kinds.length === 0 || kinds.includes(data[0].kind))
+                    hits[data[0].label] = data[0].uri;
                 }
                 if (Object.keys(hits).length > 0) matching[origin] = hits
             }

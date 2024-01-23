@@ -79,28 +79,9 @@ export class UIOutputView extends BaseWidgetView {
 
     remove() {
         super.remove();
-
-        // Clean up data files from the cache
-        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
-    }
-
-    sync_file_cache() {
-        // Unregister old files associated with this widget
-        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
-
-        // Create the data objects and add them to the file cache
-        this.file_cache = []
-        const origin = this.model.get('origin');
-        for (let f of this.model.get('files')) this.file_cache.push(new Data(origin, f));
-
-        // Register the files currently associated with this widget
-        for (let f of this.file_cache) ContextManager.data_registry.register({data: f});
     }
 
     render_files(files:string[], widget:UIOutputView) {
-        // Sync the file cache with what is displayed
-        widget.sync_file_cache();
-
         let to_return = '';
         files.forEach(path => {
             const name = extract_file_name(path);
