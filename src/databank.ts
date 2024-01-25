@@ -32,7 +32,7 @@ export class Databank extends Widget {
 
         // Update the databank when the data registry changes
         ContextManager.data_registry.on_update(() => {
-            // If the last update was more than 10 seconds ago, update the databank
+            // If the last update was more than 3 seconds ago, update the databank
             if (this.update_stale()) this.fill_databank();
             else this.queue_update();  // Otherwise, queue an update if not already waiting for one
         });

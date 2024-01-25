@@ -36,8 +36,11 @@ export class DataRegistry implements IDataRegistry {
      */
     register_all(data_list:Array<any>): boolean {
         let all_good = true;
-        for (const data of data_list)
+        for (const data of data_list) {
+            data.skip_callbacks = true;
             all_good = this.register(data) && all_good;
+        }
+        this.execute_callbacks();
         return all_good;
     }
 
@@ -51,9 +54,10 @@ export class DataRegistry implements IDataRegistry {
      * @param kind
      * @param group
      * @param data
+     * @param skip_callbacks
      */
-    register({origin=null, uri=null, label=null, kind=null, group=null, data=null}:
-                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null}): boolean {
+    register({origin=null, uri=null, label=null, kind=null, group=null, data=null, skip_callbacks=false}:
+                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null, skip_callbacks: boolean}): boolean {
         // Use origin, identifier, label and kind to initialize data, if needed
         if (!data) data = new Data(origin, uri, label, kind, group);
 
@@ -71,7 +75,7 @@ export class DataRegistry implements IDataRegistry {
         // Add to cache, execute callbacks and return
         if (!origin_data[data.uri]) origin_data[data.uri] = [];
         origin_data[data.uri].unshift(data);
-        this.execute_callbacks();
+        if (!skip_callbacks) this.execute_callbacks();
         return true
     }
 
@@ -141,12 +145,7 @@ export class DataRegistry implements IDataRegistry {
 
         // Update the cache
         this.kernel_data_cache[kernel_id] = {};
-        for (const data of data_list) this.register(data);
-
-        // Make registered callbacks when data are updated
-        this.update_callbacks.forEach((callback) => {
-            callback(data_list);
-        });
+        this.register_all(data_list);
     }
 
     /**
