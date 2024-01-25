@@ -167,7 +167,7 @@ export class Databank extends Widget {
 
         // Add and run a code cell with the generated tool code
         const files = group_data.map((d:any) => `'${d.uri}'`).join(", ");
-        Toolbox.add_code_cell(import_line + `nbtools.UIOutput(name='${group_name}', origin='${origin}', files=[${files}])`);
+        Toolbox.add_code_cell(import_line + `nbtools.data(origin='${origin}', group='${group_name}', uris=[${files}])`);
     }
 
     // TODO: Move to utils.ts and refactor so both this and toolbox.ts calls the function?

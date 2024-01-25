@@ -214,6 +214,7 @@ class DataManager(object):
 
     def __init__(self):
         self.data_registry = {}     # Initialize the data map
+        self.group_widgets = {}     # Initialize widgets for groups
 
     @staticmethod
     def instance():
@@ -297,6 +298,39 @@ class DataManager(object):
             else: return False
         else: return False
 
+    @classmethod
+    def group_widget(cls, origin, group, widget=None):
+        # Lazily add origin
+        if origin not in cls.instance().group_widgets: cls.instance().group_widgets[origin] = {}
+
+        # Set widget if present
+        if widget: cls.instance().group_widgets[origin][group] = widget
+
+        # Return the widget
+        if group not in cls.instance().group_widgets[origin]: return None
+        else: return cls.instance().group_widgets[origin][group]
+
+    @classmethod
+    def data(cls, origin='Notebook', group=None, uris=None, uri=None):
+        """
+        Return reference to data or group widget given the uri, group and origin
+        """
+        # Retrieve or create a group widget
+        if group:
+            if origin in cls.instance().group_widgets:
+                # If there is a custom group widget, return it
+                if group in cls.instance().group_widgets[origin]:
+                    return cls.instance().group_widgets[origin][group]
+
+                # Otherwise, create a new UIOutput widget and return it
+                else:
+                    if uris: return UIOutput(origin=origin, name=group, files=uris)
+                    elif uri: return UIOutput(origin=origin, name=group, files=[uri])
+                    else: return UIOutput(origin=origin, name=group)
+
+        # If no group is named, wrap data in UIOutput for display
+        return UIOutput(origin=origin, name='Notebook Data', files=[uri])
+
 
 class Data:
     """
@@ -321,3 +355,7 @@ class Data:
             'label': self.label,
             'kind': self.kind
         }
+
+
+def data(origin=None, group=None, uris=None, **kwargs):
+    return DataManager.data(origin=origin, group=group, uris=uris)
