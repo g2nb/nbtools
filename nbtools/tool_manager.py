@@ -245,7 +245,12 @@ class DataManager(object):
         return to_return
 
     @classmethod
-    def register(cls, data):
+    def register_all(cls, data_list):
+        for data in data_list: cls.register(data, skip_update=True)
+        ToolManager.instance().send_update()  # Notify the client of the registration
+
+    @classmethod
+    def register(cls, data, skip_update=False):
         """Register Data object"""
         if isinstance(data, Data):
             data_registry = cls.instance().data_registry
@@ -258,7 +263,7 @@ class DataManager(object):
                 cls.instance().data_registry[data.origin][data.uri] = data
 
                 # Notify the client of the registration
-                ToolManager.instance().send_update()
+                if not skip_update: ToolManager.instance().send_update()
 
                 # Dispatch the register event
                 EventManager.instance().dispatch('nbtools.data_register', {
