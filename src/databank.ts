@@ -154,7 +154,7 @@ export class Databank extends Widget {
     add_data(origin:HTMLElement, data:any) {
         const data_wrapper = document.createElement('a');
         data_wrapper.setAttribute('href', data.uri);
-        data_wrapper.setAttribute('onclick', 'return false;');
+        data_wrapper.setAttribute('onclick', 'event.stopPropagation(); return false;');
         data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
         data_wrapper.classList.add('nbtools-data');
         data_wrapper.innerHTML = data.label;
