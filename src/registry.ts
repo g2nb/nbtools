@@ -68,7 +68,10 @@ export class ToolRegistry implements ToolRegistry {
                     // Handle message sent by the kernel
                     const data = msg.content.data;
 
-                    if (data.func === 'update') this.update_tools(data.payload);
+                    if (data.func === 'update') {
+                        this.update_tools(data.payload);
+                        ContextManager.data_registry.update_data(data.payload);
+                    }
                     else if (data.func === 'notification') send_notification(data.payload.message, data.payload.sender,
                         ContextManager.context().default_logo());
                     else console.error('ToolRegistry received unknown message: ' + data);

@@ -3,12 +3,13 @@ import { ContextManager } from "./context";
 import { Token } from "@lumino/coreutils";
 import {extract_file_name, extract_file_type} from "./utils";
 
-export const IDataRegistry = new Token<IDataRegistry>("nbtools.data");
+export const IDataRegistry = new Token<IDataRegistry>("nbtools:IDataRegistry")
 
 export interface IDataRegistry {}
 
 export class DataRegistry implements IDataRegistry {
     public current:Widget|null = null;              // Reference to the currently selected notebook or other widget
+    update_callbacks:Array<Function> = [];          // Callbacks to execute when the cache is updated
     kernel_data_cache:any = {};                     // Keep a cache of kernels to registered data
                                                     // { 'kernel_id': { 'origin': { 'identifier': data } } }
 
@@ -29,18 +30,36 @@ export class DataRegistry implements IDataRegistry {
     }
 
     /**
+     * Register all data objects in the provided list
+     *
+     * @param data_list
+     */
+    register_all(data_list:Array<any>): boolean {
+        let all_good = true;
+        for (const data of data_list) {
+            data.skip_callbacks = true;
+            all_good = this.register(data) && all_good;
+        }
+        this.execute_callbacks();
+        return all_good;
+    }
+
+    /**
      * Register data for the sent to/come from menus
      * Return whether registration was successful or not
      *
      * @param origin
-     * @param identifier
+     * @param uri
+     * @param label
      * @param kind
+     * @param group
      * @param data
+     * @param skip_callbacks
      */
-    register({origin=null, uri=null, kind=null, data=null}:
-                 {origin?:string|null, uri?: string|null, kind?: string|null, data?:Data|null}): boolean {
-        // Use origin, identifier and kind to initialize data, if needed
-        if (!data) data = new Data(origin, uri, kind);
+    register({origin=null, uri=null, label=null, kind=null, group=null, data=null, skip_callbacks=false}:
+                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null, skip_callbacks: boolean}): boolean {
+        // Use origin, identifier, label and kind to initialize data, if needed
+        if (!data) data = new Data(origin, uri, label, kind, group);
 
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return false; // If no kernel, do nothing
@@ -53,8 +72,10 @@ export class DataRegistry implements IDataRegistry {
         let origin_data = cache[data.origin];
         if (!origin_data) origin_data = cache[data.origin] = {};
 
-        // Add to cache and return
-        origin_data[data.uri] = data;
+        // Add to cache, execute callbacks and return
+        if (!origin_data[data.uri]) origin_data[data.uri] = [];
+        origin_data[data.uri].unshift(data);
+        if (!skip_callbacks) this.execute_callbacks();
         return true
     }
 
@@ -65,13 +86,12 @@ export class DataRegistry implements IDataRegistry {
      *
      * @param origin
      * @param identifier
-     * @param kind
      * @param data
      */
-    unregister({origin=null, uri=null, kind=null, data=null}:
-                 {origin?:string|null, uri?: string|null, kind?: string|null, data?:Data|null}): Data|null {
+    unregister({origin=null, uri=null, data=null}:
+                 {origin?:string|null, uri?: string|null, data?:Data|null}): Data|null {
         // Use origin, identifier and kind to initialize data, if needed
-        if (!data) data = new Data(origin, uri, kind);
+        if (!data) data = new Data(origin, uri);
 
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return null; // If no kernel, do nothing
@@ -85,13 +105,65 @@ export class DataRegistry implements IDataRegistry {
         if (!origin_data) return null;
 
         // If unable to find identifier, return null;
-        const found = origin_data[data.uri];
-        if (!found) return null;
+        let found = origin_data[data.uri];
+        if (!found || !found.length) return null;
 
-        // Remove from the registry and return
-        delete origin_data[data.uri];
+        // Remove from the registry, execute callbacks and return
+        found = origin_data[data.uri].shift();
+        if (!origin_data[data.uri].length) delete origin_data[data.uri];
+        this.execute_callbacks();
         return found;
     }
+
+    /**
+     * Execute all registered update callbacks
+     */
+    execute_callbacks() {
+        for (const c of this.update_callbacks) c();
+    }
+
+    /**
+     * Attach a callback that gets executed every time the data in the registry is updated
+     *
+     * @param callback
+     */
+    on_update(callback:Function) {
+        this.update_callbacks.push(callback);
+    }
+
+    /**
+     * Update the data cache for the current kernel
+     *
+     * @param message
+     */
+    update_data(message:any) {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return; // Do nothing if no kernel
+
+        // Parse the message
+        const data_list = message['data'];
+
+        // Update the cache
+        this.kernel_data_cache[kernel_id] = {};
+        this.register_all(data_list);
+    }
+
+    /**
+     * List all data currently in the registry
+     */
+    list() {
+        // If no kernel, return empty map
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return {};
+
+        // If unable to retrieve cache, return empty map
+        const cache = this.kernel_data_cache[kernel_id];
+        if (!cache) return {};
+
+        // FORMAT: { 'origin': { 'identifier': [data] } }
+        return cache;
+    }
+
 
     /**
      * Get all data that matches one of the specified kinds or origins
@@ -114,8 +186,8 @@ export class DataRegistry implements IDataRegistry {
             if (origins === null || origins.length === 0 || origins.includes(origin)) {
                 const hits:any = {};
                 for (let data of Object.values(cache[origin]) as any) {
-                    if (kinds === null || kinds.length === 0 || kinds.includes(data.kind))
-                    hits[data.label] = data.uri;
+                    if (kinds === null || kinds.length === 0 || kinds.includes(data[0].kind))
+                    hits[data[0].label] = data[0].uri;
                 }
                 if (Object.keys(hits).length > 0) matching[origin] = hits
             }
@@ -138,11 +210,13 @@ export class Data {
     public uri: string;
     public label: string;
     public kind: string;
+    public group: string;
 
-    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null) {
+    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null, group:string|null=null) {
         this.origin = origin;
         this.uri = uri;
         this.label = !!label ? label : extract_file_name(uri);
         this.kind = !!kind ? kind : extract_file_type(uri);
+        this.group = group;
     }
 }

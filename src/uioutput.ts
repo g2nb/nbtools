@@ -11,7 +11,6 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, get_absolute_url, is_absolute_path, is_url } from './utils';
 import { ContextManager } from "./context";
-import { Data } from "./dataregistry";
 
 // noinspection JSAnnotator
 export class UIOutputModel extends BaseWidgetModel {
@@ -68,7 +67,6 @@ export class UIOutputView extends BaseWidgetView {
         <pre class="nbtools-text" data-traitlet="text"></pre>
         <div class="nbtools-visualization" data-traitlet="visualization"></div>
         <div class="nbtools-appendix"></div>`;
-    file_cache:Data[] = [];
 
     render() {
         super.render();
@@ -79,28 +77,9 @@ export class UIOutputView extends BaseWidgetView {
 
     remove() {
         super.remove();
-
-        // Clean up data files from the cache
-        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
-    }
-
-    sync_file_cache() {
-        // Unregister old files associated with this widget
-        for (let f of this.file_cache) ContextManager.data_registry.unregister({data: f});
-
-        // Create the data objects and add them to the file cache
-        this.file_cache = []
-        const origin = this.model.get('origin');
-        for (let f of this.model.get('files')) this.file_cache.push(new Data(origin, f));
-
-        // Register the files currently associated with this widget
-        for (let f of this.file_cache) ContextManager.data_registry.register({data: f});
     }
 
     render_files(files:string[], widget:UIOutputView) {
-        // Sync the file cache with what is displayed
-        widget.sync_file_cache();
-
         let to_return = '';
         files.forEach(path => {
             const name = extract_file_name(path);

@@ -44,7 +44,8 @@ class ToolManager(object):
         self.last_update = time()
         self.send('update', {
             'import': 'nbtools' in get_ipython().user_global_ns,
-            'tools': list(map(lambda t: t.json_safe(), self._list()))
+            'tools': list(map(lambda t: t.json_safe(), self._list())),
+            'data': list(map(lambda d: d.json_safe(), DataManager.list())),
         })
 
     def send(self, message_type, payload):
@@ -206,3 +207,155 @@ def tool(id, origin, **kwargs):
     if nbtool:  # Call load() passing kwargs only if kwargs are accepted
         try: return nbtool.load(**kwargs)
         except TypeError: return nbtool.load()
+
+
+class DataManager(object):
+    _instance = None                # DataManager singleton
+
+    def __init__(self):
+        self.data_registry = {}     # Initialize the data map
+        self.group_widgets = {}     # Initialize widgets for groups
+
+    @staticmethod
+    def instance():
+        if DataManager._instance is None:
+            DataManager._instance = DataManager()
+        return DataManager._instance
+
+    @classmethod
+    def list(cls):
+        """
+        Get the list of registered data
+
+        :return: list of data
+        """
+        # return [t for t in o.values() for o in cls.instance().data_registry.values()]
+        return cls.instance()._list()
+
+    def _list(self):
+        """
+        Get the list of registered data
+
+        :return: list of data
+        """
+        data = self.data_registry
+        to_return = []
+        for o in data.values():
+            for t in o.values():
+                to_return.append(t)
+        return to_return
+
+    @classmethod
+    def register_all(cls, data_list):
+        for data in data_list: cls.register(data, skip_update=True)
+        ToolManager.instance().send_update()  # Notify the client of the registration
+
+    @classmethod
+    def register(cls, data, skip_update=False):
+        """Register Data object"""
+        if isinstance(data, Data):
+            data_registry = cls.instance().data_registry
+            if data.origin and data.uri:
+                # Lazily create the origin
+                if data.origin not in data_registry:
+                    data_registry[data.origin] = {}
+
+                # Register the tool
+                cls.instance().data_registry[data.origin][data.uri] = data
+
+                # Notify the client of the registration
+                if not skip_update: ToolManager.instance().send_update()
+
+                # Dispatch the register event
+                EventManager.instance().dispatch('nbtools.data_register', {
+                    'origin': data.origin,
+                    'group': data.group,
+                    'id': data.uri
+                })
+            else:
+                raise ValueError(f"register() must be passed a data object with an instantiated origin ({data.origin}) and uri ({data.uri})")
+        else:
+            raise ValueError("register() must be passed a Data object")
+
+    @classmethod
+    def unregister(cls, origin, uri):
+        """Unregister the data with the associated id"""
+        if cls.exists(uri, origin):
+            del cls.instance().data_registry[origin][uri]
+
+            # Notify the client of the un-registration
+            ToolManager.instance().send_update()
+        else:
+            print(f'Cannot find data to unregister: {origin} | {uri}')
+
+    @classmethod
+    def exists(cls, uri, origin):
+        """Check if a data object for the provided uri and origin exists"""
+        data_registry = cls.instance().data_registry
+        if origin in data_registry:
+            if uri in data_registry[origin]:
+                return True
+            else: return False
+        else: return False
+
+    @classmethod
+    def group_widget(cls, origin, group, widget=None):
+        # Lazily add origin
+        if origin not in cls.instance().group_widgets: cls.instance().group_widgets[origin] = {}
+
+        # Set widget if present
+        if widget: cls.instance().group_widgets[origin][group] = widget
+
+        # Return the widget
+        if group not in cls.instance().group_widgets[origin]: return None
+        else: return cls.instance().group_widgets[origin][group]
+
+    @classmethod
+    def data(cls, origin='Notebook', group=None, uris=None, uri=None):
+        """
+        Return reference to data or group widget given the uri, group and origin
+        """
+        # Retrieve or create a group widget
+        if group:
+            if origin in cls.instance().group_widgets:
+                # If there is a custom group widget, return it
+                if group in cls.instance().group_widgets[origin]:
+                    return cls.instance().group_widgets[origin][group]
+
+                # Otherwise, create a new UIOutput widget and return it
+                else:
+                    if uris: return UIOutput(origin=origin, name=group, files=uris)
+                    elif uri: return UIOutput(origin=origin, name=group, files=[uri])
+                    else: return UIOutput(origin=origin, name=group)
+
+        # If no group is named, wrap data in UIOutput for display
+        return UIOutput(origin=origin, name='Notebook Data', files=[uri])
+
+
+class Data:
+    """
+    Data class, used to register new data with the manager
+    """
+    origin = None
+    group = None
+    uri = None
+    label = None
+    kind = None
+    load = lambda self, **kwargs: self.__class__(**kwargs)
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def json_safe(self):
+        return {
+            'origin': self.origin,
+            'group': self.group,
+            'uri': self.uri,
+            'label': self.label,
+            'kind': self.kind
+        }
+
+
+def data(origin=None, group=None, uris=None, **kwargs):
+    return DataManager.data(origin=origin, group=group, uris=uris)

@@ -28,4 +28,11 @@ class UIOutput(BaseWidget):
         # Initialize the child widget container
         self.appendix = VBox()
 
-        BaseWidget.__init__(self, **kwargs)
+        BaseWidget.__init__(self, **kwargs)     # Call the superclass
+        self.register_data()                    # Register any output files
+
+    def register_data(self):
+        if len(self.files):
+            for f in self.files:
+                from .tool_manager import DataManager, Data
+                DataManager.instance().register(Data(origin=self.origin, group=self.name, uri=f))
