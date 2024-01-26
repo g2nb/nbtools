@@ -11,7 +11,6 @@ import { MODULE_NAME, MODULE_VERSION } from './version';
 import { BaseWidgetModel, BaseWidgetView } from "./basewidget";
 import { extract_file_name, extract_file_type, get_absolute_url, is_absolute_path, is_url } from './utils';
 import { ContextManager } from "./context";
-import { Data } from "./dataregistry";
 
 // noinspection JSAnnotator
 export class UIOutputModel extends BaseWidgetModel {
@@ -68,7 +67,6 @@ export class UIOutputView extends BaseWidgetView {
         <pre class="nbtools-text" data-traitlet="text"></pre>
         <div class="nbtools-visualization" data-traitlet="visualization"></div>
         <div class="nbtools-appendix"></div>`;
-    file_cache:Data[] = [];
 
     render() {
         super.render();

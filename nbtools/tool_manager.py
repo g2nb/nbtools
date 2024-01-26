@@ -273,7 +273,7 @@ class DataManager(object):
                     'id': data.uri
                 })
             else:
-                raise ValueError("register() must be passed a data object with an instantiated origin and uri")
+                raise ValueError(f"register() must be passed a data object with an instantiated origin ({data.origin}) and uri ({data.uri})")
         else:
             raise ValueError("register() must be passed a Data object")
 
