@@ -166,6 +166,7 @@ ul.nbtools-origin {
     max-height: 3.5em;
     overflow: hidden;
     display: block;
+    text-decoration: none;
 }
 
 .nbtools-tool > .nbtools-data:hover {
