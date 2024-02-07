@@ -329,7 +329,8 @@ class DataManager(object):
                     else: return UIOutput(origin=origin, name=group)
 
         # If no group is named, wrap data in UIOutput for display
-        return UIOutput(origin=origin, name='Notebook Data', files=[uri])
+        if uris: return UIOutput(origin=origin, name='Notebook Data', files=uris)
+        elif uri: return UIOutput(origin=origin, name='Notebook Data', files=[uri])
 
 
 class Data:

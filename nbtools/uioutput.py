@@ -36,3 +36,4 @@ class UIOutput(BaseWidget):
             for f in self.files:
                 from .tool_manager import DataManager, Data
                 DataManager.instance().register(Data(origin=self.origin, group=self.name, uri=f))
+                DataManager.instance().group_widget(origin=self.origin, group=self.name, widget=self)

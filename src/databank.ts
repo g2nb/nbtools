@@ -141,8 +141,20 @@ export class Databank extends Widget {
         group_wrapper.setAttribute('title', 'Click to add to notebook');
         group_wrapper.innerHTML = `
             <div class="nbtools-add">+</div>
-            <div class="nbtools-header">${group_name}</div>`;
+            <div class="nbtools-header nbtools-group">
+                <span class="nbtools-expanded nbtools-collapse jp-Icon jp-Icon-16 jp-ToolbarButtonComponent-icon"></span>
+                ${group_name}
+            </div>
+            <ul class="nbtools-group"></ul>`;
         for (const data of group_data) this.add_data(group_wrapper, data);
+
+        // Attach the expand / collapse functionality
+        const collapse = group_wrapper.querySelector('span.nbtools-collapse') as HTMLElement;
+        collapse.addEventListener("click", (event) => {
+            this.toggle_collapse(group_wrapper);
+            event.stopPropagation();
+            return false;
+        });
         list.append(group_wrapper);
 
         // Add the click event
@@ -152,13 +164,15 @@ export class Databank extends Widget {
     }
 
     add_data(origin:HTMLElement, data:any) {
+        const group_wrapper = origin.querySelector('ul.nbtools-group');
+        if (!group_wrapper) return;
         const data_wrapper = document.createElement('a');
         data_wrapper.setAttribute('href', data.uri);
         data_wrapper.setAttribute('onclick', 'event.stopPropagation(); return false;');
         data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
         data_wrapper.classList.add('nbtools-data');
         data_wrapper.innerHTML = data.label;
-        origin.append(data_wrapper);
+        group_wrapper.append(data_wrapper);
     }
 
     static add_output_cell(origin:String, group_name:String, group_data:any) {
@@ -172,7 +186,7 @@ export class Databank extends Widget {
 
     // TODO: Move to utils.ts and refactor so both this and toolbox.ts calls the function?
     toggle_collapse(origin_wrapper:HTMLElement) {
-        const list = origin_wrapper.querySelector("ul.nbtools-origin") as HTMLElement;
+        const list = origin_wrapper.querySelector("ul.nbtools-origin, ul.nbtools-group") as HTMLElement;
         const collapsed = list.classList.contains('nbtools-hidden');
 
         // Toggle the collapse button
