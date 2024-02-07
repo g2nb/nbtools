@@ -11,7 +11,7 @@ export class DataBrowser extends Widget {
         super();
         this.addClass('nbtools-data-browser');
         this.layout = new PanelLayout();
-        this.search = new SearchBox();
+        this.search = new SearchBox('#nbtools-data-browser > .nbtools-databank');
         this.databank = new Databank(this.search);
 
         (this.layout as PanelLayout).addWidget(this.search);

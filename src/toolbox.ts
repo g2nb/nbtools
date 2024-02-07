@@ -11,7 +11,7 @@ export class ToolBrowser extends Widget {
         super();
         this.addClass('nbtools-browser');
         this.layout = new PanelLayout();
-        this.search = new SearchBox();
+        this.search = new SearchBox('#nbtools-browser > .nbtools-toolbox');
         this.toolbox = new Toolbox(this.search);
 
         (this.layout as PanelLayout).addWidget(this.search);
@@ -198,10 +198,12 @@ export class Toolbox extends Widget {
 }
 
 export class SearchBox extends Widget {
+    panel_query:string;
     value:string;
 
-    constructor() {
+    constructor(panel_query:string) {
         super();
+        this.panel_query = panel_query;
         this.value = '';
         this.node.innerHTML = `
             <div class="nbtools-wrapper">
@@ -224,12 +226,12 @@ export class SearchBox extends Widget {
         // Update the value state
         this.value = search_box.value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-        // Get the toolbox
-        const toolbox = document.querySelector('#nbtools-browser > .nbtools-toolbox') as HTMLElement|null;
-        if (!toolbox) return; // Do nothing if the toolbox is null
+        // Get the panel
+        const panel = document.querySelector(this.panel_query) as HTMLElement|null;
+        if (!panel) return; // Do nothing if the panel is null
 
         // Show any tool that matches and hide anything else
-        toolbox.querySelectorAll('li.nbtools-tool').forEach((tool:any) => {
+        panel.querySelectorAll('li.nbtools-tool').forEach((tool:any) => {
             if (tool.textContent.toLowerCase().replace(/[^a-z0-9]/g, '').includes(this.value)) tool.style.display = 'block';
             else tool.style.display = 'none';
         });
