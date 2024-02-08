@@ -102,7 +102,12 @@ class ToolManager(object):
         return cls.instance()._list()
 
     @classmethod
-    def register(cls, tool_or_widget):
+    def register_all(cls, tool_list):
+        for tool in tool_list: cls.register(tool, skip_update=True)
+        cls.instance().send_update()  # Notify the client of the registration
+
+    @classmethod
+    def register(cls, tool_or_widget, skip_update=False):
         """Register a NBTool or UIBuilder object"""
         if isinstance(tool_or_widget, NBTool):
             tools = cls.instance().tools
@@ -115,7 +120,7 @@ class ToolManager(object):
                 cls.instance().tools[tool_or_widget.origin][tool_or_widget.id] = tool_or_widget
 
                 # Notify the client of the registration
-                cls.instance().send_update()
+                if not skip_update: cls.instance().send_update()
 
                 # Dispatch the register event
                 EventManager.instance().dispatch('nbtools.register', {
