@@ -33,7 +33,9 @@ class UIOutput(BaseWidget):
 
     def register_data(self):
         if len(self.files):
+            from .tool_manager import DataManager, Data
+            all_data = []
             for f in self.files:
-                from .tool_manager import DataManager, Data
-                DataManager.instance().register(Data(origin=self.origin, group=self.name, uri=f))
+                all_data.append(Data(origin=self.origin, group=self.name, uri=f))
                 DataManager.instance().group_widget(origin=self.origin, group=self.name, widget=self)
+            DataManager.instance().register_all(all_data)

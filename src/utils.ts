@@ -195,3 +195,7 @@ export function usage_tracker(event_token:string, description='', endpoint='http
         body: description
     }).then(r => r.text()).then(b => console.log(`usage response: ${b}`));
 }
+
+export function escape_quotes(raw:String) {
+    return raw.replace(/'/g, "\\'").replace(/"/g, '\\"')
+}

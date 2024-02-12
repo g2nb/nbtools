@@ -1,5 +1,5 @@
 import { PanelLayout, Widget } from '@lumino/widgets';
-import { toggle } from "./utils";
+import { escape_quotes, toggle } from "./utils";
 import { ContextManager } from "./context";
 import { SearchBox, Toolbox } from "./toolbox";
 
@@ -181,7 +181,7 @@ export class Databank extends Widget {
 
         // Add and run a code cell with the generated tool code
         const files = group_data.map((d:any) => `'${d.uri}'`).join(", ");
-        Toolbox.add_code_cell(import_line + `nbtools.data(origin='${origin}', group='${group_name}', uris=[${files}])`);
+        Toolbox.add_code_cell(import_line + `nbtools.data(origin='${escape_quotes(origin)}', group='${escape_quotes(group_name)}', uris=[${files}])`);
     }
 
     // TODO: Move to utils.ts and refactor so both this and toolbox.ts calls the function?
