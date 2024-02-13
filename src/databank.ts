@@ -159,7 +159,7 @@ export class Databank extends Widget {
 
         // Add the click event
         group_wrapper.addEventListener("click", () => {
-            Databank.add_output_cell(list.getAttribute('title'), group_name, group_data);
+            Databank.add_group_cell(list.getAttribute('title'), group_name, group_data);
         });
     }
 
@@ -168,14 +168,29 @@ export class Databank extends Widget {
         if (!group_wrapper) return;
         const data_wrapper = document.createElement('a');
         data_wrapper.setAttribute('href', data.uri);
-        data_wrapper.setAttribute('onclick', 'event.stopPropagation(); return false;');
         data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
         data_wrapper.classList.add('nbtools-data');
         data_wrapper.innerHTML = `<i class="far fa-bookmark"></i> ${data.label}`;
         group_wrapper.append(data_wrapper);
+
+        // Add the click event
+        data_wrapper.addEventListener("click", event => {
+            if (data.widget) Databank.add_data_cell(data.origin, data.uri);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        });
     }
 
-    static add_output_cell(origin:String, group_name:String, group_data:any) {
+    static add_data_cell(origin:String, data_uri:String) {
+        // Check to see if nbtools needs to be imported
+        const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
+
+        // Add and run a code cell with the generated tool code
+        Toolbox.add_code_cell(import_line + `nbtools.data(origin='${escape_quotes(origin)}', uri='${escape_quotes(data_uri)}')`);
+    }
+
+    static add_group_cell(origin:String, group_name:String, group_data:any) {
         // Check to see if nbtools needs to be imported
         const import_line = ContextManager.tool_registry.needs_import() ? 'import nbtools\n\n' : '';
 

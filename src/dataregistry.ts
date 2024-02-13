@@ -54,12 +54,13 @@ export class DataRegistry implements IDataRegistry {
      * @param kind
      * @param group
      * @param data
+     * @param widget
      * @param skip_callbacks
      */
-    register({origin=null, uri=null, label=null, kind=null, group=null, data=null, skip_callbacks=false}:
-                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null, skip_callbacks: boolean}): boolean {
+    register({origin=null, uri=null, label=null, kind=null, group=null, data=null, widget=false, skip_callbacks=false}:
+                 {origin?:string|null, uri?: string|null, label?: string|null, kind?: string|null, group?: string|null, data?:Data|null, widget?:boolean, skip_callbacks: boolean}): boolean {
         // Use origin, identifier, label and kind to initialize data, if needed
-        if (!data) data = new Data(origin, uri, label, kind, group);
+        if (!data) data = new Data(origin, uri, label, kind, group, widget);
 
         const kernel_id = this.current_kernel_id();
         if (!kernel_id) return false; // If no kernel, do nothing
@@ -211,12 +212,14 @@ export class Data {
     public label: string;
     public kind: string;
     public group: string;
+    public widget: boolean;
 
-    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null, group:string|null=null) {
+    constructor(origin:string, uri:string, label:string|null=null, kind:string|null=null, group:string|null=null, widget:boolean=false) {
         this.origin = origin;
         this.uri = uri;
         this.label = !!label ? label : extract_file_name(uri);
         this.kind = !!kind ? kind : extract_file_type(uri);
         this.group = group;
+        this.widget = widget;
     }
 }

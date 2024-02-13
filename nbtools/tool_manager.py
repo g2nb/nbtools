@@ -220,6 +220,7 @@ class DataManager(object):
     def __init__(self):
         self.data_registry = {}     # Initialize the data map
         self.group_widgets = {}     # Initialize widgets for groups
+        self.data_widgets = {}      # Initialize widgets for data
 
     @staticmethod
     def instance():
@@ -316,26 +317,38 @@ class DataManager(object):
         else: return cls.instance().group_widgets[origin][group]
 
     @classmethod
+    def data_widget(cls, origin, uri, widget=None):
+        # Lazily add origin
+        if origin not in cls.instance().data_widgets: cls.instance().data_widgets[origin] = {}
+
+        # Set widget if present
+        if widget: cls.instance().data_widgets[origin][uri] = widget
+
+        # Return the widget
+        if uri not in cls.instance().data_widgets[origin]: return None
+        else: return cls.instance().data_widgets[origin][uri]
+
+    @classmethod
     def data(cls, origin='Notebook', group=None, uris=None, uri=None):
         """
         Return reference to data or group widget given the uri, group and origin
         """
         # Retrieve or create a group widget
         if group:
-            if origin in cls.instance().group_widgets:
-                # If there is a custom group widget, return it
-                if group in cls.instance().group_widgets[origin]:
-                    return cls.instance().group_widgets[origin][group]
+            group_widget = cls.instance().group_widget(origin=origin, group=group)
+            if group_widget: return group_widget
+            else:  # Otherwise, create a new UIOutput widget and return it
+                if uris: return UIOutput(origin=origin, name=group, files=uris)
+                elif uri: return UIOutput(origin=origin, name=group, files=[uri])
+                else: return UIOutput(origin=origin, name=group)
 
-                # Otherwise, create a new UIOutput widget and return it
-                else:
-                    if uris: return UIOutput(origin=origin, name=group, files=uris)
-                    elif uri: return UIOutput(origin=origin, name=group, files=[uri])
-                    else: return UIOutput(origin=origin, name=group)
-
-        # If no group is named, wrap data in UIOutput for display
-        if uris: return UIOutput(origin=origin, name='Notebook Data', files=uris)
-        elif uri: return UIOutput(origin=origin, name='Notebook Data', files=[uri])
+        # Does a registered data widget exist?
+        data_widget = cls.instance().data_widget(origin=origin, uri=uri)
+        if data_widget: return data_widget
+        else:
+            # If no group or data widget, wrap data in UIOutput for display
+            if uris: return UIOutput(origin=origin, name='Notebook Data', files=uris)
+            elif uri: return UIOutput(origin=origin, name='Notebook Data', files=[uri])
 
 
 class Data:
@@ -359,9 +372,10 @@ class Data:
             'group': self.group,
             'uri': self.uri,
             'label': self.label,
-            'kind': self.kind
+            'kind': self.kind,
+            'widget': bool(DataManager.data_widget(self.origin, self.uri))
         }
 
 
-def data(origin=None, group=None, uris=None, **kwargs):
-    return DataManager.data(origin=origin, group=group, uris=uris)
+def data(origin=None, group=None, uris=None, uri=None, **kwargs):
+    return DataManager.data(origin=origin, group=group, uris=uris, uri=uri)
