@@ -310,11 +310,14 @@ class DataManager(object):
         if origin not in cls.instance().group_widgets: cls.instance().group_widgets[origin] = {}
 
         # Set widget if present
-        if widget: cls.instance().group_widgets[origin][group] = widget
+        if widget:
+            cls.instance().group_widgets[origin][group] = widget
+            return
 
         # Return the widget
         if group not in cls.instance().group_widgets[origin]: return None
-        else: return cls.instance().group_widgets[origin][group]
+        else: return cls.instance().group_widgets[origin][group]() \
+            if callable(cls.instance().group_widgets[origin][group]) else cls.instance().group_widgets[origin][group]
 
     @classmethod
     def data_widget(cls, origin, uri, widget=None):
@@ -322,11 +325,14 @@ class DataManager(object):
         if origin not in cls.instance().data_widgets: cls.instance().data_widgets[origin] = {}
 
         # Set widget if present
-        if widget: cls.instance().data_widgets[origin][uri] = widget
+        if widget:
+            cls.instance().data_widgets[origin][uri] = widget
+            return
 
         # Return the widget
         if uri not in cls.instance().data_widgets[origin]: return None
-        else: return cls.instance().data_widgets[origin][uri]
+        else: return cls.instance().data_widgets[origin][uri]() \
+            if callable(cls.instance().data_widgets[origin][uri]) else cls.instance().data_widgets[origin][uri]
 
     @classmethod
     def data(cls, origin='Notebook', group=None, uris=None, uri=None):
@@ -373,7 +379,8 @@ class Data:
             'uri': self.uri,
             'label': self.label,
             'kind': self.kind,
-            'widget': bool(DataManager.data_widget(self.origin, self.uri))
+            'widget': self.origin in DataManager.instance().data_widgets and
+                      self.uri in DataManager.instance().data_widgets[self.origin]
         }
 
 
