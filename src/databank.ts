@@ -171,7 +171,7 @@ export class Databank extends Widget {
         data_wrapper.setAttribute('onclick', 'event.stopPropagation(); return false;');
         data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
         data_wrapper.classList.add('nbtools-data');
-        data_wrapper.innerHTML = data.label;
+        data_wrapper.innerHTML = `<i class="far fa-bookmark"></i> ${data.label}`;
         group_wrapper.append(data_wrapper);
     }
 

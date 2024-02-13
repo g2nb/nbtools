@@ -167,7 +167,8 @@ ul.nbtools-group {
 }
 
 .nbtools-tool .nbtools-data {
-    padding: 0 12px 4px 0;
+    text-indent: -10px;
+    padding: 0 12px 4px 20px;
     font-size: var(--jp-ui-font-size1);
     color: var(--jp-ui-font-color2);
     font-weight: 400;
@@ -175,6 +176,7 @@ ul.nbtools-group {
     overflow: hidden;
     display: block;
     text-decoration: none;
+    word-break: break-all;
 }
 
 .nbtools-tool .nbtools-data:hover {
