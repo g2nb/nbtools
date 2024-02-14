@@ -96,15 +96,6 @@ export class Databank extends Widget {
             else organized[data.group] = [data];                              // Lazily create group
         });
 
-        // Sort the data in each group
-        Object.keys(organized).forEach((group) => {
-            organized[group].sort((a:any, b:any) => {
-                const a_name = a.label.toLowerCase();
-                const b_name = b.label.toLowerCase();
-                return (a_name < b_name) ? -1 : (a_name > b_name) ? 1 : 0;
-            });
-        });
-
         // Return the organized set of groups
         return organized
     }
