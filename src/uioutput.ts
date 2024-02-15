@@ -79,11 +79,12 @@ export class UIOutputView extends BaseWidgetView {
         super.remove();
     }
 
-    render_files(files:string[], widget:UIOutputView) {
+    render_files(files:any[], widget:UIOutputView) {
         let to_return = '';
-        files.forEach(path => {
-            const name = extract_file_name(path);
-            const type = extract_file_type(path) as string;
+        files.forEach(entry => {
+            const path = Array.isArray(entry) && entry.length >= 1 ? entry[0] : entry;
+            const name = Array.isArray(entry) && entry.length >= 2 ? entry[1] : extract_file_name(path);
+            const type = Array.isArray(entry) && entry.length >= 3 ? entry[2] : extract_file_type(path) as string;
             const path_prefix = UIOutputView.pick_path_prefix(path);
             to_return += `<a class="nbtools-file" href="${path_prefix}${path}" data-type="${type}" onclick="return false;">${name} <i class="fa fa-info-circle"></i></a>`;
             to_return += `<ul class="nbtools-menu nbtools-file-menu" style="display: none;"></ul>`
