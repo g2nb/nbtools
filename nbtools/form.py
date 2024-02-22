@@ -449,4 +449,4 @@ class InteractiveForm(interactive):
         if self.parent: self.parent.busy = False
 
         # Assign value to output_var
-        get_ipython().push({self.children[-1].value: self.result})
+        if len(self.children) >= 1: get_ipython().push({self.children[-1].value: self.result})
