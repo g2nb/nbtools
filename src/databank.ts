@@ -171,6 +171,11 @@ export class Databank extends Widget {
             event.stopPropagation();
             return false;
         });
+
+        // Add the drag event
+        data_wrapper.addEventListener("dragstart", event => {
+            event.dataTransfer.setData("text/plain", data.uri);
+        })
     }
 
     static add_data_cell(origin:String, data_uri:String) {
