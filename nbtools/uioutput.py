@@ -31,7 +31,8 @@ class UIOutput(BaseWidget):
         BaseWidget.__init__(self, **kwargs)     # Call the superclass
         self.register_data()                    # Register any output files
 
-    def register_data(self):
+    def register_data(self, group=None):
+        group = self.name if group is None else group
         if len(self.files):
             from .tool_manager import DataManager, Data
             all_data = []
@@ -42,7 +43,7 @@ class UIOutput(BaseWidget):
                     else: raise Exception('Empty tuple or list passed to UIOutput.files')
                     if len(f) >= 2: kwargs['label'] = f[1]
                     if len(f) >= 3: kwargs['kind'] = f[2]
-                    all_data.append(Data(origin=self.origin, group=self.name, **kwargs))
-                else: all_data.append(Data(origin=self.origin, group=self.name, uri=f))  # Handle uri strings
-                DataManager.instance().group_widget(origin=self.origin, group=self.name, widget=self)
+                    all_data.append(Data(origin=self.origin, group=group, **kwargs))
+                else: all_data.append(Data(origin=self.origin, group=group, uri=f))  # Handle uri strings
+                DataManager.instance().group_widget(origin=self.origin, group=group, widget=self)
             DataManager.instance().register_all(all_data)
