@@ -40,6 +40,14 @@ class BaseWidget(DOMWidget):
                     getattr(self, method_name)(**kwargs)
                 except json.JSONDecodeError:
                     pass
+            elif method_name and hasattr(self, '_parent') and hasattr(self._parent, method_name) and not params:
+                getattr(self._parent, method_name)()
+            elif method_name and hasattr(self, '_parent') and hasattr(self._parent, method_name) and params:
+                try:
+                    kwargs = json.loads(params)
+                    getattr(self._parent, method_name)(**kwargs)
+                except json.JSONDecodeError:
+                    pass
 
     def __init__(self, **kwargs):
         super(BaseWidget, self).__init__(**kwargs)

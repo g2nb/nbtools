@@ -93,7 +93,7 @@ class UIBuilder(VBox, NBTool):
         self._apply_overrides(**kwargs)
 
         # Create the child widgets
-        self.form = UIBuilderBase(function_or_method, **kwargs)
+        self.form = UIBuilderBase(function_or_method, _parent=self, **kwargs)
         self.output = self.form.output
 
         # Call the super constructor
@@ -176,6 +176,7 @@ class UIBuilderBase(BaseWidget):
 
     # Declare other properties
     function_or_method = None
+    _parent = None
     upload_callback = None
     license_callback = None
 
@@ -185,6 +186,7 @@ class UIBuilderBase(BaseWidget):
 
         # Set the function and call superclass constructor
         self.function_or_method = function_or_method
+        self._parent = kwargs['_parent'] if '_parent' in kwargs else None
         BaseWidget.__init__(self, **kwargs)
 
         # Give deprecation warnings
