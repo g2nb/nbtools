@@ -201,11 +201,11 @@ class MultiselectFormInput(BaseFormInput):
 
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
-        def __init__(self, spec, parent=None, upload_callback=None, **kwargs):
+        def __init__(self, spec, parent=None, upload_callback=None, enforce_kinds=False, **kwargs):
             # Set child widgets
             self.spec = spec
             self._value = ''
-            self.upload = Upload(accept=self.accepted_kinds(spec), multiple=False)
+            self.upload = Upload(accept=self.accepted_kinds(spec, enforce_kinds), multiple=False)
             self.old_change = None
 
             # Set up the file list
@@ -259,8 +259,8 @@ class FileFormInput(BaseFormInput):
             else: return {}
 
         @staticmethod
-        def accepted_kinds(spec):
-            if 'kinds' in spec and spec['kinds'] is not None:
+        def accepted_kinds(spec, enforce_kinds=False):
+            if enforce_kinds and 'kinds' in spec and spec['kinds'] is not None:
                 return ', '.join([f'.{x}' for x in spec['kinds']])
             else:  # If not specified, accept all kinds
                 return ''
