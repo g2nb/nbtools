@@ -3,7 +3,7 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    HBox, Combobox as BaseCombobox, SelectMultiple, VBox
+    HBox, Combobox as BaseCombobox, SelectMultiple, VBox, ColorPicker
 from ipyuploads import Upload
 from traitlets import List, Dict
 from .parsing_manager import ParsingManager
@@ -111,6 +111,11 @@ class TextFormInput(BaseFormInput):
 class PasswordFormInput(BaseFormInput):
     dom_class = 'nbtools-passwordinput'
     input_class = Password
+
+
+class ColorFormInput(BaseFormInput):
+    dom_class = 'nbtools-colorinput'
+    input_class = ColorPicker
 
 
 class NumberFormInput(BaseFormInput):
@@ -406,6 +411,8 @@ class InteractiveForm(interactive):
             return TextFormInput(spec, value=unicode_type(default_value))
         elif param_type == 'password':
             return PasswordFormInput(spec, value=default_value)
+        elif param_type == 'color':
+            return ColorFormInput(spec, value=default_value)
         elif param_type == 'choice' and InteractiveForm.is_combo(spec):
             return ComboFormInput(spec, value=default_value)
         elif param_type == 'choice' and InteractiveForm.is_multiple(spec):
