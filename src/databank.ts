@@ -77,8 +77,8 @@ export class Databank extends Widget {
         origins.forEach((origin) => {
             const origin_box = this.add_origin(origin);
             const groups = this.origin_groups(data[origin]);
-            Object.keys(groups).forEach((key) => {
-                this.add_group(origin_box, key, groups[key]);
+            Object.keys(groups).reverse().forEach((key) => {
+                this.add_group(origin_box, key, groups[key].reverse());
             })
         });
 
