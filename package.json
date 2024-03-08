@@ -72,6 +72,8 @@
     "@jupyterlab/ui-components": "^3.0.3",
     "@lumino/application": "^1.13.1",
     "@lumino/widgets": "^1.16.1",
+    "@rjsf/core": "3.2.1",
+    "@rjsf/utils": "5.13.2",
     "@types/backbone": "^1.4.4",
     "@types/node": "^14.14.27",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
