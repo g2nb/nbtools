@@ -344,17 +344,40 @@ class DataManager(object):
             group_widget = cls.instance().group_widget(origin=origin, group=group)
             if group_widget: return group_widget
             else:  # Otherwise, create a new UIOutput widget and return it
-                if uris: return UIOutput(origin=origin, name=group, files=uris)
-                elif uri: return UIOutput(origin=origin, name=group, files=[uri])
-                else: return UIOutput(origin=origin, name=group)
+                if uris: return DataManager.create_placeholder_widget(origin=origin, name=group, files=uris)
+                elif uri: return DataManager.create_placeholder_widget(origin=origin, name=group, files=[uri])
+                else: return DataManager.create_placeholder_widget(origin=origin, name=group)
 
         # Does a registered data widget exist?
         data_widget = cls.instance().data_widget(origin=origin, uri=uri)
         if data_widget: return data_widget
         else:
             # If no group or data widget, wrap data in UIOutput for display
-            if uris: return UIOutput(origin=origin, name='Notebook Data', files=uris)
-            elif uri: return UIOutput(origin=origin, name='Notebook Data', files=[uri])
+            if uris: return DataManager.create_placeholder_widget(origin=origin, name=f'Notebook Data | {origin}', files=uris)
+            elif uri: return DataManager.create_placeholder_widget(origin=origin, name=f'Notebook Data | {origin}', files=[uri])
+
+    @classmethod
+    def create_placeholder_widget(cls, **kwargs):
+        output = Output()                   # Output widget
+        placeholder = UIOutput(**kwargs)    # Placeholder widget
+        output.append_display_data(placeholder)
+
+        # Callback to see if the placeholder needs replaced after a new widget is registered
+        def check_refresh_callback(data):
+            if 'group' in kwargs:
+                group_widget = cls.instance().group_widget(origin=kwargs['origin'], group=kwargs['group'])
+                if group_widget:
+                    placeholder.close()
+                    with output: display(group_widget)
+            else:
+                data_widget = cls.instance().data_widget(origin=kwargs['origin'], uri=kwargs['files'][0])
+                if data_widget:
+                    placeholder.close()
+                    with output: display(data_widget)
+
+        # Register the callback with the event manager
+        EventManager.instance().register("nbtools.refresh_data", check_refresh_callback)
+        return output
 
 
 class Data:
