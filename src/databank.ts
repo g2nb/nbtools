@@ -161,7 +161,7 @@ export class Databank extends Widget {
         data_wrapper.setAttribute('href', data.uri);
         data_wrapper.setAttribute('title', 'Drag to add parameter or cell');
         data_wrapper.classList.add('nbtools-data');
-        data_wrapper.innerHTML = `<i class="far fa-bookmark"></i> ${data.label}`;
+        data_wrapper.innerHTML = `<i class="${data.icon ? data.icon : 'far fa-bookmark'}"></i> ${data.label}`;
         group_wrapper.append(data_wrapper);
 
         // Add the click event

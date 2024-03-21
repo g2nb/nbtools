@@ -389,6 +389,7 @@ class Data:
     uri = None
     label = None
     kind = None
+    icon = None
     load = lambda self, **kwargs: self.__class__(**kwargs)
 
     def __init__(self, **kwargs):
@@ -402,6 +403,7 @@ class Data:
             'uri': self.uri,
             'label': self.label,
             'kind': self.kind,
+            'icon': self.icon,
             'widget': self.origin in DataManager.instance().data_widgets and
                       self.uri in DataManager.instance().data_widgets[self.origin]
         }
