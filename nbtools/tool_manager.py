@@ -251,6 +251,13 @@ class DataManager(object):
                 to_return.append(t)
         return to_return
 
+    def get(self, origin, uri):
+        """Return data object matching origin and uri, return None if not found"""
+        for d in self.list():
+            if d.origin == origin and d.uri == uri:
+                return d
+        return None
+
     @classmethod
     def register_all(cls, data_list):
         for data in data_list: cls.register(data, skip_update=True)

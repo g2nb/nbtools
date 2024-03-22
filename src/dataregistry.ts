@@ -188,6 +188,7 @@ export class DataRegistry implements IDataRegistry {
             if (origins === null || origins.length === 0 || origins.includes(origin)) {
                 const hits:any = {};
                 for (let data of Object.values(cache[origin]) as any) {
+                    if (data[0].kind === 'error') continue;
                     if (kinds === null || kinds.length === 0 || kinds.includes(data[0].kind))
                     hits[data[0].label] = data[0].uri;
                 }
