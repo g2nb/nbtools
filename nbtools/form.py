@@ -5,7 +5,7 @@ from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
     HBox, Combobox as BaseCombobox, SelectMultiple, VBox, ColorPicker
 from ipyuploads import Upload
-from traitlets import List, Dict
+from traitlets import List, Dict, All
 from .parsing_manager import ParsingManager
 from .utils import usage_tracker
 
@@ -328,6 +328,10 @@ class FileFormInput(BaseFormInput):
         def init_events(self):
             """Connect value change events of children to parent widget"""
             self.upload.observe(self.change_file)
+
+        def observe(self, handler, names=All, type="change"):
+            if len(self.children) >= 2 and len(self.children[1].children):
+                self.children[1].children[0].observe(handler, names, type)
 
     def __init__(self, spec, parent=None, upload_callback=None, **kwargs):
         self.input = self.FileOrURL(spec, parent=parent, upload_callback=upload_callback, layout=Layout(width='auto', grid_area='input'))
