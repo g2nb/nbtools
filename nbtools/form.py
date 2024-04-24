@@ -3,7 +3,7 @@ from numbers import Integral, Real
 from IPython import get_ipython
 from ipython_genutils.py3compat import string_types, unicode_type
 from ipywidgets import interactive, Text, GridBox, Label, Layout, ValueWidget, FloatText, IntText, Dropdown, Password, \
-    HBox, Combobox as BaseCombobox, SelectMultiple, VBox, ColorPicker
+    HBox, Combobox as BaseCombobox, SelectMultiple, VBox, ColorPicker, ToggleButton
 from ipyuploads import Upload
 from traitlets import List, Dict, All
 from .parsing_manager import ParsingManager
@@ -66,7 +66,7 @@ class BaseFormInput(GridBox, ValueWidget):
         self.label.description = spec['label']
 
         # Set the default value
-        self.input.value = self.__class__.type_safe(spec['default'], spec['type'])
+        if 'default' in spec: self.input.value = self.__class__.type_safe(spec['default'], spec['type'])
 
         # Set the description
         self.description.value = spec['description']
@@ -118,6 +118,19 @@ class ColorFormInput(BaseFormInput):
     input_class = ColorPicker
 
 
+class ButtonFormInput(BaseFormInput):
+    dom_class = 'nbtools-buttoninput'
+    input_class = ToggleButton
+
+    def __init__(self, spec, **kwargs):
+        super(ButtonFormInput, self).__init__(spec, **kwargs)
+        self.input.description = spec['label']
+
+    @staticmethod
+    def type_safe(val, input_class):
+        return bool(val)
+
+
 class NumberFormInput(BaseFormInput):
     dom_class = 'nbtools-numberinput'
     input_class = Text
@@ -149,13 +162,9 @@ class SelectFormInput(BaseFormInput):
     def apply_spec(self, spec):
         """Override parent class' method to handle non-matching default values"""
 
-        # Handle blank defaults, revert to first item in list
-        if ('default' not in spec or spec['default'] == '') and '' not in spec['choices']:
-            spec['default'] = list(spec['choices'].values())[0]
-
-        # Handle non-matching defaults, revert to first item in list
-        if spec['default'] not in list(spec['choices'].values()):
-            spec['default'] = list(spec['choices'].values())[0]
+        # Revert to first item in list if needed
+        if 'default' not in spec or spec['default'] not in list(spec['choices'].values()):
+            del spec['default']
 
         # Call the superclass method to finish
         super(SelectFormInput, self).apply_spec(spec)
@@ -417,6 +426,8 @@ class InteractiveForm(interactive):
             return PasswordFormInput(spec, value=default_value)
         elif param_type == 'color':
             return ColorFormInput(spec, value=default_value)
+        elif param_type == 'button':
+            return ButtonFormInput(spec, value=default_value)
         elif param_type == 'choice' and InteractiveForm.is_combo(spec):
             return ComboFormInput(spec, value=default_value)
         elif param_type == 'choice' and InteractiveForm.is_multiple(spec):
