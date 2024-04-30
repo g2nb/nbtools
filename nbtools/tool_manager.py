@@ -136,7 +136,7 @@ class ToolManager(object):
     def unregister(cls, origin, id):
         """Unregister the tool with the associated id"""
         if cls.exists(id, origin):
-            del cls.instance().tools['origin']['id']
+            del cls.instance().tools[origin][id]
 
             # Notify the client of the un-registration
             cls.instance().send_update()
