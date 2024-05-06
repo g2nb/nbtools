@@ -1,9 +1,17 @@
 .nbtools-icon {
     position: relative;
-    top: 3px;
-    left: -9px;
     font-size: 1.2em;
     color: var(--jp-inverse-layout-color3);
+}
+
+.jp-mod-left .nbtools-icon {
+    top: 3px;
+    left: -9px;
+}
+
+.jp-mod-right .nbtools-icon {
+    top: -3px;
+    left: 9px;
 }
 
 .nbtools-wrapper {
@@ -124,6 +132,11 @@ ul.nbtools-group {
     padding-left: 15px;
 }
 
+div.nbtools-group {
+    border-bottom: solid var(--jp-border-width) var(--jp-border-color2);
+    margin-bottom: 10px;
+}
+
 .nbtools-tool {
     padding: 8px;
     border-bottom: solid var(--jp-border-width) var(--jp-border-color2);
@@ -177,6 +190,8 @@ ul.nbtools-group {
     display: block;
     text-decoration: none;
     word-break: break-all;
+    line-height: 1.28581;
+    box-sizing: unset;
 }
 
 .nbtools-tool .nbtools-data:hover {
