@@ -117,6 +117,14 @@ class ColorFormInput(BaseFormInput):
     dom_class = 'nbtools-colorinput'
     input_class = ColorPicker
 
+    def apply_spec(self, spec):
+        default_value = spec.get('default', '__EMPTY__')
+        if default_value is None or default_value == '':
+            del spec['default']
+
+        # Call the superclass method to finish
+        super(ColorFormInput, self).apply_spec(spec)
+
 
 class ButtonFormInput(BaseFormInput):
     dom_class = 'nbtools-buttoninput'
