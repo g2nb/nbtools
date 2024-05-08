@@ -181,20 +181,29 @@
     color: var(--jp-ui-inverse-font-color0);
     font-weight: bold;
     padding: 5px 5px 5px 10px;
-    margin: 5px 0 5px 0;
+    margin: 5px 0 0 0;
     min-height: 25px;
     line-height: 25px;
     position: relative;
 }
 
 div.nbtools-group {
-    padding: 0 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
     border: solid var(--jp-border-width) var(--jp-border-color2);
     border-top: none;
 }
 
 div.nbtools-group + div.nbtools-input {
     margin-top: 20px;
+}
+
+div.nbtools-group-header.nbtools-hidden {
+    display: none;
+}
+
+div.nbtools-group-header.nbtools-hidden + div.nbtools-group {
+    padding: 0;
+    border: none;
 }
 
 div.nbtools-group > div.nbtools-header,
@@ -216,7 +225,7 @@ div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-group > 
 }
 
 .nbtools-group > .nbtools-description {
-    top: -6px;
+    top: -10px;
     left: -11px;
     padding: 10px;
     width: calc(100% + 2px);

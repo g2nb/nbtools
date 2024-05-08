@@ -336,7 +336,7 @@ export class UIBuilderView extends BaseWidgetView {
         header.style.backgroundColor = this.model.get('color');
 
         // Hide the header if no name is given and not collapsed
-        if (!name && !hidden) header.style.display = 'none';
+        if (!name && !hidden) header.classList.add('nbtools-hidden');
 
         // Return the container
         return header;
