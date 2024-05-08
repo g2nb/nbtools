@@ -176,7 +176,7 @@
     z-index: 7;
 }
 
-.nbtools-group-header {
+.nbtools-uibuilder .nbtools-group-header {
     background-color: var(--jp-layout-color4);
     color: var(--jp-ui-inverse-font-color0);
     font-weight: bold;
@@ -187,44 +187,44 @@
     position: relative;
 }
 
-div.nbtools-group {
+.nbtools-uibuilder div.nbtools-group {
     padding: 10px 10px 10px 10px;
     border: solid var(--jp-border-width) var(--jp-border-color2);
     border-top: none;
 }
 
-div.nbtools-group + div.nbtools-input {
+.nbtools-uibuilder div.nbtools-group + div.nbtools-input {
     margin-top: 20px;
 }
 
-div.nbtools-group-header.nbtools-hidden {
+.nbtools-uibuilder div.nbtools-group-header.nbtools-hidden {
     display: none;
 }
 
-div.nbtools-group-header.nbtools-hidden + div.nbtools-group {
+.nbtools-uibuilder div.nbtools-group-header.nbtools-hidden + div.nbtools-group {
     padding: 0;
     border: none;
 }
 
-div.nbtools-group > div.nbtools-header,
-div.nbtools-group > div.nbtools-group > div.nbtools-description {
+.nbtools-uibuilder div.nbtools-group > div.nbtools-header,
+.nbtools-uibuilder div.nbtools-group > div.nbtools-group > div.nbtools-description {
     opacity: 0.8;
     font-size: 0.9em;
 }
 
-div.nbtools-group > div.nbtools-group > div.nbtools-header,
-div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
+.nbtools-uibuilder div.nbtools-group > div.nbtools-group > div.nbtools-header,
+.nbtools-uibuilder div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
     opacity: 0.7;
     font-size: 0.8em;
 }
 
-div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-header,
-div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
+.nbtools-uibuilder div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-header,
+.nbtools-uibuilder div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
     opacity: 0.6;
     font-size: 0.7em;
 }
 
-.nbtools-group > .nbtools-description {
+.nbtools-uibuilder .nbtools-group > .nbtools-description {
     top: -10px;
     left: -11px;
     padding: 10px;
