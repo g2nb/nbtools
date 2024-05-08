@@ -256,6 +256,37 @@ export class UIBuilderView extends BaseWidgetView {
         });
     }
 
+    _move_parameter(form:HTMLElement, parent:HTMLElement, param_name:string) {
+        const param = this._param_dom_by_name(form, param_name);
+        if (!param) return; // If the parameter is not found, skip
+        parent.append(param);
+    }
+
+    _add_group(form:HTMLElement, parent:HTMLElement, group_data:any) {
+        // Clean the data
+        const name = group_data['name'] || '';
+        const description = group_data['description'] || '';
+        const hidden = !!group_data['hidden'];       // Is the group collapsed by default?
+        const advanced = !!group_data['advanced'];   // Toggle on with advanced options call?
+        const parameters = group_data['parameters'] || [];
+
+        // Create and add the header
+        const header = this._create_group_header(name, hidden, advanced);
+        parent.append(header);
+
+        // Create and add the body
+        const body = this._create_group_body(header, description, hidden, advanced);
+        parent.append(body);
+
+        // Iterate over child parameters
+        for (const item of parameters) {
+            if (typeof item === 'string' || item instanceof String)
+                this._move_parameter(form, body, item as string);
+            else if (typeof item === 'object')
+                this._add_group(form, body, item);
+        }
+    }
+
     /**
      * Create group headers and reorder the form widget according to the group spec
      *
@@ -270,24 +301,17 @@ export class UIBuilderView extends BaseWidgetView {
         const form = this.el.querySelector('.nbtools-form > .widget-interact') as HTMLElement;
         if (!form) return; // If no container is found, skip this step
 
-        // Iterate over each group, create headers and add parameters
-        groups.reverse().forEach((group: any) => {
-            const hidden = !!group['hidden'];       // Is the group collapsed by default?
-            const advanced = !!group['advanced'];   // Toggle on with advanced options call?
+        // Create the sorted parent and add it to the form
+        const sorted = document.createElement('div');
+        form.insertBefore(sorted, form.firstChild);
 
-            // Create and add the header
-            const header = this._create_group_header(group['name'], hidden, advanced);
-            const body = this._create_group_body(header, group['description'], hidden, advanced);
-            form.prepend(body);
-            form.prepend(header);
-
-            // Add the parameters
-            group['parameters'] && group['parameters'].forEach((param_name: string) => {
-                const param = this._param_dom_by_name(form, param_name);
-                if (!param) return; // If the parameter is not found, skip
-                body.append(param);
-            });
-        });
+        // Recursively iterate over each group, move parameters and add group containers
+        for (const item of groups) {
+            if (typeof item === 'string' || item instanceof String)
+                this._move_parameter(form, sorted, item as string);
+            else if (typeof item === 'object')
+                this._add_group(form, sorted, item);
+        }
     }
 
     _create_group_header(name: string|null, hidden: boolean, advanced: boolean) {
@@ -318,7 +342,7 @@ export class UIBuilderView extends BaseWidgetView {
         return header;
     }
 
-    _create_group_body(header:HTMLElement, description:string|null, hidden?: boolean, advanced?: boolean) {
+    _create_group_body(header:HTMLElement, description:string|null, hidden: boolean, advanced: boolean) {
         // Create the container
         const box = document.createElement('div');
         box.classList.add('nbtools-group');
@@ -346,7 +370,7 @@ export class UIBuilderView extends BaseWidgetView {
     }
 
     _group_toggle_collapse(group_box:HTMLElement, button:HTMLElement) {
-        const collapsed = group_box.style.display === "none";
+        const collapsed = group_box.style.display === "none" || group_box.classList.contains('nbtools-hidden');
 
         // Hide or show widget body
         toggle(group_box);

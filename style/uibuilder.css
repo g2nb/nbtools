@@ -187,11 +187,39 @@
     position: relative;
 }
 
+div.nbtools-group {
+    padding: 0 10px 10px 10px;
+    border: solid var(--jp-border-width) var(--jp-border-color2);
+    border-top: none;
+}
+
+div.nbtools-group + div.nbtools-input {
+    margin-top: 20px;
+}
+
+div.nbtools-group > div.nbtools-header,
+div.nbtools-group > div.nbtools-group > div.nbtools-description {
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+div.nbtools-group > div.nbtools-group > div.nbtools-header,
+div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
+    opacity: 0.6;
+    font-size: 0.8em;
+}
+
+div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-header,
+div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-group > div.nbtools-description {
+    opacity: 0.4;
+    font-size: 0.7em;
+}
+
 .nbtools-group > .nbtools-description {
-    top: -5px;
-    left: 0;
+    top: -6px;
+    left: -11px;
     padding: 10px;
-    width: calc(100% - 20px);
+    width: calc(100% + 2px);
 }
 
 .nbtools-advanced {
