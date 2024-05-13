@@ -215,6 +215,20 @@ class MultiselectFormInput(BaseFormInput):
     def value(self):
         return list(self.input.value)
 
+    def apply_spec(self, spec):
+        """Override parent class' method to handle non-matching default values"""
+
+        # Revert to first item in list if needed and filter out default values that don't match
+        if 'default' in spec:
+            if type(spec['default']) == str and spec['default'] not in list(spec['choices'].values()):
+                del spec['default']
+            elif type(spec['default']) == list:
+                spec['default'] = list(set(spec['choices'].values()).intersection(spec['default']))
+                if len(spec['default']) == 0: del spec['default']
+
+        # Call the superclass method to finish
+        super(MultiselectFormInput, self).apply_spec(spec)
+
 
 class FileFormInput(BaseFormInput):
     class FileOrURL(HBox):
