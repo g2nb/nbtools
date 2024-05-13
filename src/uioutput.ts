@@ -42,7 +42,9 @@ export class UIOutputModel extends BaseWidgetModel {
             text: '',
             visualization: '',
             appendix: undefined as any,
-            extra_file_menu_items: {}
+            extra_file_menu_items: {},
+            default_file_menu_items: true,
+            attach_file_prefixes: true
         };
     }
 }
@@ -85,7 +87,7 @@ export class UIOutputView extends BaseWidgetView {
             const path = Array.isArray(entry) && entry.length >= 1 ? entry[0] : entry;
             const name = Array.isArray(entry) && entry.length >= 2 ? entry[1] : extract_file_name(path);
             const type = Array.isArray(entry) && entry.length >= 3 ? entry[2] : extract_file_type(path) as string;
-            const path_prefix = UIOutputView.pick_path_prefix(path);
+            const path_prefix = UIOutputView.pick_path_prefix(path, widget);
             to_return += `<a class="nbtools-file" href="${path_prefix}${path}" data-type="${type}" onclick="return false;">${name} <i class="fa fa-info-circle"></i></a>`;
             to_return += `<ul class="nbtools-menu nbtools-file-menu" style="display: none;"></ul>`
         });
@@ -133,8 +135,9 @@ export class UIOutputView extends BaseWidgetView {
         });
     }
 
-    static pick_path_prefix(path:string) {
-        if (is_url(path)) return '';                // is a URL
+    static pick_path_prefix(path:string, widget:UIOutputView) {
+        if (!widget.model.get('attach_file_prefixes')) return '';
+        else if (is_url(path)) return '';                // is a URL
         else if (is_absolute_path(path)) return ''; // is an absolute
         else return 'files/' + ContextManager.context().notebook_path();  // is relative path
     }
@@ -213,9 +216,11 @@ export class UIOutputView extends BaseWidgetView {
         });
 
         // Add download and new tab options
-        this.add_menu_item('Copy Link', () => navigator.clipboard.writeText(get_absolute_url(link.getAttribute('href'))), '', menu);
-        this.add_menu_item('Download', () => window.open(link.getAttribute('href') + '?download=1'), '', menu);
-        this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string), '', menu);
+        if (this.model.get('default_file_menu_items')) {
+            this.add_menu_item('Copy Link', () => navigator.clipboard.writeText(get_absolute_url(link.getAttribute('href'))), '', menu);
+            this.add_menu_item('Download', () => window.open(link.getAttribute('href') + '?download=1'), '', menu);
+            this.add_menu_item('Open in New Tab', () => window.open(link.getAttribute('href') as string), '', menu);
+        }
     }
 
     toggle_file_menu(link:HTMLElement) {
