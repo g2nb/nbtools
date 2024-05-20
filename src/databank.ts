@@ -59,6 +59,12 @@ export class Databank extends Widget {
     fill_databank() {
         this.last_update = Date.now();
 
+        // Gather collapsed origins and groups
+        const collapsed_origins = Array.from(this.node.querySelectorAll('header.nbtools-origin > span.nbtools-collapsed'))
+            .map((n:any) => n.parentElement?.getAttribute('title'));
+        const collapsed_groups = Array.from(this.node.querySelectorAll('div.nbtools-group > span.nbtools-collapsed'))
+            .map((n:any) => `${n.closest('ul.nbtools-origin')?.getAttribute('title')}||${n.parentElement?.getAttribute('title')}`);
+
         // First empty the databank
         this.empty_databank();
 
@@ -76,9 +82,10 @@ export class Databank extends Widget {
         // Add each origin
         origins.forEach((origin) => {
             const origin_box = this.add_origin(origin);
+            if (collapsed_origins.includes(origin)) this.toggle_collapse(origin_box); // Retain collapsed origins
             const groups = this.origin_groups(data[origin]);
             Object.keys(groups).reverse().forEach((key) => {
-                this.add_group(origin_box, key, groups[key].reverse());
+                this.add_group(origin_box, key, collapsed_groups.includes(`${origin}||${key}`), groups[key].reverse());
             })
         });
 
@@ -123,7 +130,7 @@ export class Databank extends Widget {
         return origin_wrapper;
     }
 
-    add_group(origin:HTMLElement, group_name:String, group_data:any) {
+    add_group(origin:HTMLElement, group_name:String, collapsed:boolean, group_data:any) {
         const list = origin.querySelector('ul');
         if (!list) return;
 
@@ -132,11 +139,12 @@ export class Databank extends Widget {
         group_wrapper.setAttribute('title', 'Click to add to notebook');
         group_wrapper.innerHTML = `
             <div class="nbtools-add">+</div>
-            <div class="nbtools-header nbtools-group">
+            <div class="nbtools-header nbtools-group" title="${group_name}">
                 <span class="nbtools-expanded nbtools-collapse jp-Icon jp-Icon-16 jp-ToolbarButtonComponent-icon"></span>
                 ${group_name}
             </div>
             <ul class="nbtools-group"></ul>`;
+        if (collapsed) this.toggle_collapse(group_wrapper); // Retain collapsed groups
         for (const data of group_data) this.add_data(group_wrapper, data);
 
         // Attach the expand / collapse functionality
@@ -152,6 +160,7 @@ export class Databank extends Widget {
         group_wrapper.addEventListener("click", () => {
             Databank.add_group_cell(list.getAttribute('title'), group_name, group_data);
         });
+        return group_wrapper;
     }
 
     add_data(origin:HTMLElement, data:any) {
