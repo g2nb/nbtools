@@ -251,6 +251,34 @@ class DataManager(object):
                 to_return.append(t)
         return to_return
 
+    @classmethod
+    def filter(cls, **kwargs):
+        """
+        Get a filtered list of registered data
+
+        :return: filtered list of data
+        """
+        return cls.instance()._filter(**kwargs)
+
+    def _filter(self, **kwargs):
+        """
+        Get a filtered list of registered data
+
+        :return: filtered list of data
+        """
+        def has_attributes(tool, kwargs):
+            for kw in kwargs:
+                # Special case for kinds list
+                if kw == 'kinds':
+                    if tool.kind not in kwargs['kinds']: return False
+                    else: continue
+
+                if not hasattr(tool, kw): return False
+                if getattr(tool, kw) != kwargs[kw]: return False
+            return True
+
+        return [t for t in self._list() if has_attributes(t, kwargs)]
+
     def get(self, origin, uri):
         """Return data object matching origin and uri, return None if not found"""
         for d in self.list():
