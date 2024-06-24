@@ -244,6 +244,12 @@ class FileFormInput(BaseFormInput):
             self.urls = []
             self.file_list.children = self.urls
 
+            # Handle send to's
+            no_send_to = 'sendto' in spec and not spec['sendto']
+            if no_send_to:
+                for c in self.file_list.children:
+                    c.input.add_class('nbtools-nosendto')
+
             # Set the reference to the parent UI Builder
             self.parent = parent
 
