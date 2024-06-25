@@ -231,6 +231,11 @@
     width: calc(100% + 2px);
 }
 
+.nbtools-uibuilder .nbtools-input select[multiple] {
+    width: 100%;
+    max-width: 100%;
+}
+
 .nbtools-advanced {
     display: none;
 }
