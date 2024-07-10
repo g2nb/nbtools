@@ -156,7 +156,7 @@ class ToolManager(object):
     @classmethod
     def create_placeholder_widget(cls, origin, id):
         output = Output()                                                                            # Output widget
-        placeholder = UIOutput(name='Cannot find tool', error=f'Cannot find tool: {origin} | {id}')  # Placeholder widget
+        placeholder = UIOutput(name='Tool not loaded', error=f'Tool not loaded: {origin} | {id}')  # Placeholder widget
         output.append_display_data(placeholder)
 
         # Callback to see if the placeholder needs replaced after a new widget is registered
