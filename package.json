@@ -1,6 +1,6 @@
 {
   "name": "@g2nb/nbtools",
-  "version": "24.4.0",
+  "version": "24.8.0",
   "description": "Framework for creating user-friendly Jupyter notebooks, accessible to both programming and non-programming users alike.",
   "keywords": [
     "jupyter",
