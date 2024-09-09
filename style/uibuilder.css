@@ -98,6 +98,16 @@
     top: 2px;
 }
 
+.nbtools div.widget-text.nbtools-menu-attached.nbtools-dropdown {
+    background-color: transparent;
+    /*z-index: 0;*/
+}
+
+.nbtools div.widget-text.nbtools-menu-attached.nbtools-dropdown > input {
+    background-color: transparent;
+    /*z-index: 0;*/
+}
+
 .nbtools-passwordinput input[type=password] {
     box-sizing: border-box;
     border: var(--jp-widgets-input-border-width) solid var(--jp-widgets-input-border-color);
@@ -151,7 +161,7 @@
     width: 100%;
 }
 
-.nbtools-dropdown::before{
+.nbtools-dropdown input::before{
     position: absolute;
     content: " \f078";
     top: 5px;
@@ -164,8 +174,9 @@
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
-    z-index: 1;
+    z-index: -1;
 }
+
 .nbtools-uibuilder .nbtools-file-menu {
     left: 0;
     right: 0;
