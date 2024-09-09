@@ -102,12 +102,12 @@ class ToolManager(object):
         return cls.instance()._list()
 
     @classmethod
-    def register_all(cls, tool_list):
-        for tool in tool_list: cls.register(tool, skip_update=True)
+    def register_all(cls, tool_list, **kwargs):
+        for tool in tool_list: cls.register(tool, skip_update=True, **kwargs)
         cls.instance().send_update()  # Notify the client of the registration
 
     @classmethod
-    def register(cls, tool_or_widget, skip_update=False):
+    def register(cls, tool_or_widget, skip_update=False, **kwargs):
         """Register a NBTool or UIBuilder object"""
         if isinstance(tool_or_widget, NBTool):
             tools = cls.instance().tools
@@ -125,7 +125,8 @@ class ToolManager(object):
                 # Dispatch the register event
                 EventManager.instance().dispatch('nbtools.register', {
                     'origin': tool_or_widget.origin,
-                    'id': tool_or_widget.id
+                    'id': tool_or_widget.id,
+                    **kwargs
                 })
             else:
                 raise ValueError("register() must be passed a tool with an instantiated origin and id")
@@ -163,7 +164,7 @@ class ToolManager(object):
         def check_registration_callback(data):
             if 'origin' in data and 'id' in data and data['origin'] == origin and data['id'] == id:
                 placeholder.close()
-                with output: display(tool(id=id, origin=origin))
+                with output: display(tool(**data))
 
         # Register the callback with the event manager
         EventManager.instance().register("nbtools.register", check_registration_callback)
