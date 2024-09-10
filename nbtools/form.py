@@ -308,6 +308,8 @@ class FileFormInput(BaseFormInput):
             if 'kinds' in self.spec and self.spec['kinds']:
                 combobox.kinds = self.spec['kinds']
             combobox.choices = self.choices_dict(self.spec)
+            if 'sendto' in self.spec and not self.spec['sendto']:
+                combobox.add_class('nbtools-nosendto')
 
         def _file_list_values(self, append=None):
             """Return a values from the file list widgets, stripping blank values and with an optional value appended"""
