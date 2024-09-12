@@ -104,9 +104,65 @@ header.nbtools-origin {
     line-height: 24px;
     height: 24px;
     padding: 4px;
+}
+
+header.nbtools-origin > .nbtools-collapse {
+    position: relative;
+    top: -7px;
+}
+
+header.nbtools-origin > span.nbtools-header-title {
+    display: inline-block;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    width: calc(100% - 90px);
+}
+
+header.nbtools-origin > button {
+    border: var(--jp-border-width) solid transparent;
+    background: var(--jp-layout-color1);
+    color: var(--jp-ui-font-color1);
+    font-size: 0.9em;
+    float: right;
+    position: relative;
+    top: 5px
+}
+
+header.nbtools-origin > button > menu {
+    position: absolute;
+    right: 0;
+    top: 6px;
+    list-style: none;
+    display: none;
+    z-index: 10000;
+    background: var(--jp-layout-color0);
+    color: var(--jp-ui-font-color1);
+    border: var(--jp-border-width) solid var(--jp-border-color1);
+    font-size: 0.9em;
+    box-shadow: var(--jp-elevation-z6);
+    width: 120px;
+    text-align: left;
+    padding: 2px 0 3px 0;
+    line-height: 1.6em;
+}
+
+header.nbtools-origin > button > menu > li {
+    padding: 0 5px 1px 5px;
+}
+
+header.nbtools-origin > button > menu > li:hover {
+    background: var(--jp-layout-color2);
+}
+
+header.nbtools-origin > button:hover {
+    border: var(--jp-border-width) solid var(--jp-border-color2);
+    background: var(--jp-layout-color2);
+    cursor: pointer;
+}
+
+header.nbtools-origin > button > i {
+    margin: 0 3px 0 3px;
 }
 
 .nbtools-collapse {

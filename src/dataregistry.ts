@@ -12,6 +12,8 @@ export class DataRegistry implements IDataRegistry {
     update_callbacks:Array<Function> = [];          // Callbacks to execute when the cache is updated
     kernel_data_cache:any = {};                     // Keep a cache of kernels to registered data
                                                     // { 'kernel_id': { 'origin': { 'identifier': data } } }
+    kernel_origin_cache:any = {};                     // Keep a cache of kernels to registered origins
+                                                    // { 'kernel_id': { 'origin': {} } }
 
     /**
      * Initialize the DataRegistry and connect event handlers
@@ -27,6 +29,30 @@ export class DataRegistry implements IDataRegistry {
             // Otherwise, update the current notebook reference
             this.current = current_widget;
         });
+    }
+
+    register_all_origins(origin_list:Array<any>) {
+        let all_good = true;
+        for (const origin of origin_list) {
+            origin.skip_callbacks = true;
+            all_good = this.register_origin(origin) && all_good;
+        }
+        // this.execute_callbacks();
+        return all_good;
+    }
+
+    register_origin(origin:any) {
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return false; // If no kernel, do nothing
+
+        // Lazily initialize dict for kernel cache
+        let cache = this.kernel_origin_cache[kernel_id];
+        if (!cache) cache = this.kernel_origin_cache[kernel_id] = {};
+
+        // Add to cache, execute callbacks and return
+        this.kernel_origin_cache[kernel_id][origin.name] = origin;
+        if (!origin.skip_callbacks) this.execute_callbacks();
+        return true
     }
 
     /**
@@ -144,8 +170,13 @@ export class DataRegistry implements IDataRegistry {
 
         // Parse the message
         const data_list = message['data'];
+        const origins = message['origins'];
 
-        // Update the cache
+        // Update the origin cache
+        this.kernel_origin_cache[kernel_id] = {};
+        this.register_all_origins(origins);
+
+        // Update the data cache
         this.kernel_data_cache[kernel_id] = {};
         this.register_all(data_list);
     }
@@ -163,6 +194,19 @@ export class DataRegistry implements IDataRegistry {
         if (!cache) return {};
 
         // FORMAT: { 'origin': { 'identifier': [data] } }
+        return cache;
+    }
+
+    list_origins() {
+        // If no kernel, return empty map
+        const kernel_id = this.current_kernel_id();
+        if (!kernel_id) return {};
+
+        // If unable to retrieve cache, return empty map
+        const cache = this.kernel_origin_cache[kernel_id];
+        if (!cache) return {};
+
+        // FORMAT: { 'name': origin}
         return cache;
     }
 

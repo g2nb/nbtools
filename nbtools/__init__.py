@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from .tool_manager import ToolManager, NBTool, tool, DataManager, Data, data
+from .tool_manager import ToolManager, NBTool, tool, DataManager, Data, NBOrigin, data
 from .event_manager import EventManager
 from .nbextension import _jupyter_nbextension_paths
 from .uioutput import UIOutput

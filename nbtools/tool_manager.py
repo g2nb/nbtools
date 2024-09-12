@@ -19,6 +19,7 @@ class ToolManager(object):
 
     def __init__(self):
         self.tools = {}             # Initialize the tools map
+        self.callbacks = {}         # Initialize the map of function callbacks
         self.comm = None            # The comm to communicate with the client
         self.last_update = 0        # The last time the client was updated
         self.update_queued = False  # Waiting for an update?
@@ -29,8 +30,13 @@ class ToolManager(object):
             @comm.on_msg
             def receive(msg):
                 data = msg['content']['data']
-                if data['func'] == 'request_update':
+                if data['func'] == 'request_update':  # Push an update to the client
                     self.send_update()
+                elif data['func'] == 'origin_button':  # Make a callback, if the button key has been registered
+                    if 'payload' in data and 'name' in data['payload'] and data['payload']['name'] in self.callbacks:
+                        name = data['payload']['name']
+                        option = data['payload']['option'] if 'option' in data['payload'] else None
+                        self.callbacks[name](option)
                 else:
                     print('ToolManager received unknown message')
 
@@ -45,6 +51,7 @@ class ToolManager(object):
         self.send('update', {
             'import': 'nbtools' in get_ipython().user_global_ns,
             'tools': list(map(lambda t: t.json_safe(), self._list())),
+            'origins': list(map(lambda o: o.json_safe(), DataManager.list_origins())),
             'data': list(map(lambda d: d.json_safe(), DataManager.list())),
         })
 
@@ -134,6 +141,12 @@ class ToolManager(object):
             raise ValueError("register() must be passed an NBTool or UIBuilder object")
 
     @classmethod
+    def register_callback(cls, key, callback):
+        """Register a callback that can be executed via the comm"""
+        callbacks = cls.instance().callbacks
+        callbacks[key] = callback
+
+    @classmethod
     def unregister(cls, origin, id):
         """Unregister the tool with the associated id"""
         if cls.exists(id, origin):
@@ -215,11 +228,45 @@ def tool(id, origin, **kwargs):
         except TypeError: return nbtool.load()
 
 
+class NBOrigin:
+    """
+    Origin class, used to register new origins with the manager
+    Otherwise origins are lazily created with new tools
+    """
+    name = None
+    buttons = []  # name, icon, options, callback
+    collapsed = False
+    click_disabled = False
+    description = None
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def json_safe(self):
+        buttons = []
+        if hasattr(self, 'buttons'):
+            for b in self.buttons:
+                button = { 'name': b['name'] if 'name' in b else self.name }
+                if 'icon' in b: button['icon'] = b['icon']
+                if 'options' in b: button['options'] = b['options']
+                buttons.append(button)
+
+        return {
+            'name': self.name,
+            'buttons': buttons,
+            'collapsed': self.collapsed,
+            'click_disabled': self.click_disabled,
+            'description': self.description
+        }
+
+
 class DataManager(object):
     _instance = None                # DataManager singleton
 
     def __init__(self):
         self.data_registry = {}     # Initialize the data map
+        self.origins = {}           # Initialize the origin map
         self.group_widgets = {}     # Initialize widgets for groups
         self.data_widgets = {}      # Initialize widgets for data
 
@@ -339,6 +386,32 @@ class DataManager(object):
                 return True
             else: return False
         else: return False
+
+    @classmethod
+    def register_origin(cls, origin, skip_update=False):
+        origins = cls.instance().origins
+
+        # Register the origin
+        cls.instance().origins[origin.name] = origin
+
+        # Register any button callbacks with the ToolManager
+        if isinstance(origin.buttons, list):
+            for button in origin.buttons:
+                if 'callback' in button:
+                    ToolManager.instance().register_callback(button['name'], button['callback'])
+
+        # Notify the client of the registration
+        if not skip_update: ToolManager.instance().send_update()
+
+    @classmethod
+    def list_origins(cls):
+        """
+        Get the list of explicitly registered origins
+
+        :return: list of tools
+        """
+        origins = cls.instance().origins
+        return origins.values()
 
     @classmethod
     def group_widget(cls, origin, group, widget=None):

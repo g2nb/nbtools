@@ -52,7 +52,7 @@ export class ContextManager {
  */
 abstract class Context {
     /**
-     * Toggle hiding or or showing the code for the specified cell
+     * Toggle hiding or showing the code for the specified cell
      *
      * @param {HTMLElement} element
      * @param {boolean} display

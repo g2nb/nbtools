@@ -70,9 +70,10 @@ export class Databank extends Widget {
 
         // Get the list of data
         const data = ContextManager.data_registry.list();
+        const declared_origins = ContextManager.data_registry.list_origins();
 
         // Organize by origin and sort
-        const origins = Object.keys(data);
+        const origins = [...Object.keys(declared_origins), ...Object.keys(data)];
         origins.sort((a:any, b:any) => {
             const a_name = a.toLowerCase();
             const b_name = b.toLowerCase();
@@ -81,7 +82,7 @@ export class Databank extends Widget {
 
         // Add each origin
         origins.forEach((origin) => {
-            const origin_box = this.add_origin(origin);
+            const origin_box = this.add_origin(origin, declared_origins[origin]);
             if (collapsed_origins.includes(origin)) this.toggle_collapse(origin_box); // Retain collapsed origins
             const groups = this.origin_groups(data[origin]);
             Object.keys(groups).reverse().forEach((key) => {
@@ -95,6 +96,7 @@ export class Databank extends Widget {
 
     origin_groups(origin: any) {
         const organized:any = {};
+        if (!origin) return organized;
 
         // Organize data by group
         Object.keys(origin).forEach((uri) => {
@@ -104,26 +106,70 @@ export class Databank extends Widget {
         });
 
         // Return the organized set of groups
-        return organized
+        return organized;
     }
 
     empty_databank() {
         this.node.innerHTML = '';
     }
 
-    add_origin(name:string) {
+    add_origin(name:string, origin_object:any) {
         // Create the HTML DOM element
         const origin_wrapper = document.createElement('div');
         origin_wrapper.innerHTML = `
             <header class="nbtools-origin" title="${name}">
                 <span class="nbtools-expanded nbtools-collapse jp-Icon jp-Icon-16 jp-ToolbarButtonComponent-icon"></span>
-                ${name}
+                <span class="nbtools-header-title">${name}</span>
             </header>
             <ul class="nbtools-origin" title="${name}"></ul>`;
 
         // Attach the expand / collapse functionality
         const collapse = origin_wrapper.querySelector('span.nbtools-collapse') as HTMLElement;
         collapse.addEventListener("click", () => this.toggle_collapse(origin_wrapper));
+
+        // Attach functionality from origin object, if defined
+        if (origin_object) {
+            const header = origin_wrapper.querySelector('header');
+            if (origin_object.description) header.setAttribute('title', origin_object.description);
+            if (origin_object.click_disabled) header.setAttribute('data-click-disabled', "true");
+            if (origin_object.collapsed) collapse.classList.add('nbtools-collapsed');
+
+            if (origin_object.buttons)
+                for (let button_spec of origin_object.buttons) {
+                    const button = document.createElement('button');
+                    button.setAttribute('title', button_spec.name)
+                    button.innerHTML = `<i class="${button_spec.icon || 'fa fa-gear'}"></i>`;
+                    header.append(button);
+
+                    // Add options menu, if required
+                    if (button_spec.options) {
+                        button.innerHTML += '<i class="fa fa-caret-down"></i>';
+                        const menu = document.createElement('menu');
+                        for (let o of button_spec.options)
+                            menu.innerHTML += `<li class="nbtools-origin-menu" data-value="${o}">${o}</li>`;
+                        menu.addEventListener('click', event => {
+                            const value = (event.target as HTMLElement)?.closest('li')?.getAttribute('data-value');
+                            if (value)
+                                ContextManager.tool_registry.send_command(ContextManager.tool_registry.comm, 'origin_button',
+                                    { name: button_spec.name, option: value });
+                        });
+                        button.append(menu);
+                    }
+
+                    // Add button click event
+                    if (button_spec.options)
+                        button.addEventListener('click', event => {
+                            const menu = (event.target as HTMLElement)?.closest('button')?.querySelector('menu');
+                            if (!menu) return;
+                            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                            setTimeout(() =>
+                                document.body.addEventListener('click', () => menu.style.display = 'none', { once: true }), 100);
+                        });
+                    else
+                        button.addEventListener('click',
+                            () => ContextManager.tool_registry.send_command(ContextManager.tool_registry.comm, 'origin_button', { name: button_spec.name }));
+                }
+        }
 
         // Add to the databank
         this.node.append(origin_wrapper);

@@ -9,6 +9,7 @@ export const IToolRegistry = new Token<IToolRegistry>("nbtools");
 export interface IToolRegistry {}
 
 export class ToolRegistry implements ToolRegistry {
+    public comm:any = null;                         // Reference to the comm used to communicate with the kernel
     public current:Widget|null = null;              // Reference to the currently selected notebook or other widget
     private _update_callbacks:Array<Function> = []; // Functions to call when an update happens
     kernel_tool_cache:any = {};                     // Keep a cache of kernels to registered tools
@@ -77,12 +78,13 @@ export class ToolRegistry implements ToolRegistry {
                     else console.error('ToolRegistry received unknown message: ' + data);
                 });
 
+                this.comm = comm;
+                // TODO: Remove - debugging
                 (window as any).comm = comm;
+                (window as any).ToolRegistry = ToolRegistry;
 
                 // Request the current tool list
-                comm.send({
-                    'func': 'request_update'
-                });
+                this.request_update(comm);
             };
 
             // When the kernel restarts or is changed, reconnect the comm
@@ -120,6 +122,17 @@ export class ToolRegistry implements ToolRegistry {
      */
     request_update(comm:any) {
         comm.send({'func': 'request_update'});
+    }
+
+    /**
+     * Send a command the kernel (used for databank buttons, etc.)
+     *
+     * @param comm
+     * @param command
+     * @param payload
+     */
+    send_command(comm:any, command:string, payload:object) {
+        comm.send({'func': command, 'payload': payload});
     }
 
     /**
