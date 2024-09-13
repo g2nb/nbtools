@@ -146,8 +146,10 @@ export class Databank extends Widget {
                     if (button_spec.options) {
                         button.innerHTML += '<i class="fa fa-caret-down"></i>';
                         const menu = document.createElement('menu');
-                        for (let o of button_spec.options)
-                            menu.innerHTML += `<li class="nbtools-origin-menu" data-value="${o}">${o}</li>`;
+                        for (let o of button_spec.options) {
+                            if (typeof o === 'string') o = {'label': o, 'value': o};
+                            menu.innerHTML += `<li class="nbtools-origin-menu" data-value="${o.value}">${o.label}</li>`;
+                        }
                         menu.addEventListener('click', event => {
                             const value = (event.target as HTMLElement)?.closest('li')?.getAttribute('data-value');
                             if (value)

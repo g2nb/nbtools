@@ -378,6 +378,24 @@ class DataManager(object):
             print(f'Cannot find data to unregister: {origin} | {uri}')
 
     @classmethod
+    def unregister_all(cls, origin, skip_update=False):
+        """Unregister all data with the associated origin"""
+        if cls.origin_exists(origin):
+            del cls.instance().data_registry[origin]
+
+            # Notify the client of the un-registration
+            if not skip_update: ToolManager.instance().send_update()
+        else:
+            print(f'Cannot find origin to unregister: {origin}')
+
+    @classmethod
+    def origin_exists(cls, origin):
+        """Check if the origin exists in the data registiry"""
+        data_registry = cls.instance().data_registry
+        if origin in data_registry: return True
+        else: return False
+
+    @classmethod
     def exists(cls, uri, origin):
         """Check if a data object for the provided uri and origin exists"""
         data_registry = cls.instance().data_registry
