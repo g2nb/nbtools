@@ -221,6 +221,10 @@ ul.nbtools-group {
     visibility: visible;
 }
 
+.nbtools-tool > .nbtools-add.nbtools-hidden {
+    display: none;
+}
+
 .nbtools-tool > .nbtools-description {
     padding: 0 12px 4px 0;
     font-size: var(--jp-ui-font-size1);

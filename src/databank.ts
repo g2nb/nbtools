@@ -73,7 +73,7 @@ export class Databank extends Widget {
         const declared_origins = ContextManager.data_registry.list_origins();
 
         // Organize by origin and sort
-        const origins = [...Object.keys(declared_origins), ...Object.keys(data)];
+        const origins = [...new Set([...Object.keys(declared_origins), ...Object.keys(data)])];
         origins.sort((a:any, b:any) => {
             const a_name = a.toLowerCase();
             const b_name = b.toLowerCase();
@@ -83,10 +83,11 @@ export class Databank extends Widget {
         // Add each origin
         origins.forEach((origin) => {
             const origin_box = this.add_origin(origin, declared_origins[origin]);
+            const click_disabled = declared_origins[origin]?.click_disabled;
             if (collapsed_origins.includes(origin)) this.toggle_collapse(origin_box); // Retain collapsed origins
             const groups = this.origin_groups(data[origin]);
             Object.keys(groups).reverse().forEach((key) => {
-                this.add_group(origin_box, key, collapsed_groups.includes(`${origin}||${key}`), groups[key].reverse());
+                this.add_group(origin_box, key, collapsed_groups.includes(`${origin}||${key}`), groups[key].reverse(), click_disabled);
             })
         });
 
@@ -176,22 +177,22 @@ export class Databank extends Widget {
         return origin_wrapper;
     }
 
-    add_group(origin:HTMLElement, group_name:String, collapsed:boolean, group_data:any) {
+    add_group(origin:HTMLElement, group_name:String, collapsed:boolean, group_data:any, click_disabled=false) {
         const list = origin.querySelector('ul');
         if (!list) return;
 
         const group_wrapper = document.createElement('li');
         group_wrapper.classList.add('nbtools-tool');
-        group_wrapper.setAttribute('title', 'Click to add to notebook');
+        if (!click_disabled) group_wrapper.setAttribute('title', 'Click to add to notebook');
         group_wrapper.innerHTML = `
-            <div class="nbtools-add">+</div>
+            <div class="nbtools-add ${click_disabled ? 'nbtools-hidden' : ''}">+</div>
             <div class="nbtools-header nbtools-group" title="${group_name}">
                 <span class="nbtools-expanded nbtools-collapse jp-Icon jp-Icon-16 jp-ToolbarButtonComponent-icon"></span>
                 ${group_name}
             </div>
             <ul class="nbtools-group"></ul>`;
         if (collapsed) this.toggle_collapse(group_wrapper); // Retain collapsed groups
-        for (const data of group_data) this.add_data(group_wrapper, data);
+        for (const data of group_data) this.add_data(group_wrapper, data, click_disabled);
 
         // Attach the expand / collapse functionality
         const collapse = group_wrapper.querySelector('span.nbtools-collapse') as HTMLElement;
@@ -203,13 +204,14 @@ export class Databank extends Widget {
         list.append(group_wrapper);
 
         // Add the click event
-        group_wrapper.addEventListener("click", () => {
-            Databank.add_group_cell(list.getAttribute('title'), group_name, group_data);
-        });
+        if (!click_disabled)
+            group_wrapper.addEventListener("click", () => {
+                Databank.add_group_cell(list.getAttribute('title'), group_name, group_data);
+            });
         return group_wrapper;
     }
 
-    add_data(origin:HTMLElement, data:any) {
+    add_data(origin:HTMLElement, data:any, click_disabled=false) {
         const group_wrapper = origin.querySelector('ul.nbtools-group');
         if (!group_wrapper) return;
         const data_wrapper = document.createElement('a');
@@ -221,7 +223,7 @@ export class Databank extends Widget {
 
         // Add the click event
         data_wrapper.addEventListener("click", event => {
-            if (data.widget) Databank.add_data_cell(data.origin, data.uri);
+            if (data.widget && !click_disabled) Databank.add_data_cell(data.origin, data.uri);
             event.preventDefault();
             event.stopPropagation();
             return false;

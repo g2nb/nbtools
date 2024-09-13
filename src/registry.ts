@@ -79,9 +79,9 @@ export class ToolRegistry implements ToolRegistry {
                 });
 
                 this.comm = comm;
-                // TODO: Remove - debugging
-                (window as any).comm = comm;
-                (window as any).ToolRegistry = ToolRegistry;
+
+                // (window as any).comm = comm;
+                // (window as any).ToolRegistry = ToolRegistry;
 
                 // Request the current tool list
                 this.request_update(comm);
