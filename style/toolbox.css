@@ -121,18 +121,19 @@ header.nbtools-origin > span.nbtools-header-title {
 
 header.nbtools-origin > button {
     border: var(--jp-border-width) solid transparent;
-    background: var(--jp-layout-color1);
+    background: transparent;
     color: var(--jp-ui-font-color1);
     font-size: 0.9em;
     float: right;
     position: relative;
-    top: 5px
+    top: -5px;
+    height: 25px;
 }
 
 header.nbtools-origin > button > menu {
     position: absolute;
     right: 0;
-    top: 6px;
+    top: 13px;
     list-style: none;
     display: none;
     z-index: 10000;
